@@ -225,6 +225,40 @@
     -webkit-text-fill-color: #a0361a;
   }
 
+  /* Prominent briefing CTA on result page */
+  .briefing-cta {
+    margin: 32px 0 20px;
+    padding: 20px 22px;
+    background: #f7f6f3 !important;
+    border: 1px solid #1a1a1a;
+    text-align: center;
+  }
+  .briefing-cta-btn {
+    display: inline-block;
+    background: #1a1a1a !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff;
+    border: none;
+    font-family: 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 14px 28px;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: background-color 0.15s;
+  }
+  .briefing-cta-btn:hover, .briefing-cta-btn:active {
+    background: #c8441c !important;
+  }
+  .briefing-cta-hint {
+    margin-top: 12px;
+    font-size: 13px;
+    font-style: italic;
+    color: #6a6a67 !important;
+    -webkit-text-fill-color: #6a6a67;
+  }
+
   .briefing-overlay {
     display: none;
     position: fixed;
@@ -511,6 +545,62 @@
     color: #666 !important;
     -webkit-text-fill-color: #666;
   }
+  .opt.multi.selected {
+    border-color: #c8321a;
+    background: #fef5f2 !important;
+  }
+  .opt .rank-badge {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+    text-align: center;
+    background: #c8321a !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .multi-helper {
+    font-size: 13px;
+    color: #666 !important;
+    -webkit-text-fill-color: #666;
+    font-style: italic;
+    margin-bottom: 14px;
+  }
+  .multi-helper strong {
+    color: #c8321a !important;
+    -webkit-text-fill-color: #c8321a;
+    font-weight: 700;
+    font-style: normal;
+  }
+  .continue-btn {
+    display: block;
+    width: 100%;
+    padding: 14px 20px;
+    background: #c8321a !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 12px;
+    margin-bottom: 12px;
+    transition: background-color 0.15s;
+  }
+  .continue-btn:hover, .continue-btn:active {
+    background: #a0260f !important;
+  }
+  .continue-btn:disabled {
+    background: #ccc !important;
+    cursor: not-allowed;
+  }
 
   .nav {
     display: flex;
@@ -637,6 +727,72 @@
     -webkit-text-fill-color: #222;
   }
   .reason-text strong { font-weight: 600; color: #111 !important; -webkit-text-fill-color: #111; }
+
+  /* Alignment analysis */
+  .alignment-block {
+    margin-top: 8px;
+    padding: 14px 16px;
+    background: #f7f7f5 !important;
+    border-left: 3px solid #d1d1cc;
+  }
+  .alignment-block.positive { border-left-color: #2b8a3e; background: #f1f8f2 !important; }
+  .alignment-block.negative { border-left-color: #c8321a; background: #fdf4f2 !important; }
+  .alignment-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    color: #555 !important;
+    -webkit-text-fill-color: #555;
+  }
+  .alignment-block.positive .alignment-header { color: #2b8a3e !important; -webkit-text-fill-color: #2b8a3e; }
+  .alignment-block.negative .alignment-header { color: #c8321a !important; -webkit-text-fill-color: #c8321a; }
+  .alignment-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 16px;
+    font-size: 11px;
+    background: currentColor;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff;
+  }
+  .alignment-item {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #222 !important;
+    -webkit-text-fill-color: #222;
+    padding: 4px 0;
+  }
+  .alignment-item strong { font-weight: 600; }
+  .vs-box {
+    margin-top: 8px;
+    padding: 14px 16px;
+    background: #f4f0e8 !important;
+    border-left: 3px solid #c8321a;
+  }
+  .vs-header {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #c8321a !important;
+    -webkit-text-fill-color: #c8321a;
+    margin-bottom: 8px;
+  }
+  .vs-body {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #222 !important;
+    -webkit-text-fill-color: #222;
+  }
+  .vs-body strong { font-weight: 600; color: #111 !important; -webkit-text-fill-color: #111; }
 
   .caveat {
     background: #fef5f2 !important;
@@ -815,8 +971,10 @@ const CANDIDATES = {
 const QUESTIONS = [
   {
     id: "topIssue",
-    title: "What's the #1 issue driving your vote?",
-    sub: "Pick what you most want the next governor to prioritize.",
+    title: "What are your top issues in this race?",
+    sub: "Rank up to three — tap in order of importance. First tap = highest priority.",
+    multi: true,
+    maxPicks: 3,
     options: [
       { key: "housing", label: "Housing cost and supply", sub: "Rent, home prices, not enough building",
         weights: { porter: 4, steyer: 4, mahan: 4, villaraigosa: 2, becerra: 1, hilton: 2, thurmond: 1, bianco: 0 },
@@ -1021,13 +1179,57 @@ function renderIntro() {
 function renderQuestion() {
   const q = QUESTIONS[state.step];
   const pct = Math.round(((state.step + 1) / QUESTIONS.length) * 100);
-  const selected = state.answers[q.id];
 
-  const opts = q.options.map(opt => {
-    const sel = selected === opt.key ? 'selected' : '';
-    const sub = opt.sub ? `<small>${opt.sub}</small>` : '';
-    return `<button class="opt ${sel}" onclick="answer('${q.id}', '${opt.key}')"><strong>${opt.label}</strong>${sub}</button>`;
-  }).join('');
+  let optsHtml, navHtml, helperHtml = '';
+
+  if (q.multi) {
+    // Multi-select: state.answers[q.id] is an array of keys in selection order
+    const selected = state.answers[q.id] || [];
+    const maxPicks = q.maxPicks || 3;
+
+    optsHtml = q.options.map(opt => {
+      const idx = selected.indexOf(opt.key);
+      const isSel = idx !== -1;
+      const rank = isSel ? `<span class="rank-badge">${idx + 1}</span>` : '';
+      const cls = isSel ? 'selected' : '';
+      const sub = opt.sub ? `<small>${opt.sub}</small>` : '';
+      return `<button class="opt multi ${cls}" onclick="toggleMulti('${q.id}', '${opt.key}', ${maxPicks})"><strong>${rank}${opt.label}</strong>${sub}</button>`;
+    }).join('');
+
+    const pickedCount = selected.length;
+    const remainingText = pickedCount === 0
+      ? `Tap up to <strong>${maxPicks}</strong> issues in order of importance`
+      : pickedCount < maxPicks
+        ? `<strong>${pickedCount} of ${maxPicks} picked.</strong> Tap another, or Continue`
+        : `<strong>${maxPicks} picked.</strong> Tap Continue, or swap a pick`;
+
+    helperHtml = `<p class="multi-helper">${remainingText}</p>`;
+
+    navHtml = `
+      <button class="continue-btn" onclick="continueMulti()" ${pickedCount === 0 ? 'disabled' : ''}>
+        ${pickedCount === 0 ? 'Pick at least one to continue' : 'Continue →'}
+      </button>
+      <div class="nav">
+        <button class="back-btn" onclick="goBack()" ${state.step === 0 ? 'disabled' : ''}>← Back</button>
+        <span class="nav-hint">${pickedCount > 0 ? `${pickedCount} selected` : ''}</span>
+      </div>
+    `;
+  } else {
+    // Single-select (original behavior)
+    const selected = state.answers[q.id];
+    optsHtml = q.options.map(opt => {
+      const sel = selected === opt.key ? 'selected' : '';
+      const sub = opt.sub ? `<small>${opt.sub}</small>` : '';
+      return `<button class="opt ${sel}" onclick="answer('${q.id}', '${opt.key}')"><strong>${opt.label}</strong>${sub}</button>`;
+    }).join('');
+
+    navHtml = `
+      <div class="nav">
+        <button class="back-btn" onclick="goBack()" ${state.step === 0 ? 'disabled' : ''}>← Back</button>
+        <span class="nav-hint">Tap an answer to continue</span>
+      </div>
+    `;
+  }
 
   app.innerHTML = `
     <div class="fade-in">
@@ -1037,13 +1239,37 @@ function renderQuestion() {
       </div>
       <h2 class="q-title">${q.title}</h2>
       ${q.sub ? `<p class="q-sub">${q.sub}</p>` : ''}
-      <div class="options">${opts}</div>
-      <div class="nav">
-        <button class="back-btn" onclick="goBack()" ${state.step === 0 ? 'disabled' : ''}>← Back</button>
-        <span class="nav-hint">Tap an answer to continue</span>
-      </div>
+      ${helperHtml}
+      <div class="options">${optsHtml}</div>
+      ${navHtml}
     </div>
   `;
+}
+
+function toggleMulti(qid, optKey, maxPicks) {
+  if (!state.answers[qid]) state.answers[qid] = [];
+  const arr = state.answers[qid];
+  const idx = arr.indexOf(optKey);
+  if (idx !== -1) {
+    // Deselect
+    arr.splice(idx, 1);
+  } else {
+    if (arr.length >= maxPicks) {
+      // Replace last pick with new one
+      arr.pop();
+    }
+    arr.push(optKey);
+  }
+  render();
+}
+
+function continueMulti() {
+  const q = QUESTIONS[state.step];
+  const arr = state.answers[q.id] || [];
+  if (arr.length === 0) return;
+  state.step++;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  render();
 }
 
 function renderResult() {
@@ -1059,9 +1285,10 @@ function renderResult() {
   const reasons = buildReasons(winnerKey);
   const caveat = CAVEATS[winnerKey];
 
-  const reasonsHtml = reasons.map(r =>
-    `<div class="reason"><div class="reason-label">${r.q}</div><div class="reason-text">${r.body}</div></div>`
-  ).join('');
+  const reasonsHtml = reasons.map(r => {
+    if (r.html) return r.html;
+    return `<div class="reason"><div class="reason-label">${r.q}</div><div class="reason-text">${r.body}</div></div>`;
+  }).join('');
 
   const scoresHtml = sorted.map(([k, s]) => {
     const c = CANDIDATES[k];
@@ -1100,12 +1327,13 @@ function renderResult() {
       <button class="scores-toggle" onclick="toggleScores()">${state.showScores ? '▾' : '▸'} See how all 8 candidates scored</button>
       <div class="scores-list ${state.showScores ? 'open' : ''}">${scoresHtml}</div>
 
-      <div class="restart-wrap">
-        <button class="restart-btn" onclick="restart()">Start Over</button>
+      <div class="briefing-cta">
+        <button class="briefing-cta-btn" onclick="openBriefing()">Read the full candidate briefing</button>
+        <p class="briefing-cta-hint">Everything this match is based on: records, plans, complaints, sources.</p>
       </div>
 
-      <div class="briefing-link-row">
-        <button class="briefing-link" onclick="openBriefing()">Read the full candidate briefing →</button>
+      <div class="restart-wrap">
+        <button class="restart-btn" onclick="restart()">Start Over</button>
       </div>
 
       <p class="footer">This match reflects alignment between your priorities and each candidate's public record and plan depth. Not a prediction. Not a recommendation.</p>
@@ -1113,51 +1341,539 @@ function renderResult() {
   `;
 }
 
+// Multipliers for ranked multi-select picks (1st, 2nd, 3rd in importance)
+const RANK_MULTIPLIERS = [1.0, 0.6, 0.3];
+
 function computeScores() {
   const scores = {};
   Object.keys(CANDIDATES).forEach(k => scores[k] = 0);
   QUESTIONS.forEach(q => {
-    const ansKey = state.answers[q.id];
-    if (!ansKey) return;
-    const opt = q.options.find(o => o.key === ansKey);
-    if (!opt) return;
-    if (opt.weights) Object.entries(opt.weights).forEach(([c, p]) => scores[c] = (scores[c] || 0) + p);
-    if (opt.eliminates && opt.eliminates.length) {
-      opt.eliminates.forEach(c => { scores[c] = Math.round((scores[c] || 0) * 0.3); });
+    const ans = state.answers[q.id];
+    if (!ans) return;
+
+    if (q.multi) {
+      // Multi-select: ans is an array of keys in ranked order
+      if (!Array.isArray(ans) || ans.length === 0) return;
+      ans.forEach((key, idx) => {
+        const opt = q.options.find(o => o.key === key);
+        if (!opt || !opt.weights) return;
+        const mult = RANK_MULTIPLIERS[idx] || 0;
+        Object.entries(opt.weights).forEach(([c, p]) => {
+          scores[c] = (scores[c] || 0) + (p * mult);
+        });
+      });
+    } else {
+      // Single-select
+      const opt = q.options.find(o => o.key === ans);
+      if (!opt) return;
+      if (opt.weights) Object.entries(opt.weights).forEach(([c, p]) => scores[c] = (scores[c] || 0) + p);
+      if (opt.eliminates && opt.eliminates.length) {
+        opt.eliminates.forEach(c => { scores[c] = Math.round((scores[c] || 0) * 0.3); });
+      }
     }
   });
+  // Round to whole numbers for display
+  Object.keys(scores).forEach(k => scores[k] = Math.round(scores[k]));
   return scores;
 }
 
 function computeMaxPossible() {
   let max = 0;
   QUESTIONS.forEach(q => {
-    let qMax = 0;
-    q.options.forEach(opt => {
-      if (opt.weights) {
-        const localMax = Math.max(...Object.values(opt.weights));
-        if (localMax > qMax) qMax = localMax;
+    if (q.multi) {
+      // Max for multi = sum of top picks times their multipliers
+      // Find the highest weight any single candidate could get on each rank position
+      const allMaxes = q.options
+        .filter(o => o.weights)
+        .map(o => Math.max(...Object.values(o.weights)));
+      allMaxes.sort((a, b) => b - a);
+      for (let i = 0; i < Math.min(q.maxPicks || 3, allMaxes.length); i++) {
+        max += (allMaxes[i] || 0) * (RANK_MULTIPLIERS[i] || 0);
       }
-    });
-    max += qMax;
+    } else {
+      let qMax = 0;
+      q.options.forEach(opt => {
+        if (opt.weights) {
+          const localMax = Math.max(...Object.values(opt.weights));
+          if (localMax > qMax) qMax = localMax;
+        }
+      });
+      max += qMax;
+    }
   });
-  return max;
+  return Math.round(max);
 }
+
+// Human-friendly labels for each question's answer, for use in alignment explanations
+const ANSWER_LABELS = {
+  topIssue: {
+    housing: "housing supply and affordability",
+    homelessness: "homelessness",
+    cost: "cost of living and affordability",
+    crime: "crime and public safety",
+    insurance: "the insurance and wildfire crisis",
+    climate: "climate and energy",
+    education: "education",
+    healthcare: "health care",
+    immigration_defend: "protecting immigrants",
+    immigration_enforce: "tougher immigration enforcement"
+  },
+  temperament: {
+    fighter: "a fighter",
+    manager: "an operator",
+    coalition: "a coalition-builder",
+    outsider: "an outsider"
+  },
+  trumpStance: {
+    resist: "full resistance to the Trump administration",
+    selective: "selective pushback on the Trump administration",
+    cooperate: "a cooperative working relationship with the Trump administration"
+  },
+  taxes: {
+    raise_wealthy: "raising taxes on the wealthy",
+    hold_steady: "holding taxes steady and spending smarter",
+    cut_broadly: "cutting taxes across the board"
+  },
+  donorModel: {
+    grassroots: "grassroots funding with no corporate PACs",
+    self_funded: "self-funded campaigns",
+    labor: "organized labor backing",
+    business: "business and industry backing",
+    dontcare: "any funding model"
+  },
+  experience: {
+    statewide_exec: "proven statewide government executive experience",
+    local_exec: "active city or county leadership",
+    legislator: "a legislator or oversight role",
+    outsider_biz: "business or private-sector executive experience"
+  }
+};
+
+// Short labels for the alignment blocks
+const QUESTION_LABELS = {
+  topIssue: "Top issue",
+  temperament: "Leadership style",
+  trumpStance: "Trump relationship",
+  taxes: "Tax direction",
+  donorModel: "Money model",
+  experience: "Experience type"
+};
+
+// Descriptions of WHY a candidate scored at a given level on a given dimension.
+// Keyed by candidate + question answer. These power the "why you aligned" / "why you didn't" explanations.
+// IMPORTANT: All language must be grounded in briefing facts only — no invented characterizations.
+const CANDIDATE_STANCES = {
+  bianco: {
+    topIssue: {
+      crime: "Platform: Prop 36 + prison expansion. 30+ years at Riverside County Sheriff's Department.",
+      immigration_enforce: "Platform: weaken SB 54 sanctuary law, cooperate with ICE.",
+      cost: "No published affordability plan, mechanisms, or funding sources."
+    },
+    temperament: {
+      fighter: "Briefing temperament note: combative, defensive under scrutiny. Accuses critics of stunts.",
+      outsider: "Bianco has never served in Sacramento or held state-level office."
+    },
+    trumpStance: { cooperate: "Platform: cooperate with ICE and federal enforcement. Weaken SB 54." },
+    taxes: {
+      cut_broadly: "Platform includes agriculture deregulation; no published state tax plan.",
+      hold_steady: "Returned unspent funds to Riverside County treasury."
+    },
+    donorModel: {
+      grassroots: "Donors: law enforcement associations, CRPA, small-dollar conservative. Raised ~$3.7M.",
+      labor: "Backed by law-enforcement associations specifically."
+    },
+    experience: {
+      local_exec: "Sheriff of Riverside County since 2019."
+    }
+  },
+  hilton: {
+    topIssue: {
+      cost: "Platform: no income tax on earnings under $100K; 7.5% flat tax above. Cap housing taxes.",
+      crime: "Platform: Prop 36 + prison expansion.",
+      immigration_enforce: "Platform: cooperate with federal immigration enforcement.",
+      education: "Platform: grade teachers, reward best, fire worst."
+    },
+    temperament: {
+      outsider: "Never held U.S. elected office.",
+      fighter: "Briefing temperament note: measured, telegenic, avoids personal attacks."
+    },
+    trumpStance: {
+      cooperate: "Trump-endorsed April 6, 2026. Platform aligns with cooperative federal relationship."
+    },
+    taxes: {
+      cut_broadly: "Platform: no income tax under $100K, 7.5% flat above; CEQA reform; roll back CA environmental rules."
+    },
+    donorModel: {
+      business: "Donors include Rupert Murdoch; Fox News-adjacent conservative donor network. Raised ~$5.7M."
+    },
+    experience: {
+      outsider_biz: "Director of Strategy for UK PM David Cameron 2010-2012. Co-founded Crowdpac 2014."
+    }
+  },
+  becerra: {
+    topIssue: {
+      healthcare: "Delivered record: Medicare drug-price negotiation under HHS cut prices 38-79% on 10 high-cost drugs. Platform: protect Medicare/Medicaid from Trump cuts.",
+      immigration_defend: "Delivered record: sued Trump administration 122 times as AG, won on DACA and ACA. Platform: sanctuary-state defender.",
+      cost: "Platform: stabilize rents; freeze utility/insurance rate increases 'until we find out why.'"
+    },
+    temperament: {
+      manager: "Briefing temperament note: deliberate, procedural, collaborative.",
+      coalition: "24 years in U.S. House; chair of House Democratic Caucus 2013-2017."
+    },
+    trumpStance: {
+      resist: "Delivered record: sued the first Trump administration 122 times as California AG."
+    },
+    taxes: {
+      hold_steady: "No published wealth tax or Prop 13 reform position.",
+      raise_wealthy: "Has not championed progressive taxation in the race."
+    },
+    donorModel: {
+      labor: "Endorsed by California State Council of Laborers and multiple Assemblymembers (Avila Farías, Alvarez, Zbur, Quirk-Silva, Archuleta)."
+    },
+    experience: {
+      statewide_exec: "CA Attorney General 2017-2021, U.S. HHS Secretary 2021-2025.",
+      legislator: "12 Congressional terms (24 years), chair of House Democratic Caucus 2013-2017."
+    }
+  },
+  porter: {
+    topIssue: {
+      housing: "Platform: Housing for All (10 points); endorses CA SB 79 transit-density bill.",
+      education: "Platform: $4B Zero-tuition pathway — 2 free community college years + 2 tuition-free UC/CSU years.",
+      cost: "Track record in U.S. House Oversight: fighting insurers and drug-price gouging. Wells Fargo, HUD, CFPB oversight.",
+      healthcare: "Platform: 'Health-care governor' — protect coverage from Trump cuts."
+    },
+    temperament: {
+      fighter: "Briefing temperament note: sharp, prepared, impatient, direct. Viral whiteboard cross-examinations.",
+      coalition: "Briefing note lists Porter's strength as hearings, liability as campaign-long coalition-building.",
+      manager: "Has not held executive office. Strength is public oversight.",
+      outsider: "Six years in U.S. House 2019-2025."
+    },
+    trumpStance: {
+      resist: "Platform: \"Health-care governor\" — protect coverage from Trump cuts.",
+      selective: "Platform is resistance-oriented rather than selective pushback."
+    },
+    taxes: {
+      raise_wealthy: "Has not championed a wealth tax or Prop 13 commercial reform in the race.",
+      hold_steady: "Platform focuses on consumer protection rather than state-tax rate changes.",
+      cut_broadly: "Opposes broad tax cuts."
+    },
+    donorModel: {
+      grassroots: "$6.1M raised in 2025. Average donation ~$68. No corporate PAC money.",
+      labor: "Endorsed by Teamsters, UAW, CWA District 9, NUHW. Co-endorsed by CA Federation of Labor (with Steyer, Villaraigosa).",
+      self_funded: "Runs on small dollars, not self-funded.",
+      business: "Takes no corporate PAC money."
+    },
+    experience: {
+      legislator: "U.S. Rep CA-45 (2019-23) and CA-47 (2023-25). Oversight and Natural Resources committees.",
+      statewide_exec: "No executive office. Lost 2024 Senate primary (3rd).",
+      local_exec: "No local executive office held.",
+      outsider_biz: "UC Irvine law professor. Consumer-protection attorney. Not business background."
+    }
+  },
+  steyer: {
+    topIssue: {
+      climate: "Founded NextGen Climate 2013, Galvanize Climate Solutions 2021. 2024 NYT bestseller on climate. Platform: AI compute fee → Worker Transition Fund; Golden State Sovereign Wealth Fund.",
+      housing: "Platform: 1 million homes in 4 years; state-approved disaster-resilient blueprints. Rent tax-deduction for renters; rent-spike protection.",
+      homelessness: "Platform: housing-first bridge housing + stabilization services framework.",
+      insurance: "Platform: state-approved disaster-resilient blueprints to address insurance crisis.",
+      cost: "Platform: rent tax-deduction, rent-spike protection, AI compute fee."
+    },
+    temperament: {
+      manager: "Briefing temperament note: analytical, stiff on stage, disciplined, low-drama. Avoids personal attacks.",
+      outsider: "Never held elected public office."
+    },
+    trumpStance: {
+      resist: "Platform: abolish ICE; state prosecutors against rogue ICE agents."
+    },
+    taxes: {
+      raise_wealthy: "Only billionaire in the race supporting a wealth tax on billionaires. Open to Prop 13 commercial-property reform."
+    },
+    donorModel: {
+      self_funded: "$122.7M raised, ~$122.5M (99.9%) self-funded.",
+      labor: "Co-endorsed by CA Federation of Labor. Individually endorsed by California Nurses Association and UDW."
+    },
+    experience: {
+      outsider_biz: "Founded Farallon Capital 1986. Grew to tens of billions AUM. Net worth ~$2.4B."
+    }
+  },
+  villaraigosa: {
+    topIssue: {
+      housing: "Platform: executive orders to bypass local zoning for transit-adjacent density; CEQA reform (limit private lawsuits).",
+      crime: "Platform: statewide community-policing surge; anti-retail-theft task forces.",
+      cost: "Platform: cut regulations on CA oil refineries to lower gas prices. Balance state budget."
+    },
+    temperament: {
+      coalition: "8 years as LA Mayor, former Assembly Speaker, former LA City Council. Former teachers'-union organizer.",
+      manager: "Delivered Measure R (2008) — ~$40B in LA County transportation funding over 30 years."
+    },
+    trumpStance: {
+      selective: "Platform emphasizes selective pushback and balancing state interests.",
+      resist: "Opposes ICE cooperation."
+    },
+    taxes: {
+      hold_steady: "Platform: balance state budget.",
+      raise_wealthy: "Has not championed progressive taxation in the race."
+    },
+    donorModel: {
+      labor: "State Building and Construction Trades Council. Co-endorsed by CA Federation of Labor (with Steyer, Porter)."
+    },
+    experience: {
+      statewide_exec: "Former Speaker of the California State Assembly.",
+      local_exec: "Mayor of Los Angeles 2005-2013."
+    }
+  },
+  mahan: {
+    topIssue: {
+      housing: "Track record: 2,000 stalled San Jose housing units under construction in 2024 after fee/permit reform. Platform: 2-year tax holiday on new home construction; impact-fee caps.",
+      homelessness: "Platform: shelter-or-arrest for repeat encampment refusals; tiny-home villages; treatment-mandated felony beds under Prop 36.",
+      cost: "Platform: gas-tax suspension; impact-fee caps; reduced litigation risk.",
+      crime: "Platform: Prop 36 enforcement; shelter-or-arrest for repeat refusals."
+    },
+    temperament: {
+      manager: "Briefing temperament note: disciplined, metric-driven, avoids personal attacks. Performance-based budgeting implemented in San Jose.",
+      outsider: "Mayor of San Jose since Jan 2023; previously CEO of Causes and Brigade Media."
+    },
+    trumpStance: {
+      selective: "Platform emphasizes selective pushback on federal issues.",
+      cooperate: "Has signaled willingness to work across lines on some issues."
+    },
+    taxes: {
+      hold_steady: "Platform: performance-based budgeting; cut waste.",
+      cut_broadly: "Platform: 2-year housing-construction tax holiday; gas-tax suspension."
+    },
+    donorModel: {
+      business: "Donors: Sergey Brin, Joe Lonsdale, Michael Moritz, Rick Caruso. Pro-Mahan super PAC has raised $15M+, spent $1.5M on Super Bowl LX ad."
+    },
+    experience: {
+      local_exec: "Mayor of San Jose since January 2023.",
+      outsider_biz: "CEO of Causes (~190M users); CEO of Brigade Media (Sean Parker-backed)."
+    }
+  },
+  thurmond: {
+    topIssue: {
+      education: "CA Superintendent of Public Instruction since 2019. Platform: CS graduation requirement; dual-language expansion; $10K school mental-health clinicians; teacher scholarships.",
+      cost: "Platform: state tax credit for working families; raise taxes on billionaires; commercial Prop 13 reform.",
+      immigration_defend: "Platform: abolish ICE; pathway to citizenship; due-process protections."
+    },
+    temperament: {
+      manager: "CA Superintendent of Public Instruction since 2019. Former social worker (foster care / juvenile justice youth).",
+      coalition: "Social-work background (Lincoln Child Center). Richmond City Council, WCCUSD school board, Assembly."
+    },
+    trumpStance: {
+      resist: "Platform: abolish ICE; pathway to citizenship; due-process bills.",
+      selective: "Platform emphasizes immigration and education specifically."
+    },
+    taxes: {
+      raise_wealthy: "Only Democrat openly supporting both a billionaire's tax AND Prop 13 commercial reform."
+    },
+    donorModel: {
+      grassroots: "Lowest-funded of top-8 candidates. Won statewide twice (2018, 2022).",
+      labor: "IBEW Local 952 and other building-trades locals. National Association of Social Workers-CA. Black Women Organized for Political Action PAC. Oakland POA."
+    },
+    experience: {
+      statewide_exec: "CA Superintendent of Public Instruction since 2019 (won statewide twice).",
+      legislator: "CA Assembly 2014-2018. Legislative record on methane reduction, immigrant due process, school tobacco, truancy funding."
+    }
+  }
+};
 
 function buildReasons(winnerKey) {
   const reasons = [];
-  const topIssueAns = state.answers.topIssue;
-  if (topIssueAns) {
-    const opt = QUESTIONS[0].options.find(o => o.key === topIssueAns);
-    if (opt && opt.reason) reasons.push({ q: "On your #1 issue", body: opt.reason });
+  const scores = computeScores();
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const runnerKey = sorted[1][0];
+  const winnerFirst = CANDIDATES[winnerKey].name.split(' ')[0];
+
+  // 1. Top-issues reason — walk through each ranked pick
+  const topIssues = state.answers.topIssue;
+  if (topIssues && Array.isArray(topIssues) && topIssues.length > 0) {
+    const rankLabels = ['Your #1 issue', 'Your #2 issue', 'Your #3 issue'];
+    topIssues.forEach((key, idx) => {
+      const opt = QUESTIONS[0].options.find(o => o.key === key);
+      if (!opt) return;
+      const stance = (CANDIDATE_STANCES[winnerKey] && CANDIDATE_STANCES[winnerKey].topIssue && CANDIDATE_STANCES[winnerKey].topIssue[key])
+        ? CANDIDATE_STANCES[winnerKey].topIssue[key]
+        : null;
+      const label = ANSWER_LABELS.topIssue[key] || key;
+      const weight = opt.weights ? (opt.weights[winnerKey] || 0) : 0;
+      let body;
+      if (stance) {
+        body = `You picked <strong>${label}</strong>. ${winnerFirst}: ${stance}`;
+      } else {
+        // No direct stance — fall back to the generic issue template, but attribute it clearly
+        body = `You picked <strong>${label}</strong>. ${opt.reason || ''}`;
+      }
+      // Add a note if the winner didn't actually score well on this issue
+      if (weight <= 1) {
+        const topScorer = opt.weights ? Object.entries(opt.weights).sort((a,b) => b[1]-a[1])[0] : null;
+        if (topScorer && topScorer[0] !== winnerKey) {
+          body += ` <em>Note: ${CANDIDATES[topScorer[0]].name.split(' ')[0]} has the strongest record on this specific issue.</em>`;
+        }
+      }
+      reasons.push({ q: rankLabels[idx], body });
+    });
   }
-  reasons.push({ q: `About ${CANDIDATES[winnerKey].name.split(' ')[0]}`, body: CANDIDATE_FITS[winnerKey] });
-  const tempAns = state.answers.temperament;
-  if (tempAns) {
-    const labels = { fighter: "fighter", manager: "operator", coalition: "coalition-builder", outsider: "outsider" };
-    reasons.push({ q: "Temperament", body: `You wanted <strong>a ${labels[tempAns]}</strong>. ${TEMPERAMENTS[winnerKey]}` });
+
+  // 2. About-candidate blurb
+  reasons.push({ q: `About ${winnerFirst}`, body: CANDIDATE_FITS[winnerKey] });
+
+  // 3. Where you aligned (strong matches, score 3-5) — but skip topIssue since it's already covered above
+  const aligned = [];
+  const misaligned = [];
+
+  QUESTIONS.forEach(q => {
+    if (q.id === 'redflag') return;
+    if (q.id === 'topIssue') return; // already handled above
+    const ansKey = state.answers[q.id];
+    if (!ansKey) return;
+    const opt = q.options.find(o => o.key === ansKey);
+    if (!opt || !opt.weights) return;
+    const pts = opt.weights[winnerKey] || 0;
+    const answerLabel = ANSWER_LABELS[q.id] ? ANSWER_LABELS[q.id][ansKey] : ansKey;
+    const stance = (CANDIDATE_STANCES[winnerKey] && CANDIDATE_STANCES[winnerKey][q.id])
+      ? CANDIDATE_STANCES[winnerKey][q.id][ansKey]
+      : null;
+
+    if (pts >= 3) {
+      aligned.push({ qLabel: QUESTION_LABELS[q.id] || q.id, answerLabel, points: pts, stance });
+    } else if (pts <= 1) {
+      misaligned.push({ qLabel: QUESTION_LABELS[q.id] || q.id, answerLabel, points: pts, stance });
+    }
+  });
+
+  // Build the "Where you aligned" block (non-issue dimensions)
+  if (aligned.length > 0) {
+    const items = aligned.map(a => {
+      const stanceText = a.stance ? ` — ${a.stance}` : '';
+      return `<div class="alignment-item"><strong>${a.qLabel}:</strong> you chose <strong>${a.answerLabel}</strong>${stanceText}</div>`;
+    }).join('');
+    reasons.push({
+      q: null,
+      html: `<div class="alignment-block positive">
+        <div class="alignment-header"><span class="alignment-icon">✓</span> Where else ${winnerFirst} matches you</div>
+        ${items}
+      </div>`
+    });
   }
+
+  // Build the "Where you didn't align" block
+  if (misaligned.length > 0) {
+    const items = misaligned.map(m => {
+      let note;
+      if (m.stance) {
+        note = ` — ${m.stance}`;
+      } else {
+        const q = QUESTIONS.find(qq => QUESTION_LABELS[qq.id] === m.qLabel);
+        if (q) {
+          const ansKey = state.answers[q.id];
+          const opt = q.options.find(o => o.key === ansKey);
+          if (opt && opt.weights) {
+            const topScorer = Object.entries(opt.weights).sort((a, b) => b[1] - a[1])[0];
+            if (topScorer && topScorer[0] !== winnerKey) {
+              note = ` — ${CANDIDATES[topScorer[0]].name.split(' ')[0]} would have scored higher on this dimension.`;
+            } else {
+              note = `.`;
+            }
+          } else { note = `.`; }
+        } else { note = `.`; }
+      }
+      return `<div class="alignment-item"><strong>${m.qLabel}:</strong> you chose <strong>${m.answerLabel}</strong>${note}</div>`;
+    }).join('');
+    reasons.push({
+      q: null,
+      html: `<div class="alignment-block negative">
+        <div class="alignment-header"><span class="alignment-icon">!</span> Where you and ${winnerFirst} don't fully line up</div>
+        ${items}
+        <div class="alignment-item" style="margin-top: 8px; font-style: italic; color: #666; -webkit-text-fill-color: #666;">${winnerFirst} still scored highest overall — your other priorities outweighed these gaps.</div>
+      </div>`
+    });
+  }
+
+  // 4. Head-to-head vs runner-up
+  const winnerScore = sorted[0][1];
+  const runnerScore = sorted[1][1];
+  const runner = CANDIDATES[runnerKey];
+  const vsDetail = buildHeadToHead(winnerKey, runnerKey);
+  reasons.push({
+    q: null,
+    html: `<div class="vs-box">
+      <div class="vs-header">Why ${winnerFirst}, not ${runner.name.split(' ')[0]}?</div>
+      <div class="vs-body">${winnerFirst} scored <strong>${winnerScore}</strong>, ${runner.name.split(' ')[0]} scored <strong>${runnerScore}</strong>${winnerScore - runnerScore > 0 ? ` — a ${winnerScore - runnerScore}-point gap` : ''}. ${vsDetail}</div>
+    </div>`
+  });
+
   return reasons;
+}
+
+// Analyze which specific answers tipped the race between two candidates
+function buildHeadToHead(winnerKey, runnerKey) {
+  const diffs = [];
+  QUESTIONS.forEach(q => {
+    if (q.id === 'redflag') return;
+    const ans = state.answers[q.id];
+    if (!ans) return;
+
+    if (q.multi) {
+      // Multi-select: compute rank-weighted diff across all picks
+      if (!Array.isArray(ans) || ans.length === 0) return;
+      let winnerTotal = 0, runnerTotal = 0;
+      ans.forEach((key, idx) => {
+        const opt = q.options.find(o => o.key === key);
+        if (!opt || !opt.weights) return;
+        const mult = RANK_MULTIPLIERS[idx] || 0;
+        winnerTotal += (opt.weights[winnerKey] || 0) * mult;
+        runnerTotal += (opt.weights[runnerKey] || 0) * mult;
+      });
+      const diff = Math.round(winnerTotal - runnerTotal);
+      if (Math.abs(diff) >= 1) {
+        // For multi-select, name the highest-ranked issue as the label
+        const topKey = ans[0];
+        const answerLabel = ANSWER_LABELS[q.id] ? ANSWER_LABELS[q.id][topKey] : topKey;
+        diffs.push({ qId: q.id, qLabel: QUESTION_LABELS[q.id] || q.id, answerLabel, diff });
+      }
+    } else {
+      const opt = q.options.find(o => o.key === ans);
+      if (!opt || !opt.weights) return;
+      const winnerPts = opt.weights[winnerKey] || 0;
+      const runnerPts = opt.weights[runnerKey] || 0;
+      const diff = winnerPts - runnerPts;
+      if (Math.abs(diff) >= 1) {
+        diffs.push({
+          qId: q.id,
+          qLabel: QUESTION_LABELS[q.id] || q.id,
+          answerLabel: ANSWER_LABELS[q.id] ? ANSWER_LABELS[q.id][ans] : ans,
+          diff
+        });
+      }
+    }
+  });
+
+  const winnerFirst = CANDIDATES[winnerKey].name.split(' ')[0];
+  const runnerFirst = CANDIDATES[runnerKey].name.split(' ')[0];
+
+  const winnerAdvantages = diffs.filter(d => d.diff > 0).sort((a, b) => b.diff - a.diff);
+  const runnerAdvantages = diffs.filter(d => d.diff < 0).sort((a, b) => a.diff - b.diff);
+
+  if (winnerAdvantages.length === 0) {
+    return `Your answers were split almost evenly between ${winnerFirst} and ${runnerFirst}. The win comes from small accumulated edges rather than one big difference.`;
+  }
+
+  const top = winnerAdvantages[0];
+  let text = `The biggest edge was on <strong>${top.qLabel.toLowerCase()}</strong>, where ${winnerFirst} scored ${top.diff} points higher than ${runnerFirst}.`;
+
+  const moreWins = winnerAdvantages.slice(1, 3);
+  if (moreWins.length > 0) {
+    const others = moreWins.map(d => d.qLabel.toLowerCase()).join(' and ');
+    text += ` ${winnerFirst} also edged ahead on ${others}.`;
+  }
+
+  const significantRunnerWins = runnerAdvantages.filter(d => Math.abs(d.diff) >= 2);
+  if (significantRunnerWins.length > 0) {
+    const item = significantRunnerWins[0];
+    text += ` ${runnerFirst} did score higher on <strong>${item.qLabel.toLowerCase()}</strong>, but not by enough to close the overall gap.`;
+  }
+
+  return text;
 }
 
 function begin() { state.step = 0; window.scrollTo({ top: 0, behavior: 'smooth' }); render(); }

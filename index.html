@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#ffffff">
+<meta name="supported-color-schemes" content="light">
+<title>California Governor 2026 — Candidate Matcher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { color-scheme: light only; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: #ffffff !important;
+    color: #111111 !important;
+    -webkit-text-fill-color: #111111;
+    font-family: 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    html, body { background: #ffffff !important; color: #111111 !important; -webkit-text-fill-color: #111111; }
+  }
+
+  .stage {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+
+  /* INTRO */
+  .tag {
+    display: inline-block;
+    background: #1a1a1a !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    padding: 6px 12px;
+    text-transform: uppercase;
+    border-radius: 3px;
+    margin-bottom: 24px;
+  }
+
+  h1 {
+    font-size: clamp(32px, 7vw, 44px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+    color: #111 !important;
+    -webkit-text-fill-color: #111;
+  }
+
+  .lede {
+    font-size: 18px;
+    color: #444 !important;
+    -webkit-text-fill-color: #444;
+    margin-bottom: 32px;
+    line-height: 1.45;
+  }
+
+  .intro-card {
+    background: #f7f5f0 !important;
+    border: 1px solid #e4e0d6;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 28px;
+  }
+
+  .intro-card h3 {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #888 !important;
+    -webkit-text-fill-color: #888;
+    margin-bottom: 16px;
+  }
+
+  .intro-steps {
+    list-style: none;
+    counter-reset: steps;
+  }
+
+  .intro-steps li {
+    counter-increment: steps;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid #e4e0d6;
+    font-size: 15px;
+    line-height: 1.4;
+    color: #222 !important;
+    -webkit-text-fill-color: #222;
+  }
+  .intro-steps li:last-child { border-bottom: none; }
+  .intro-steps li::before {
+    content: counter(steps);
+    background: #111 !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .stat {
+    background: #fff !important;
+    border: 1px solid #e4e0d6;
+    border-radius: 6px;
+    padding: 14px 10px;
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 22px;
+    font-weight: 700;
+    color: #111 !important;
+    -webkit-text-fill-color: #111;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: #666 !important;
+    -webkit-text-fill-color: #666;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .cta-wrap {
+    text-align: center;
+    padding: 12px 0;
+  }
+
+  .cta {
+    display: block;
+    width: 100%;
+    background: #c8321a !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    border: none;
+    font-family: inherit;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    padding: 18px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    box-shadow: 0 2px 0 #8a1f0c;
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+  .cta:hover, .cta:focus { background: #b02816 !important; }
+  .cta:active { transform: translateY(2px); box-shadow: 0 0 0 #8a1f0c; }
+
+  .hint {
+    font-size: 13px;
+    color: #666 !important;
+    -webkit-text-fill-color: #666;
+    margin-top: 12px;
+    font-style: italic;
+  }
+
+  .disclaimer {
+    margin-top: 28px;
+    padding: 14px 16px;
+    background: #fffaf0 !important;
+    border-left: 3px solid #c8321a;
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #444 !important;
+    -webkit-text-fill-color: #444;
+  }
+  .disclaimer strong { color: #111 !important; -webkit-text-fill-color: #111; }
+
+  /* ==========================================================
+     BRIEFING — full-screen overlay
+     ========================================================== */
+  .briefing-link-row {
+    margin-top: 16px;
+    text-align: center;
+  }
+  .briefing-link {
+    display: inline-block;
+    background: transparent !important;
+    color: #c8441c !important;
+    -webkit-text-fill-color: #c8441c;
+    border: none;
+    font-family: 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    padding: 10px 4px;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .briefing-link:hover, .briefing-link:active {
+    color: #a0361a !important;
+    -webkit-text-fill-color: #a0361a;
+  }
+
+  .briefing-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #ffffff !important;
+    z-index: 10000;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .briefing-overlay.open { display: block; }
+  .briefing-topbar {
+    position: sticky;
+    top: 0;
+    background: #ffffff !important;
+    border-bottom: 1px solid #e5e3de;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+  }
+  .briefing-topbar-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #111 !important;
+    -webkit-text-fill-color: #111;
+  }
+  .briefing-close {
+    background: transparent !important;
+    border: 1px solid #111;
+    color: #111 !important;
+    -webkit-text-fill-color: #111;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .briefing-close:hover, .briefing-close:active {
+    background: #111 !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff;
+  }
+  .briefing-stage {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 28px 20px 80px;
+  }
+  .briefing-stage h2.b-h1 {
+    font-size: clamp(24px, 5vw, 30px);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: #111 !important;
+    -webkit-text-fill-color: #111;
+    margin: 28px 0 12px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #111;
+  }
+  .briefing-stage h2.b-h1:first-child { margin-top: 0; }
+  .briefing-stage h3.b-h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111 !important;
+    -webkit-text-fill-color: #111;
+    margin: 20px 0 10px;
+  }
+  .briefing-stage h4.b-h3 {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #c8441c !important;
+    -webkit-text-fill-color: #c8441c;
+    margin: 18px 0 8px;
+  }
+  .briefing-stage p.b-p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #111 !important;
+    -webkit-text-fill-color: #111;
+    margin-bottom: 12px;
+  }
+  .briefing-stage ul.b-ul {
+    margin: 8px 0 16px 0;
+    padding-left: 0;
+    list-style: none;
+  }
+  .briefing-stage ul.b-ul li {
+    font-size: 14px;
+    line-height: 1.55;
+    color: #111 !important;
+    -webkit-text-fill-color: #111;
+    padding: 6px 0 6px 18px;
+    position: relative;
+  }
+  .briefing-stage ul.b-ul li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    top: 6px;
+    color: #c8441c !important;
+    -webkit-text-fill-color: #c8441c;
+    font-weight: 700;
+  }
+  .briefing-stage ul.b-ul li strong { font-weight: 600; }
+  .briefing-toc {
+    background: #f7f6f3 !important;
+    padding: 18px 20px;
+    margin-bottom: 24px;
+  }
+  .briefing-toc h4 {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #6a6a67 !important;
+    -webkit-text-fill-color: #6a6a67;
+    margin-bottom: 10px;
+  }
+  .briefing-toc a {
+    display: block;
+    padding: 6px 0;
+    color: #111 !important;
+    -webkit-text-fill-color: #111;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    border-bottom: 1px solid #e5e3de;
+  }
+  .briefing-toc a:last-child { border-bottom: none; }
+  .briefing-toc a:hover { color: #c8441c !important; -webkit-text-fill-color: #c8441c; }
+  .bcard {
+    border: 1px solid #e5e3de;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+  .bcard-head {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111 !important;
+    -webkit-text-fill-color: #111;
+    margin-bottom: 4px;
+  }
+  .bcard-sub {
+    font-size: 13px;
+    color: #6a6a67 !important;
+    -webkit-text-fill-color: #6a6a67;
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+  .bcard-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6a6a67 !important;
+    -webkit-text-fill-color: #6a6a67;
+    margin-top: 10px;
+    margin-bottom: 4px;
+  }
+  .bcard-body {
+    font-size: 14px;
+    line-height: 1.55;
+    color: #111 !important;
+    -webkit-text-fill-color: #111;
+  }
+  .gloss-term {
+    display: block;
+    padding: 10px 0;
+    border-bottom: 1px solid #e5e3de;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #111 !important;
+    -webkit-text-fill-color: #111;
+  }
+  .gloss-term strong {
+    font-weight: 700;
+    color: #c8441c !important;
+    -webkit-text-fill-color: #c8441c;
+  }
+  .source-list {
+    margin-top: 8px;
+    list-style: none;
+    padding-left: 0;
+  }
+  .source-list li {
+    padding: 5px 0;
+    font-size: 13px;
+    color: #111 !important;
+    -webkit-text-fill-color: #111;
+    line-height: 1.5;
+    border-bottom: 1px solid #f0efea;
+  }
+
+  /* QUIZ */
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .progress-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: #666 !important;
+    -webkit-text-fill-color: #666;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .progress-bar {
+    flex: 1;
+    height: 4px;
+    background: #eee !important;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: #c8321a !important;
+    transition: width 0.4s ease;
+  }
+
+  .q-title {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #111 !important;
+    -webkit-text-fill-color: #111;
+    margin-bottom: 8px;
+  }
+  .q-sub {
+    font-size: 15px;
+    color: #666 !important;
+    -webkit-text-fill-color: #666;
+    margin-bottom: 24px;
+    line-height: 1.4;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .opt {
+    background: #fff !important;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    padding: 14px 16px;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.4;
+    color: #111 !important;
+    -webkit-text-fill-color: #111;
+    width: 100%;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .opt:hover { border-color: #111; }
+  .opt.selected {
+    border-color: #c8321a;
+    background: #fef5f2 !important;
+    color: #111 !important;
+    -webkit-text-fill-color: #111;
+  }
+  .opt strong {
+    display: block;
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 2px;
+    color: #111 !important;
+    -webkit-text-fill-color: #111;
+  }
+  .opt small {
+    display: block;
+    font-size: 13px;
+    color: #666 !important;
+    -webkit-text-fill-color: #666;
+  }
+
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid #eee;
+  }
+  .back-btn {
+    background: transparent;
+    border: none;
+    color: #666 !important;
+    -webkit-text-fill-color: #666;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 8px 0;
+  }
+  .back-btn:hover { color: #111 !important; -webkit-text-fill-color: #111; }
+  .back-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .nav-hint {
+    font-size: 12px;
+    color: #888 !important;
+    -webkit-text-fill-color: #888;
+    font-style: italic;
+  }
+
+  /* RESULT */
+  .result-head {
+    text-align: center;
+    padding: 24px 0 32px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 28px;
+  }
+  .result-kicker {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: #c8321a !important;
+    -webkit-text-fill-color: #c8321a;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .result-name {
+    font-size: clamp(36px, 8vw, 48px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: #111 !important;
+    -webkit-text-fill-color: #111;
+    margin-bottom: 10px;
+  }
+  .result-liner {
+    font-size: 17px;
+    color: #444 !important;
+    -webkit-text-fill-color: #444;
+    margin-bottom: 14px;
+  }
+  .party-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    border-radius: 3px;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff;
+  }
+  .party-badge.R { background: #c8321a !important; }
+  .party-badge.D { background: #2c5aa0 !important; }
+  .alignment {
+    margin-top: 18px;
+    font-size: 13px;
+    color: #666 !important;
+    -webkit-text-fill-color: #666;
+  }
+  .alignment-bar {
+    width: 240px;
+    height: 6px;
+    margin: 8px auto 0;
+    background: #eee !important;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .alignment-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #c8321a, #a67a27) !important;
+  }
+
+  .section {
+    margin-bottom: 32px;
+  }
+  .section-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #111 !important;
+    -webkit-text-fill-color: #111;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #111;
+    margin-bottom: 16px;
+  }
+
+  .reason {
+    padding: 14px 0;
+    border-bottom: 1px solid #eee;
+  }
+  .reason:last-child { border-bottom: none; }
+  .reason-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #c8321a !important;
+    -webkit-text-fill-color: #c8321a;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .reason-text {
+    font-size: 15px;
+    line-height: 1.5;
+    color: #222 !important;
+    -webkit-text-fill-color: #222;
+  }
+  .reason-text strong { font-weight: 600; color: #111 !important; -webkit-text-fill-color: #111; }
+
+  .caveat {
+    background: #fef5f2 !important;
+    border-left: 4px solid #c8321a;
+    border-radius: 4px;
+    padding: 16px 18px;
+    margin-bottom: 28px;
+  }
+  .caveat-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: #8a1f0c !important;
+    -webkit-text-fill-color: #8a1f0c;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .caveat-body {
+    font-size: 14px;
+    line-height: 1.55;
+    color: #222 !important;
+    -webkit-text-fill-color: #222;
+  }
+  .caveat-body strong { color: #111 !important; -webkit-text-fill-color: #111; font-weight: 600; }
+
+  .runner {
+    background: #f7f5f0 !important;
+    border-radius: 8px;
+    padding: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .runner-body { flex: 1; }
+  .runner-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #888 !important;
+    -webkit-text-fill-color: #888;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .runner-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111 !important;
+    -webkit-text-fill-color: #111;
+    line-height: 1.1;
+  }
+  .runner-note {
+    font-size: 13px;
+    color: #666 !important;
+    -webkit-text-fill-color: #666;
+    margin-top: 2px;
+  }
+  .runner-pts {
+    font-size: 22px;
+    font-weight: 700;
+    color: #111 !important;
+    -webkit-text-fill-color: #111;
+    text-align: right;
+  }
+  .runner-pts-label {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: #888 !important;
+    -webkit-text-fill-color: #888;
+    text-transform: uppercase;
+    text-align: right;
+  }
+
+  .scores-toggle {
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: #666 !important;
+    -webkit-text-fill-color: #666;
+    padding: 12px 0;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    user-select: none;
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border-left: none;
+    border-right: none;
+    font-family: inherit;
+  }
+  .scores-list {
+    padding: 12px 0;
+    display: none;
+  }
+  .scores-list.open { display: block; }
+  .score-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 13px;
+  }
+  .score-name { color: #333 !important; -webkit-text-fill-color: #333; }
+  .score-name .p { color: #888 !important; -webkit-text-fill-color: #888; font-size: 11px; margin-left: 4px; }
+  .score-val {
+    font-weight: 700;
+    color: #111 !important;
+    -webkit-text-fill-color: #111;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .restart-wrap {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    text-align: center;
+  }
+  .restart-btn {
+    background: #fff !important;
+    border: 1.5px solid #111;
+    color: #111 !important;
+    -webkit-text-fill-color: #111;
+    padding: 12px 28px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .restart-btn:hover { background: #111 !important; color: #fff !important; -webkit-text-fill-color: #fff; }
+
+  .footer {
+    text-align: center;
+    margin-top: 32px;
+    padding-top: 20px;
+    font-size: 12px;
+    color: #888 !important;
+    -webkit-text-fill-color: #888;
+    line-height: 1.55;
+    font-style: italic;
+  }
+
+  .fade-in { animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+  <div class="stage" id="app"></div>
+
+  <div class="briefing-overlay" id="briefing">
+    <div class="briefing-topbar">
+      <div class="briefing-topbar-title">Full Candidate Briefing</div>
+      <button class="briefing-close" onclick="closeBriefing()">✕ Close</button>
+    </div>
+    <div class="briefing-stage" id="briefingContent"></div>
+  </div>
+
+<script>
+const CANDIDATES = {
+  bianco: { name: "Chad Bianco", party: "R", oneLiner: "Riverside County Sheriff, law-and-order Republican" },
+  hilton: { name: "Steve Hilton", party: "R", oneLiner: "Former Fox News host, Trump-endorsed, policy-focused Republican" },
+  becerra: { name: "Xavier Becerra", party: "D", oneLiner: "Former HHS Secretary and California AG, Trump-resistance Democrat" },
+  porter: { name: "Katie Porter", party: "D", oneLiner: "Former Congresswoman, consumer-protection attorney, grassroots Democrat" },
+  steyer: { name: "Tom Steyer", party: "D", oneLiner: "Billionaire climate activist, self-funded, deepest policy agenda" },
+  villaraigosa: { name: "Antonio Villaraigosa", party: "D", oneLiner: "Former LA Mayor, most elected-executive experience in the Democratic field" },
+  mahan: { name: "Matt Mahan", party: "D", oneLiner: "San Jose Mayor, moderate Democrat, tech-industry-backed" },
+  thurmond: { name: "Tony Thurmond", party: "D", oneLiner: "CA Superintendent of Public Instruction, progressive, education-first" }
+};
+
+const QUESTIONS = [
+  {
+    id: "topIssue",
+    title: "What's the #1 issue driving your vote?",
+    sub: "Pick what you most want the next governor to prioritize.",
+    options: [
+      { key: "housing", label: "Housing cost and supply", sub: "Rent, home prices, not enough building",
+        weights: { porter: 4, steyer: 4, mahan: 4, villaraigosa: 2, becerra: 1, hilton: 2, thurmond: 1, bianco: 0 },
+        reason: "You put housing first. Porter, Steyer, and Mahan have the three deepest housing plans. Porter wrote a 10-point Housing for All and endorsed SB 79, Steyer published a 1M-homes target with state-approved blueprints, and Mahan got 2,000 stalled San Jose units moving by cutting fees and permitting friction." },
+      { key: "homelessness", label: "Homelessness", sub: "Encampments, shelter, mental health, addiction",
+        weights: { mahan: 4, steyer: 4, bianco: 2, hilton: 2, becerra: 1, porter: 2, villaraigosa: 1, thurmond: 2 },
+        reason: "You put homelessness first. Mahan has the most operationally tested framework (tiny homes plus shelter-or-arrest in San Jose). Steyer has the most structured housing-first plan with bridge housing and stabilization services." },
+      { key: "cost", label: "Cost of living and taxes", sub: "Gas, groceries, utilities, insurance",
+        weights: { steyer: 4, mahan: 4, porter: 3, hilton: 3, thurmond: 3, becerra: 2, villaraigosa: 1, bianco: 1 },
+        reason: "You put affordability first. Steyer has the deepest published affordability bundle (rent tax-deduction, rent-spike protection, AI compute fee). Mahan proposes a two-year housing tax holiday and gas-tax suspension and is the Democrat closest to this issue in practice." },
+      { key: "crime", label: "Crime and public safety", sub: "Property crime, drugs, repeat offenders",
+        weights: { bianco: 4, hilton: 4, mahan: 3, villaraigosa: 2, porter: 1, becerra: 1, thurmond: 1, steyer: 1 },
+        reason: "You put crime and safety first. Bianco and Hilton both want Prop 36 enforcement plus prison expansion. Among Democrats, Mahan is closest to this position. Worth knowing: Bianco's own department has the worst crime-clearance rate in California (9.2%)." },
+      { key: "insurance", label: "Home insurance and wildfire risk", sub: "Insurers leaving California, premiums rising",
+        weights: { steyer: 4, becerra: 2, porter: 2, hilton: 1, villaraigosa: 1, mahan: 1, thurmond: 1, bianco: 0 },
+        reason: "You put the insurance crisis first. Steyer has the only detailed insurance plan in the field: fix broken risk pools, state-approved disaster-resilient building blueprints, and work with CDI on premium drivers. No one else has published a plan this specific." },
+      { key: "climate", label: "Climate and energy", sub: "Emissions, clean power, water, wildfires",
+        weights: { steyer: 5, porter: 2, becerra: 2, thurmond: 2, villaraigosa: 1, mahan: 1, hilton: 0, bianco: 0 },
+        reason: "You put climate first. Steyer has the deepest climate credentials in this race: founded NextGen Climate in 2013, founded Galvanize Climate Solutions in 2021, and wrote a 2024 NYT bestseller on climate. His AI compute fee and sovereign wealth fund proposals are unique to him." },
+      { key: "education", label: "Education", sub: "K-12 outcomes, teacher quality, college affordability",
+        weights: { thurmond: 5, porter: 4, hilton: 2, mahan: 2, becerra: 2, villaraigosa: 1, steyer: 1, bianco: 0 },
+        reason: "You put education first. Thurmond has the deepest K-12 plan: CS graduation requirement, dual-language expansion, $10K school mental-health clinicians, teacher scholarships. He's run the California Department of Education since 2019. Porter has the clearest priced higher-ed proposal ($4B zero-tuition pathway)." },
+      { key: "healthcare", label: "Health care", sub: "Coverage, drug prices, protecting Medi-Cal",
+        weights: { becerra: 5, porter: 3, steyer: 2, thurmond: 2, villaraigosa: 1, mahan: 1, hilton: 0, bianco: 0 },
+        reason: "You put health care first. Becerra is the only candidate who has delivered federal-scale health care outcomes. Medicare drug-price negotiation under his HHS leadership cut prices 38-79% on 10 high-cost drugs including Eliquis, Jardiance, and Xarelto." },
+      { key: "immigration_defend", label: "Immigration — protect immigrants", sub: "Defend sanctuary laws, resist ICE, expand legal protections",
+        weights: { becerra: 5, steyer: 4, thurmond: 3, porter: 3, villaraigosa: 3, mahan: 2, hilton: 0, bianco: 0 },
+        reason: "You want to defend immigrants from federal enforcement. Becerra is the only candidate with a delivered, court-tested record here. He sued the first Trump administration 122 times as AG and led the 21-state coalition that defended DACA (and won). Steyer and Thurmond have the most aggressive rhetoric on abolishing ICE." },
+      { key: "immigration_enforce", label: "Immigration — tougher enforcement", sub: "Weaken sanctuary laws, cooperate with ICE, close border",
+        weights: { bianco: 5, hilton: 5, mahan: 1, villaraigosa: 0, porter: 0, becerra: 0, steyer: 0, thurmond: 0 },
+        reason: "You want stricter immigration enforcement. Bianco and Hilton are the only two candidates supporting full federal cooperation and weakening SB 54, California's sanctuary law. Every Democrat in the race opposes this direction." }
+    ]
+  },
+  {
+    id: "temperament",
+    title: "What kind of leader do you want?",
+    sub: "Governing style matters.",
+    options: [
+      { key: "fighter", label: "A fighter", sub: "Pushes back hard, publicly",
+        weights: { porter: 4, bianco: 3, steyer: 1, becerra: 2, hilton: 2, thurmond: 1, villaraigosa: 0, mahan: 0 } },
+      { key: "manager", label: "An operator", sub: "Manages and delivers quietly",
+        weights: { becerra: 3, mahan: 4, villaraigosa: 3, steyer: 2, thurmond: 2, porter: 0, hilton: 1, bianco: 0 } },
+      { key: "coalition", label: "A coalition-builder", sub: "Negotiates across labor, business, and government",
+        weights: { villaraigosa: 4, becerra: 3, thurmond: 2, steyer: 2, mahan: 1, porter: 1, hilton: 2, bianco: 0 } },
+      { key: "outsider", label: "An outsider", sub: "Doesn't come from Sacramento",
+        weights: { bianco: 3, hilton: 4, steyer: 3, mahan: 3, porter: 1, thurmond: 1, becerra: 0, villaraigosa: 0 } }
+    ]
+  },
+  {
+    id: "trumpStance",
+    title: "How should California relate to the Trump administration?",
+    sub: "This will shape the next four years.",
+    options: [
+      { key: "resist", label: "Full resistance", sub: "Sue, defy, protect California from federal actions",
+        weights: { becerra: 5, porter: 4, steyer: 4, villaraigosa: 3, thurmond: 3, mahan: 1, hilton: 0, bianco: 0 } },
+      { key: "selective", label: "Selective pushback", sub: "Fight on some issues, cooperate on others",
+        weights: { porter: 2, mahan: 4, becerra: 2, villaraigosa: 3, steyer: 1, thurmond: 2, hilton: 1, bianco: 0 } },
+      { key: "cooperate", label: "Cooperative working relationship", sub: "Partner with the federal government where possible",
+        weights: { hilton: 5, bianco: 4, mahan: 1, villaraigosa: 0, porter: 0, becerra: 0, steyer: 0, thurmond: 0 } }
+    ]
+  },
+  {
+    id: "taxes",
+    title: "On taxes, which direction feels right?",
+    sub: "",
+    options: [
+      { key: "raise_wealthy", label: "Raise taxes on the wealthy", sub: "Billionaire tax, commercial Prop 13 reform",
+        weights: { thurmond: 5, steyer: 5, porter: 3, becerra: 2, villaraigosa: 1, mahan: 0, hilton: 0, bianco: 0 } },
+      { key: "hold_steady", label: "Hold taxes steady, spend smarter", sub: "Performance-based budgeting, cut waste",
+        weights: { mahan: 5, becerra: 2, porter: 2, villaraigosa: 3, steyer: 1, thurmond: 1, hilton: 1, bianco: 2 } },
+      { key: "cut_broadly", label: "Cut taxes across the board", sub: "Lower income tax, suspend gas tax, less regulation",
+        weights: { hilton: 5, bianco: 4, mahan: 2, villaraigosa: 1, porter: 0, becerra: 0, steyer: 0, thurmond: 0 } }
+    ]
+  },
+  {
+    id: "donorModel",
+    title: "How do you feel about campaign money?",
+    sub: "Where money comes from usually shapes who a candidate listens to.",
+    options: [
+      { key: "grassroots", label: "Grassroots, no corporate PACs", sub: "Small-dollar donor independence",
+        weights: { porter: 5, thurmond: 4, becerra: 1, steyer: 0, villaraigosa: 1, mahan: 0, hilton: 1, bianco: 2 } },
+      { key: "self_funded", label: "Self-funded", sub: "Can't be bought by donors",
+        weights: { steyer: 5, porter: 1, mahan: 0, villaraigosa: 0, becerra: 0, thurmond: 0, hilton: 0, bianco: 0 } },
+      { key: "labor", label: "Backed by organized labor", sub: "Unions, trades, working-class base",
+        weights: { villaraigosa: 4, porter: 4, steyer: 3, thurmond: 3, becerra: 2, mahan: 0, hilton: 0, bianco: 1 } },
+      { key: "business", label: "Backed by business and industry", sub: "Tech, developers, Chamber-style donors",
+        weights: { mahan: 5, hilton: 4, villaraigosa: 2, becerra: 2, bianco: 2, steyer: 1, porter: 0, thurmond: 0 } },
+      { key: "dontcare", label: "I don't really care", sub: "I just want results",
+        weights: { bianco: 1, hilton: 1, becerra: 1, porter: 1, steyer: 1, villaraigosa: 1, mahan: 1, thurmond: 1 } }
+    ]
+  },
+  {
+    id: "experience",
+    title: "What kind of experience matters most?",
+    sub: "",
+    options: [
+      { key: "statewide_exec", label: "Proven statewide government executive", sub: "Ran a large public agency, won statewide office",
+        weights: { becerra: 5, thurmond: 3, villaraigosa: 3, porter: 1, mahan: 1, bianco: 1, hilton: 0, steyer: 0 } },
+      { key: "local_exec", label: "Active city or county leader", sub: "Currently running something, right now",
+        weights: { mahan: 5, villaraigosa: 3, bianco: 3, thurmond: 2, hilton: 0, becerra: 0, porter: 0, steyer: 0 } },
+      { key: "legislator", label: "Legislator or oversight role", sub: "Writes laws, grills witnesses, builds policy",
+        weights: { porter: 5, becerra: 3, thurmond: 3, villaraigosa: 2, mahan: 1, hilton: 0, steyer: 0, bianco: 0 } },
+      { key: "outsider_biz", label: "Business or private-sector executive", sub: "Built something at scale outside of government",
+        weights: { steyer: 5, mahan: 3, hilton: 3, villaraigosa: 1, becerra: 0, porter: 0, thurmond: 0, bianco: 0 } }
+    ]
+  },
+  {
+    id: "redflag",
+    title: "Which red flag is the hardest for you to accept?",
+    sub: "Every candidate has something. Pick the one you can't look past.",
+    options: [
+      { key: "ethics_lobby", label: "Lobbying or consulting conflicts", sub: "Paid by industries the governor regulates", eliminates: ["villaraigosa", "hilton"] },
+      { key: "inexperience", label: "Never held U.S. elected office", sub: "No voter-accountability track record", eliminates: ["hilton", "steyer"] },
+      { key: "enforcement_record", label: "Questionable law-enforcement record", sub: "Jail deaths, ballot seizure, extremist ties", eliminates: ["bianco"] },
+      { key: "scandal", label: "Staff or campaign-account scandals", sub: "Chief-of-staff theft, PAC coordination complaint", eliminates: ["becerra", "mahan"] },
+      { key: "selffund", label: "Billionaire self-funding the race", sub: "Buying the office with personal wealth", eliminates: ["steyer", "mahan"] },
+      { key: "temperament_flag", label: "Staff-treatment or temperament issues", sub: "Viral incidents, reported staff mistreatment", eliminates: ["porter"] },
+      { key: "donor_scope", label: "Narrow donor concentration", sub: "Tech billionaires or single-industry backing", eliminates: ["mahan", "hilton"] },
+      { key: "none", label: "None of these disqualifies for me", sub: "I'll weigh them all together", eliminates: [] }
+    ]
+  }
+];
+
+const CANDIDATE_FITS = {
+  bianco: "Thirty-year law-enforcement career. Unambiguously pro-Prop 36, pro-ICE cooperation, pro-deregulation on agriculture. <strong>Voters should know</strong>: his own department has California's lowest crime-clearance rate (9.2%), and the CA Department of Justice has an open pattern-or-practice investigation into jail conditions and excessive force.",
+  hilton: "Strongest policy-design background among Republicans (former UK PM Cameron's Director of Strategy). Most specific GOP tax plan. Trump-endorsed April 6, 2026. <strong>Never held elected office</strong>; became U.S. citizen in 2021; still a paid Fox News contributor during this campaign.",
+  becerra: "The most diverse executive resume in the field: 12 terms in Congress, California Attorney General, U.S. HHS Secretary. Sued the first Trump administration 122 times as AG and won on DACA and ACA. Delivered federal-scale health care results at HHS.",
+  porter: "Deepest published policy work in the Democratic field: 10-point Housing for All plan, $4B zero-tuition pathway. Consumer-protection attorney background. <strong>No corporate PAC money</strong>, 2025 average donation around $68.",
+  steyer: "Deepest overall policy agenda in the race. Self-funded at $122.7M (99.9% of his campaign). Climate credentials unrivaled. Only billionaire in the race supporting a wealth tax on billionaires.",
+  villaraigosa: "Most operating-executive experience of any Democrat: eight years as LA Mayor, former Assembly Speaker. Delivered Measure R (2008), around $40B in LA County transportation funding. Deep labor alliances.",
+  mahan: "Currently an operating mayor, right now. San Jose got 2,000 stalled housing units under construction in 2024 after he cut fees and streamlined permitting. Most operationally specific affordability and homelessness framework among Democrats.",
+  thurmond: "Deepest K-12 education plan in the field, with a track record implementing it. Won statewide twice (2018, 2022). Only Democrat openly supporting both a billionaire's tax and Prop 13 commercial reform."
+};
+
+const TEMPERAMENTS = {
+  bianco: "Bianco is <strong>combative and defensive</strong> under scrutiny. Fits a fighter profile.",
+  hilton: "Hilton is <strong>measured and telegenic</strong>. Six years of Fox News debate experience. More wonk than brawler.",
+  becerra: "Becerra is <strong>deliberate, procedural, and collaborative</strong>. Can be aggressive when focused. Sued Trump 122 times as AG.",
+  porter: "Porter is <strong>sharp, prepared, and impatient</strong>. Famous for whiteboard cross-examinations.",
+  steyer: "Steyer is <strong>analytical and low-drama</strong> on stage. Policy-heavy. Stiff to some, substantive to others.",
+  villaraigosa: "Villaraigosa is a <strong>coalition-builder and transactional politician</strong>. Eight years as LA Mayor.",
+  mahan: "Mahan is <strong>disciplined and metric-driven</strong>. San Jose's performance-dashboards style.",
+  thurmond: "Thurmond is <strong>earnest and mission-driven</strong>. Speaks from personal story."
+};
+
+const CAVEATS = {
+  bianco: "Your top match has California's <strong>worst crime-clearance rate</strong> (9.2%) and an open California DOJ pattern-or-practice investigation. He also seized 650,000 ballots from California's 2025 Prop 50 election based on evidence a court-unsealed warrant showed came from one activist group.",
+  hilton: "Your top match has <strong>never held U.S. elected office</strong>, became a U.S. citizen only in 2021, and is <strong>still a paid Fox News contributor</strong> during his campaign. His spouse has held senior roles at Google, Uber, Facebook, and Netflix, a continuing regulatory-conflict question.",
+  becerra: "Your top match's chief of staff <strong>pleaded guilty</strong> to siphoning around $225,000 from a dormant Becerra campaign account over two years. Becerra himself faces no charges but did not notice the theft until federal investigators approached him.",
+  porter: "Your top match has documented <strong>staff-treatment issues</strong> and a 2024 viral CBS Sacramento interview where she said she \"would not need\" the 40% of Californians who voted for Trump. Betty Yee publicly called Porter \"unfit to lead California\" before dropping out.",
+  steyer: "Your top match's hedge fund Farallon <strong>held around $90M in Corrections Corporation of America stock</strong> during his tenure (now CoreCivic, a major ICE contractor). He says he ordered the position sold and regrets it, but his 2024 disclosure shows continuing hedge-fund income.",
+  villaraigosa: "Your top match co-chaired <strong>Mercury Public Affairs</strong> 2018-2021, during which federal prosecutors investigated the firm over a Paul Manafort-linked Belgian NGO's FARA failure. He also advised <strong>Herbalife</strong> (which LULAC publicly condemned) and has been out of elected office for 13 years.",
+  mahan: "Your top match faces an <strong>active FPPC complaint</strong> (filed April 17, 2026) alleging illegal coordination with a pro-Mahan super PAC funded by Michael Moritz and Rick Caruso. He has also <strong>never finished a term</strong> in any elected role.",
+  thurmond: "Your top match was subject of a <strong>2021 Politico report</strong> on a nepotism and residency issue. He helped hire longtime associate Daniel Lee (Philadelphia-based) as California's \"superintendent of equity\" at up to $179,832/year without public posting. Lee resigned December 14, 2021."
+};
+
+const state = { step: -1, answers: {}, showScores: false };
+const app = document.getElementById('app');
+
+function render() {
+  if (state.step === -1) return renderIntro();
+  if (state.step >= QUESTIONS.length) return renderResult();
+  return renderQuestion();
+}
+
+function renderIntro() {
+  app.innerHTML = `
+    <div class="fade-in">
+      <span class="tag">Primary · June 2, 2026</span>
+      <h1>Which candidate for California Governor matches your priorities?</h1>
+
+      <div class="intro-card">
+        <h3>How it works</h3>
+        <ol class="intro-steps">
+          <li>Answer 7 quick questions about your priorities, the kind of leader you want, and your dealbreakers.</li>
+          <li>The tool scores every candidate against your answers using their actual records and published plans.</li>
+          <li>You'll see your top match, why they matched, and what you should know before you vote.</li>
+        </ol>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="stat-num">7</div><div class="stat-label">Questions</div></div>
+        <div class="stat"><div class="stat-num">~3</div><div class="stat-label">Minutes</div></div>
+        <div class="stat"><div class="stat-num">8</div><div class="stat-label">Candidates</div></div>
+      </div>
+
+      <div class="cta-wrap">
+        <button class="cta" onclick="begin()">Find my match</button>
+      </div>
+
+      <div class="disclaimer">
+        This tool doesn't tell you who to vote for. It just shows you which candidate best matches what you said matters. All data comes from public filings, news reporting, and each candidate's own published plans.
+      </div>
+
+      <div class="briefing-link-row">
+        <button class="briefing-link" onclick="openBriefing()">Read the full candidate briefing →</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[state.step];
+  const pct = Math.round(((state.step + 1) / QUESTIONS.length) * 100);
+  const selected = state.answers[q.id];
+
+  const opts = q.options.map(opt => {
+    const sel = selected === opt.key ? 'selected' : '';
+    const sub = opt.sub ? `<small>${opt.sub}</small>` : '';
+    return `<button class="opt ${sel}" onclick="answer('${q.id}', '${opt.key}')"><strong>${opt.label}</strong>${sub}</button>`;
+  }).join('');
+
+  app.innerHTML = `
+    <div class="fade-in">
+      <div class="progress-row">
+        <span class="progress-text">Question ${state.step + 1} of ${QUESTIONS.length}</span>
+        <div class="progress-bar"><div class="progress-fill" style="width: ${pct}%"></div></div>
+      </div>
+      <h2 class="q-title">${q.title}</h2>
+      ${q.sub ? `<p class="q-sub">${q.sub}</p>` : ''}
+      <div class="options">${opts}</div>
+      <div class="nav">
+        <button class="back-btn" onclick="goBack()" ${state.step === 0 ? 'disabled' : ''}>← Back</button>
+        <span class="nav-hint">Tap an answer to continue</span>
+      </div>
+    </div>
+  `;
+}
+
+function renderResult() {
+  const scores = computeScores();
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const [winnerKey, winnerScore] = sorted[0];
+  const [runnerKey, runnerScore] = sorted[1];
+  const winner = CANDIDATES[winnerKey];
+  const runner = CANDIDATES[runnerKey];
+  const maxPossible = computeMaxPossible();
+  const alignmentPct = Math.round((winnerScore / maxPossible) * 100);
+
+  const reasons = buildReasons(winnerKey);
+  const caveat = CAVEATS[winnerKey];
+
+  const reasonsHtml = reasons.map(r =>
+    `<div class="reason"><div class="reason-label">${r.q}</div><div class="reason-text">${r.body}</div></div>`
+  ).join('');
+
+  const scoresHtml = sorted.map(([k, s]) => {
+    const c = CANDIDATES[k];
+    return `<div class="score-row"><span class="score-name">${c.name}<span class="p">(${c.party})</span></span><span class="score-val">${s}</span></div>`;
+  }).join('');
+
+  app.innerHTML = `
+    <div class="fade-in">
+      <div class="result-head">
+        <div class="result-kicker">Your Top Match</div>
+        <h2 class="result-name">${winner.name}</h2>
+        <p class="result-liner">${winner.oneLiner}</p>
+        <span class="party-badge ${winner.party}">${winner.party === 'R' ? 'Republican' : 'Democrat'}</span>
+        <div class="alignment">Alignment ${alignmentPct}% · ${winnerScore} of ${maxPossible} possible points<div class="alignment-bar"><div class="alignment-fill" style="width: ${alignmentPct}%"></div></div></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Why ${winner.name.split(' ')[0]}</div>
+        ${reasonsHtml}
+      </div>
+
+      ${caveat ? `<div class="caveat"><div class="caveat-title">One thing to know before you vote</div><div class="caveat-body">${caveat}</div></div>` : ''}
+
+      <div class="runner">
+        <div class="runner-body">
+          <div class="runner-label">Close Runner-Up</div>
+          <div class="runner-name">${runner.name}</div>
+          <div class="runner-note">${runner.oneLiner}</div>
+        </div>
+        <div>
+          <div class="runner-pts">${runnerScore}</div>
+          <div class="runner-pts-label">pts</div>
+        </div>
+      </div>
+
+      <button class="scores-toggle" onclick="toggleScores()">${state.showScores ? '▾' : '▸'} See how all 8 candidates scored</button>
+      <div class="scores-list ${state.showScores ? 'open' : ''}">${scoresHtml}</div>
+
+      <div class="restart-wrap">
+        <button class="restart-btn" onclick="restart()">Start Over</button>
+      </div>
+
+      <div class="briefing-link-row">
+        <button class="briefing-link" onclick="openBriefing()">Read the full candidate briefing →</button>
+      </div>
+
+      <p class="footer">This match reflects alignment between your priorities and each candidate's public record and plan depth. Not a prediction. Not a recommendation.</p>
+    </div>
+  `;
+}
+
+function computeScores() {
+  const scores = {};
+  Object.keys(CANDIDATES).forEach(k => scores[k] = 0);
+  QUESTIONS.forEach(q => {
+    const ansKey = state.answers[q.id];
+    if (!ansKey) return;
+    const opt = q.options.find(o => o.key === ansKey);
+    if (!opt) return;
+    if (opt.weights) Object.entries(opt.weights).forEach(([c, p]) => scores[c] = (scores[c] || 0) + p);
+    if (opt.eliminates && opt.eliminates.length) {
+      opt.eliminates.forEach(c => { scores[c] = Math.round((scores[c] || 0) * 0.3); });
+    }
+  });
+  return scores;
+}
+
+function computeMaxPossible() {
+  let max = 0;
+  QUESTIONS.forEach(q => {
+    let qMax = 0;
+    q.options.forEach(opt => {
+      if (opt.weights) {
+        const localMax = Math.max(...Object.values(opt.weights));
+        if (localMax > qMax) qMax = localMax;
+      }
+    });
+    max += qMax;
+  });
+  return max;
+}
+
+function buildReasons(winnerKey) {
+  const reasons = [];
+  const topIssueAns = state.answers.topIssue;
+  if (topIssueAns) {
+    const opt = QUESTIONS[0].options.find(o => o.key === topIssueAns);
+    if (opt && opt.reason) reasons.push({ q: "On your #1 issue", body: opt.reason });
+  }
+  reasons.push({ q: `About ${CANDIDATES[winnerKey].name.split(' ')[0]}`, body: CANDIDATE_FITS[winnerKey] });
+  const tempAns = state.answers.temperament;
+  if (tempAns) {
+    const labels = { fighter: "fighter", manager: "operator", coalition: "coalition-builder", outsider: "outsider" };
+    reasons.push({ q: "Temperament", body: `You wanted <strong>a ${labels[tempAns]}</strong>. ${TEMPERAMENTS[winnerKey]}` });
+  }
+  return reasons;
+}
+
+function begin() { state.step = 0; window.scrollTo({ top: 0, behavior: 'smooth' }); render(); }
+function answer(qid, key) {
+  state.answers[qid] = key;
+  render();
+  setTimeout(() => { state.step++; window.scrollTo({ top: 0, behavior: 'smooth' }); render(); }, 180);
+}
+function goBack() { if (state.step > 0) { state.step--; window.scrollTo({ top: 0, behavior: 'smooth' }); render(); } }
+function restart() { state.step = -1; state.answers = {}; state.showScores = false; window.scrollTo({ top: 0, behavior: 'smooth' }); render(); }
+function toggleScores() { state.showScores = !state.showScores; render(); }
+
+// ==========================================================
+// FULL BRIEFING — overlay content
+// ==========================================================
+function openBriefing() {
+  const el = document.getElementById('briefing');
+  const content = document.getElementById('briefingContent');
+  if (!content.innerHTML.trim()) content.innerHTML = buildBriefing();
+  el.classList.add('open');
+  el.scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+}
+function closeBriefing() {
+  document.getElementById('briefing').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeBriefing();
+});
+
+function buildBriefing() {
+  return `
+    <h2 class="b-h1" id="top">California Governor 2026 — Voter Briefing</h2>
+    <p class="b-p">Primary: June 2, 2026. Mail ballots begin arriving in early May. Top-two primary means the two highest finishers — even from the same party — advance to November.</p>
+
+    <div class="briefing-toc">
+      <h4>In this briefing</h4>
+      <a href="#summary">Executive summary</a>
+      <a href="#priorities">Match by priority</a>
+      <a href="#cards">Candidate cards</a>
+      <a href="#detail">Business & complaints detail</a>
+      <a href="#glossary">Glossary</a>
+      <a href="#sources">Sources</a>
+    </div>
+
+    <h2 class="b-h1" id="summary">Executive Summary</h2>
+    <p class="b-p">Eight major candidates are competing. Polling leaders in late April 2026 are Republicans Steve Hilton and Chad Bianco, followed by Democrats Xavier Becerra, Tom Steyer, and Katie Porter. Matt Mahan, Antonio Villaraigosa, and Tony Thurmond trail. Eric Swalwell suspended his campaign April 12 amid sexual-assault allegations. Betty Yee dropped out April 21 and endorsed Steyer.</p>
+
+    <h4 class="b-h3">Deepest published plans</h4>
+    <ul class="b-ul">
+      <li><strong>Tom Steyer</strong> — most developed overall agenda (housing, climate, insurance, homelessness, AI compute fee).</li>
+      <li><strong>Matt Mahan</strong> — most implementation-tested affordability and housing plan, San Jose track record.</li>
+      <li><strong>Katie Porter</strong> — 10-point Housing for All plan; priced zero-tuition pathway ($4B).</li>
+      <li><strong>Tony Thurmond</strong> — deepest education agenda; only candidate openly supporting both a billionaire's tax and Prop 13 commercial reform.</li>
+      <li><strong>Xavier Becerra</strong> — deepest delivered health care record (Medicare drug-price negotiation).</li>
+    </ul>
+
+    <h4 class="b-h3">Biggest risk factors</h4>
+    <ul class="b-ul">
+      <li><strong>Bianco:</strong> worst jail death rate and worst crime-clearance rate in CA; seized 650,000 ballots on activist-group evidence; open DOJ pattern-or-practice investigation; Oath Keepers 2014.</li>
+      <li><strong>Hilton:</strong> never held U.S. elected office; citizen since 2021; still a paid Fox News contributor; wife is senior tech executive.</li>
+      <li><strong>Becerra:</strong> chief of staff pleaded guilty to siphoning $225K from a dormant Becerra account; 2024 Politico report flagged possible Hatch Act issue.</li>
+      <li><strong>Porter:</strong> lost 2024 Senate primary; documented temperament incidents; housing plan built for federal, not state, tools.</li>
+      <li><strong>Steyer:</strong> $122M self-funded but stuck mid-teens; Farallon past included ~$90M position in private-prison operator CCA; still receives hedge-fund income.</li>
+      <li><strong>Villaraigosa:</strong> out of office 13 years; Mercury Public Affairs co-chair during Manafort-FARA episode; Herbalife consulting; 2010 ethics investigation over 81 unreported tickets.</li>
+      <li><strong>Mahan:</strong> never finished a term in any elected role; April 2026 FPPC complaint over alleged super PAC coordination with Moritz and Caruso.</li>
+      <li><strong>Thurmond:</strong> polling ~5%; 2021 Daniel Lee hiring scandal raised residency-rule and nepotism questions.</li>
+    </ul>
+
+    <h4 class="b-h3">Money raised (2026 cycle)</h4>
+    <ul class="b-ul">
+      <li><strong>Steyer:</strong> ~$122.7M raised, 99.9% self-funded.</li>
+      <li><strong>Mahan:</strong> ~$12.7M; Silicon Valley donors; outside super PAC $15M+ including Super Bowl LX ad.</li>
+      <li><strong>Porter:</strong> $6.1M in 2025; avg donation ~$68; no corporate PAC money.</li>
+      <li><strong>Hilton:</strong> ~$5.7M; Fox-adjacent donor network, Murdoch cited as donor.</li>
+      <li><strong>Becerra:</strong> ~$5.2M; Chevron donor flagged.</li>
+      <li><strong>Bianco:</strong> ~$3.7M; law-enforcement and CRPA; separate legal-defense fund Oct 2025.</li>
+      <li><strong>Villaraigosa:</strong> ~$3.2M; labor trades and LA business.</li>
+      <li><strong>Thurmond:</strong> ~$101K+; electrical, plumber, boilermaker locals; Oakland POA.</li>
+    </ul>
+
+    <h2 class="b-h1" id="priorities">Match by Priority</h2>
+    <p class="b-p">If your top concern is X, these candidates have the strongest case based on plan depth and delivered record.</p>
+    <ul class="b-ul">
+      <li><strong>Housing supply & affordability:</strong> Porter, Steyer, Mahan.</li>
+      <li><strong>Homelessness (enforcement first):</strong> Mahan.</li>
+      <li><strong>Homelessness (housing-first):</strong> Steyer.</li>
+      <li><strong>Insurance crisis:</strong> Steyer (only detailed plan); Becerra on rate-freeze rhetoric.</li>
+      <li><strong>Public safety (enforcement):</strong> Bianco, Hilton; Mahan among Democrats.</li>
+      <li><strong>Public safety (reform):</strong> Porter, Thurmond, Becerra.</li>
+      <li><strong>Climate & energy:</strong> Steyer (deepest by far).</li>
+      <li><strong>Education:</strong> Thurmond (K-12), Porter (higher ed).</li>
+      <li><strong>Health care:</strong> Becerra (delivered federal outcomes).</li>
+      <li><strong>Sanctuary defense / resistance:</strong> Becerra (tested); Steyer, Thurmond (rhetoric).</li>
+      <li><strong>Immigration enforcement:</strong> Bianco, Hilton (only two).</li>
+      <li><strong>Lower taxes / anti-regulation:</strong> Hilton (most specific), Bianco, Mahan.</li>
+      <li><strong>Progressive taxation / wealth tax:</strong> Thurmond, Steyer.</li>
+      <li><strong>Business climate / Silicon Valley:</strong> Mahan (aligned), Hilton (deregulation).</li>
+      <li><strong>Labor:</strong> Steyer, Porter, Villaraigosa (CA Fed Labor co-endorsed); Thurmond building-trades.</li>
+      <li><strong>Donor independence:</strong> Porter (grassroots), Steyer (self-funded).</li>
+      <li><strong>Executive experience:</strong> Villaraigosa, Becerra, Mahan.</li>
+      <li><strong>Statewide winning record:</strong> Becerra, Thurmond.</li>
+    </ul>
+
+    <h2 class="b-h1" id="cards">Candidate Cards</h2>
+
+    ${buildCandidateCard({
+      name: "Chad Bianco (R)",
+      role: "Riverside County Sheriff since 2019",
+      exp: "30+ years at Riverside Sheriff's Department. No state-level experience.",
+      money: "~$3.7M. Law enforcement + CRPA donors. Legal defense fund opened Oct 2025.",
+      pros: "30+ year LE career. Disciplined county budget. Clear positions on Prop 36, ICE cooperation, agricultural deregulation.",
+      cons: "Worst CA crime-clearance rate (9.2%). 18 jail deaths in 2022 (15-yr high). Ballot seizure based on activist-group evidence. Oath Keepers 2014. $100M Vem Miller federal lawsuit.",
+      platform: "Prop 36 + prison expansion. Weaken SB 54 sanctuary law. Agriculture deregulation. Election integrity is central theme.",
+      polling: "~14%"
+    })}
+
+    ${buildCandidateCard({
+      name: "Steve Hilton (R)",
+      role: "Former Fox News host; former UK PM Cameron strategist",
+      exp: "No US elected office. UK political staff 2010-2012. Fox Next Revolution host 2017-2023. US citizen since 2021.",
+      money: "~$5.7M. Rupert Murdoch cited as donor. Fox-adjacent network.",
+      pros: "Strongest GOP policy background. Specific tax plan (no income tax under $100K; 7.5% flat above). Trump-endorsed April 6, 2026.",
+      cons: "Never held US elected office. Still a paid Fox News contributor during campaign. Spouse Rachel Whetstone is senior tech exec (Google, Uber, Facebook, Netflix). Crowdpac 2018 exit controversy.",
+      platform: "Flat tax above $100K. Cap housing taxes. CEQA reform. Cooperate with ICE. Roll back environmental rules.",
+      polling: "~17% (leads the field)"
+    })}
+
+    ${buildCandidateCard({
+      name: "Xavier Becerra (D)",
+      role: "Former HHS Secretary (2021-25); former CA AG (2017-21); 12 terms in Congress",
+      exp: "Federal cabinet, statewide AG, 12 Congressional terms. Most diverse resume in field. First Latino CA AG; first Latino HHS Sec.",
+      money: "~$5.2M. Traditional Dem donors. Chevron flagged.",
+      pros: "Sued Trump 122 times as AG, won DACA/ACA. Medicare drug-price negotiation 38-79% cuts. Won CA AG 61% in 2018.",
+      cons: "2025 chief-of-staff pleaded guilty to $225K theft from dormant Becerra account. 2024 Politico Hatch Act report. 85,000 migrant kids lost contact at HHS. NIFLA SCOTUS loss.",
+      platform: "Stabilize rents, freeze insurance rate increases. Protect Medicare/Medicaid. Expand early childhood ed. Sanctuary defender.",
+      polling: "~10-13%"
+    })}
+
+    ${buildCandidateCard({
+      name: "Katie Porter (D)",
+      role: "Former US Rep CA-47 (2019-25); UC Irvine law professor",
+      exp: "6 yrs US House (Oversight, Natural Resources). Lost 2024 Senate primary (3rd).",
+      money: "$6.1M in 2025. Avg donation ~$68. No corporate PAC money.",
+      pros: "Deepest Democratic policy work (10-pt housing plan, $4B zero-tuition pathway). Most labor endorsements of any Dem. Grassroots donor model.",
+      cons: "Lost 2024 Senate primary. Documented staff-treatment issues. 2024 CBS Sacramento viral incident. Housing plan written for federal, not state, tools.",
+      platform: "Housing for All (10 pts, endorses SB 79). Zero-tuition pathway. \"Health-care governor.\" 100% renewable.",
+      polling: "~8-10%"
+    })}
+
+    ${buildCandidateCard({
+      name: "Tom Steyer (D)",
+      role: "Founder Farallon Capital (1986-2012); founder NextGen Climate",
+      exp: "Private-sector exec at scale. Chaired Newsom's pandemic econ-recovery task force 2020. No elected office. 2020 presidential run ($200M+, finished 3rd SC).",
+      money: "~$122.7M raised, 99.9% self-funded.",
+      pros: "Deepest overall policy agenda. Self-funded = donor-independent. Proven at $10B+ scale. Climate policy unrivaled. Only billionaire backing a wealth tax on billionaires.",
+      cons: "Farallon held ~$90M in Corrections Corporation of America (now CoreCivic/ICE). Still hedge-fund income per 2024 disclosure. Polling mid-teens after $122M. Never elected.",
+      platform: "1M homes in 4 years. Rent tax-deduction, rent-spike protection. AI compute fee → Worker Transition Fund. Golden State Sovereign Wealth Fund. Abolish ICE.",
+      polling: "~14%"
+    })}
+
+    ${buildCandidateCard({
+      name: "Antonio Villaraigosa (D)",
+      role: "Former 2-term LA Mayor (2005-13); former Assembly Speaker",
+      exp: "8 yrs LA Mayor; Assembly Speaker; LA City Council. Most operating-executive experience in Dem field. Lost 2018 governor primary.",
+      money: "~$3.2M. Labor trades + LA business.",
+      pros: "Most operating-exec experience. Delivered Measure R (2008, ~$40B LA transit). Sophisticated CEQA reform. Deep labor (former teachers'-union organizer).",
+      cons: "13 yrs out of office. Mercury Public Affairs co-chair 2018-21 during Manafort-FARA episode. Herbalife advisor (LULAC condemned). Banc of CA. 2010: 81 unreported tickets (courtside Lakers $3,100 ea, Oscars tickets $21,000 ea).",
+      platform: "Executive orders on transit-adjacent density. CEQA reform (limit private lawsuits). Statewide community policing surge. Refinery deregulation.",
+      polling: "~5-7%"
+    })}
+
+    ${buildCandidateCard({
+      name: "Matt Mahan (D)",
+      role: "Mayor of San Jose since January 2023",
+      exp: "SJ Council 2021-23. Never finished a full elected term. Harvard '05. CEO Causes + Brigade Media.",
+      money: "~$12.7M. Brin, Lonsdale, Moritz, Caruso. Super PAC $15M+, Super Bowl LX ad.",
+      pros: "Currently operating major city. 2,000 stalled SJ housing units moving after fee/permit reform. Performance-based budgeting. Most operationally specific moderate Dem platform.",
+      cons: "April 17, 2026 FPPC complaint: alleges illegal coordination with pro-Mahan super PAC; Zoom call with Moritz ($1M) and Caruso ($1.5M) April 6 as evidence. Never finished a term. Silicon Valley billionaire donor concentration. No labor support.",
+      platform: "Two-year housing tax holiday. Gas-tax suspension. Impact-fee caps. Shelter-or-arrest. Tiny-home villages. Cellphone ban in schools. Pathway to citizenship.",
+      polling: "~5%"
+    })}
+
+    ${buildCandidateCard({
+      name: "Tony Thurmond (D)",
+      role: "CA Superintendent of Public Instruction since 2019",
+      exp: "Richmond City Council, WCCUSD school board, Assembly 2014-18, Superintendent. Won statewide twice (2018, 2022).",
+      money: "Lowest-funded top-8. ~$101K+. Electrical/plumber/boilermaker locals. Oakland POA.",
+      pros: "Lived experience of CA poverty. Won statewide twice with limited funds. Deepest K-12 plan. Only Dem backing both billionaire's tax AND Prop 13 commercial reform.",
+      cons: "Polling ~5%. 2021 Daniel Lee hiring scandal (Politico): longtime associate hired as \"superintendent of equity\" at $179,832/yr, no public posting, Philadelphia-based (residency rule concern). Seven elected offices pursued since 2004.",
+      platform: "State tax credit for working families. Raise taxes on billionaires; commercial Prop 13 reform. CS graduation requirement, dual-language expansion, $10K school mental-health clinicians. Abolish ICE.",
+      polling: "~5%"
+    })}
+
+    <h2 class="b-h1" id="detail">Business Holdings & Complaints (Detail)</h2>
+    <p class="b-p">Record-by-record review of each candidate's business, consulting, and ethics history.</p>
+
+    <h3 class="b-h2">Chad Bianco</h3>
+    <ul class="b-ul">
+      <li>Career entirely Riverside Sheriff's Dept. No private businesses or board seats publicly disclosed.</li>
+      <li>2023 composite public compensation: $593,518 (highest-paid elected official in Riverside County).</li>
+      <li>Legal-defense fund opened late Oct 2025. No other top-tier 2026 candidate has opened one.</li>
+      <li>CA DOJ pattern-or-practice investigation (2023-present) into policing and jail conditions.</li>
+      <li>Vem Miller v. Bianco — $100M federal civil rights/defamation suit over Oct 2024 Trump-rally arrest.</li>
+      <li>Cloobeck v. Bianco — uniform-in-campaign violation suit (CA Gov Code 3206).</li>
+      <li>April 14, 2026: Riverside Board of Supervisors voted 4-1 NOT to fund his legal defense.</li>
+      <li>2014 Oath Keepers $40 paid membership; declined to denounce after 2021 exposure.</li>
+    </ul>
+
+    <h3 class="b-h2">Steve Hilton</h3>
+    <ul class="b-ul">
+      <li>Co-founded Crowdpac (2014). Resigned as CEO 2018 after company suspended GOP fundraising over "tension" caused by his Fox News Trump advocacy. Shut down May 2019.</li>
+      <li>Founded Golden Together policy nonprofit 2023. Donor list not fully public. Ballot initiative called a "developer giveaway" by SF Chronicle's Joe Garofoli.</li>
+      <li>Still a paid Fox News contributor during his 2026 campaign.</li>
+      <li>Spouse Rachel Whetstone: senior communications roles at Google, Uber, Facebook, Netflix over last 15+ years. Ongoing regulatory conflict question.</li>
+      <li>No personal litigation or enforcement actions.</li>
+    </ul>
+
+    <h3 class="b-h2">Xavier Becerra</h3>
+    <ul class="b-ul">
+      <li>Career entirely public sector. No private businesses or corporate boards.</li>
+      <li>2025: Chief of staff pleaded guilty to siphoning ~$225,000 from dormant Becerra campaign account over two years. Becerra not charged.</li>
+      <li>2024 Politico: reported contact with political consultants re: gubernatorial run while HHS Secretary — possible Hatch Act issue. No formal finding.</li>
+      <li>HHS: 85,000+ unaccompanied migrant children lost contact with HHS after placement during his tenure.</li>
+      <li>NIFLA v. Becerra (SCOTUS 2018, 5-4) struck down the CA crisis-pregnancy-center law he was defending.</li>
+      <li>Chevron donated to 2026 campaign.</li>
+    </ul>
+
+    <h3 class="b-h2">Katie Porter</h3>
+    <ul class="b-ul">
+      <li>UC Irvine law professor. No private businesses or for-profit boards.</li>
+      <li>2012-2014: Independent monitor of the $25B National Mortgage Settlement (appointed by AG Harris). Oversaw $9.5B in CA reforms.</li>
+      <li>2015: Paid consultant to Ocwen (mortgage servicer). Disclosed.</li>
+      <li>Documented staff-treatment reports across congressional tenure and 2024 Senate campaign.</li>
+      <li>2024 CBS Sacramento viral: said she "would not need" the 40% of Californians who voted for Trump.</li>
+      <li>Betty Yee publicly called Porter "unfit to lead California" before dropping out.</li>
+      <li>No personal litigation or enforcement actions.</li>
+    </ul>
+
+    <h3 class="b-h2">Tom Steyer</h3>
+    <ul class="b-ul">
+      <li>Farallon Capital (founded 1986, left 2012). Grew to tens of billions AUM. University-endowment manager.</li>
+      <li>~$90M position in Corrections Corporation of America (now CoreCivic, major ICE contractor) under his tenure. Steyer says he ordered the position sold.</li>
+      <li>Yale + other campus protests (mid-2000s) over "ethics of Farallon's investment practices."</li>
+      <li>Still receives hedge-fund-related income per 2024 Statement of Economic Interest.</li>
+      <li>Beneficial State Bank (co-founded 2007, nonprofit CDFI). Galvanize Climate Solutions (2021). NextGen America (2013).</li>
+      <li>No personal SEC or enforcement actions.</li>
+    </ul>
+
+    <h3 class="b-h2">Antonio Villaraigosa</h3>
+    <ul class="b-ul">
+      <li>Mercury Public Affairs (Omnicom-owned lobbying firm) — co-chair 2018-2021. Federal FARA investigation over Manafort-linked Belgian NGO during his tenure. Personnel not prosecuted; Omnicom-linked law firm settled with DOJ. $1.4M California Endowment contract lost. Villaraigosa, Nuñez, Boxer led October 2021 exodus and sued Omnicom.</li>
+      <li>Mercury CA clients during his co-chair: Clorox, Lyft, California Charter Schools Association, Westlands Water District.</li>
+      <li>Herbalife paid advisor post-2013. LULAC publicly condemned. FTC investigated Herbalife for Latino-targeted claims.</li>
+      <li>Banc of California paid advisor. Left before major governance controversies.</li>
+      <li>2010 LA Ethics Commission: 81 unreported tickets (courtside Lakers $3,100 each, Oscars/Governor's Ball $21,000 each).</li>
+      <li>2012 DNC voice-vote controversy on Jerusalem/God amendment.</li>
+    </ul>
+
+    <h3 class="b-h2">Matt Mahan</h3>
+    <ul class="b-ul">
+      <li>Causes (2008-14+) — for-profit civic-engagement startup; COO then CEO. ~190M users. No reported complaints.</li>
+      <li>Brigade Media (2014-19) — Sean Parker-backed civic platform; CEO. Absorbed into Countable.</li>
+      <li>No disclosed outside corporate boards during mayoralty.</li>
+      <li>April 17, 2026: FPPC complaint filed by Raul Claros alleging illegal coordination with pro-Mahan super PAC "California Back to Basics." Supporting docs: Zoom screenshots of April 6 fundraising call with Moritz ($1M donor) and Caruso ($1.5M donor); strategy slides allegedly screen-shared. Same day, PAC sent donors "State of the Race" memo coordinating ad-blitz timing. FPPC has not decided whether to investigate.</li>
+      <li>Measure E redirection: housing advocates complain he redirected voter-approved funds from permanent affordable housing to temporary shelter.</li>
+    </ul>
+
+    <h3 class="b-h2">Tony Thurmond</h3>
+    <ul class="b-ul">
+      <li>Career entirely public + nonprofit. No private businesses or corporate boards.</li>
+      <li>2021 Politico: Daniel Lee hiring — longtime associate hired as "superintendent of equity" at CDE, up to $179,832/yr. Position never publicly posted. Funded via Hewlett Foundation grant through CDE-affiliated nonprofit, then taxpayers. Possible CA state-employee residency-rule violation (Lee lived in Philadelphia). Lee resigned Dec 14, 2021.</li>
+      <li>Pandemic-era CDE criticism over school-reopening timing and guidance.</li>
+      <li>No personal litigation or enforcement actions.</li>
+    </ul>
+
+    <h2 class="b-h1" id="glossary">Glossary</h2>
+    ${buildGlossary()}
+
+    <h2 class="b-h1" id="sources">Sources</h2>
+    <h4 class="b-h3">Government databases (primary)</h4>
+    <ul class="source-list">
+      <li>CA Secretary of State CAL-ACCESS — campaign finance filings</li>
+      <li>CA Fair Political Practices Commission (FPPC) — ethics enforcement, Form 700</li>
+      <li>CA Secretary of State Certified List of Candidates — June 2, 2026 ballot</li>
+      <li>FEC.gov — federal candidate filings</li>
+      <li>PACER — federal court filings</li>
+      <li>NY State Commission on Ethics and Lobbying — Mercury Public Affairs records</li>
+      <li>CA DOJ — Riverside Sheriff pattern-or-practice investigation</li>
+      <li>CA Legislative Information — SB 54, SB 79, related bill text</li>
+    </ul>
+
+    <h4 class="b-h3">Nonpartisan trackers</h4>
+    <ul class="source-list">
+      <li>OpenSecrets.org — Mercury lobbying firm profile, industry rollups</li>
+      <li>Ballotpedia.org — candidate profiles, prior election results</li>
+      <li>CalMatters Digital Democracy — CA state voting records, transcripts</li>
+      <li>GovTrack.us — federal voting records</li>
+      <li>Public Policy Institute of California (PPIC) — polling and issue research</li>
+      <li>Emerson College Polling — 2026 CA governor race polling</li>
+    </ul>
+
+    <h4 class="b-h3">News outlets cited</h4>
+    <ul class="source-list">
+      <li>CalMatters — Bianco ballot seizure, Yee exit, Becerra analysis</li>
+      <li>LA Times — Mercury Public Affairs exodus, Herbalife, Bianco Oath Keepers</li>
+      <li>SF Chronicle — Swalwell allegations, Golden Together CEQA initiative</li>
+      <li>Politico — Becerra Hatch Act, Daniel Lee hiring</li>
+      <li>Washington Post, NPR — Bianco Oath Keepers, Miller v. Bianco</li>
+      <li>Daily Beast — Crowdpac, Hilton profile</li>
+      <li>Institutional Investor — "Steyer Power" Farallon long-form</li>
+      <li>Mic — Crowdpac progressive-boycott reporting</li>
+      <li>DeSmog — Mercury Public Affairs fossil-fuel client profile</li>
+      <li>Mission Local — April 17, 2026 Mahan FPPC complaint</li>
+      <li>San Jose Spotlight — editorial against Mahan running for governor</li>
+      <li>Hollywood Reporter — Hilton interview, debate coverage</li>
+      <li>Courthouse News — Villaraigosa candidacy</li>
+      <li>Black Voice News — Porter Inland Empire rally</li>
+      <li>Lookout Santa Cruz — Thurmond candidate launch; Mahan interview</li>
+      <li>CBS News California — candidate guide, debate coverage</li>
+      <li>KQED, CapRadio — debate coverage, labor endorsements</li>
+      <li>Democracy Docket — Bianco ballot-seizure analysis</li>
+      <li>Center on Juvenile and Criminal Justice — Bianco crime-clearance-rate analysis</li>
+      <li>Associated Press — April 22, 2026 debate coverage</li>
+    </ul>
+
+    <h4 class="b-h3">Candidate campaign sites (official platform)</h4>
+    <ul class="source-list">
+      <li>biancoforgovernor.com</li>
+      <li>hiltonforcalifornia.com</li>
+      <li>xavierbecerra2026.com</li>
+      <li>katieporter.com</li>
+      <li>tomsteyer.com</li>
+      <li>villaraigosaforcalifornia.com</li>
+      <li>mahanforcalifornia.com</li>
+      <li>tonythurmond.com</li>
+    </ul>
+
+    <p class="b-p" style="margin-top: 28px; font-style: italic; color: #6a6a67; font-size: 13px;">Compiled April 23, 2026. Polling figures reflect late-April 2026 snapshots and will shift between now and June 2. This briefing does not recommend a vote — it helps you make your own informed decision.</p>
+
+    <div style="text-align: center; margin-top: 40px; padding-top: 24px; border-top: 1px solid #e5e3de;">
+      <button class="briefing-close" onclick="closeBriefing()">✕ Close briefing</button>
+    </div>
+  `;
+}
+
+function buildCandidateCard(d) {
+  return `
+    <div class="bcard">
+      <div class="bcard-head">${d.name}</div>
+      <div class="bcard-sub">${d.role}</div>
+      <div class="bcard-label">Experience</div>
+      <div class="bcard-body">${d.exp}</div>
+      <div class="bcard-label">Money raised</div>
+      <div class="bcard-body">${d.money}</div>
+      <div class="bcard-label">Top pros</div>
+      <div class="bcard-body">${d.pros}</div>
+      <div class="bcard-label">Top cons</div>
+      <div class="bcard-body">${d.cons}</div>
+      <div class="bcard-label">Platform headlines</div>
+      <div class="bcard-body">${d.platform}</div>
+      <div class="bcard-label">Current polling</div>
+      <div class="bcard-body">${d.polling}</div>
+    </div>
+  `;
+}
+
+function buildGlossary() {
+  const terms = [
+    ["ACA", "Affordable Care Act. Federal health-insurance law often called Obamacare. Becerra defended it as CA AG."],
+    ["AG", "Attorney General. California's chief law-enforcement officer. Becerra held this job 2017-2021."],
+    ["AUM", "Assets Under Management. The dollar value a fund like Farallon manages for investors."],
+    ["CAL-ACCESS", "CA Secretary of State's public database of campaign finance filings."],
+    ["CCA / CoreCivic", "Corrections Corporation of America, now CoreCivic. Private prison operator and major federal ICE contractor."],
+    ["CDE", "California Department of Education. Thurmond has led it since 2019."],
+    ["CDI", "California Department of Insurance. Regulates insurers and approves rate changes."],
+    ["CEQA", "California Environmental Quality Act. Requires environmental impact review on development. Target of housing-reform efforts because it allows wide-ranging private lawsuits."],
+    ["Clearance rate", "Percentage of reported crimes police solve (typically by arrest). Bianco's department is lowest in CA at 9.2%."],
+    ["CPUC", "California Public Utilities Commission. Regulates utility rates."],
+    ["CRPA", "California Rifle and Pistol Association. Gun-rights group endorsing Bianco."],
+    ["DACA", "Deferred Action for Childhood Arrivals. Federal program protecting Dreamers. Becerra led the 21-state coalition that defended it against termination."],
+    ["FARA", "Foreign Agents Registration Act. Federal law requiring registration when lobbying for foreign principals. Relevant to the Mercury Public Affairs Manafort-era investigation."],
+    ["FPPC", "California Fair Political Practices Commission. Enforces campaign finance and conflict-of-interest laws. Currently holding an April 2026 complaint against Mahan."],
+    ["Form 700", "CA Statement of Economic Interests. Required disclosure of real estate, investments, gifts, business positions."],
+    ["Hatch Act", "Federal law limiting political activity by federal employees including cabinet officers. Becerra faced 2024 reporting about possibly violating it."],
+    ["HHS", "US Department of Health and Human Services. Becerra served as Secretary 2021-2025."],
+    ["ICE", "US Immigration and Customs Enforcement."],
+    ["Independent expenditure / super PAC", "Committee that can raise and spend unlimited money, not allowed to coordinate with the candidate. The pro-Mahan California Back to Basics PAC is an example."],
+    ["Measure E (San Jose)", "Voter-approved property-transfer tax in San Jose funding permanent affordable housing. Mahan redirected some to temporary shelter."],
+    ["Measure R (LA)", "2008 LA County sales-tax increase Villaraigosa championed. Funded ~$40B in transportation over 30 years."],
+    ["NIFLA v. Becerra", "2018 Supreme Court case (5-4) striking down the CA law Becerra defended requiring crisis pregnancy centers to advertise state-funded abortion services."],
+    ["Oath Keepers", "Far-right group classified as extremist by SPLC, with members indicted for January 6. Bianco was a paid 2014 member."],
+    ["Omnicom", "Global advertising and communications holding company that owns Mercury Public Affairs."],
+    ["Prop 13", "1978 CA ballot measure capping property taxes. 'Split roll' refers to reforming commercial property taxes while preserving residential protections."],
+    ["Prop 36", "2024 CA ballot measure that increased penalties for certain drug and theft offenses and allows treatment-mandated felony alternatives. Passed 2-to-1."],
+    ["Prop 47", "2014 CA ballot measure reducing certain drug and theft offenses to misdemeanors."],
+    ["Prop 50", "2025 CA ballot measure (Election Rigging Response Act) allowing CA to redraw congressional districts. Bianco's ballot seizure targeted Prop 50 ballots."],
+    ["Sanctuary state", "A state (California, via SB 54) that limits local and state law-enforcement cooperation with federal immigration enforcement."],
+    ["SB 54", "California Values Act (2017). California's sanctuary-state law. Bianco and Hilton want to weaken it; Becerra and Steyer want to defend it."],
+    ["SB 79", "CA bill (Sen. Wiener) to allow multifamily housing near transit. Porter endorses."],
+    ["Top-two primary", "CA primary format. All candidates on same ballot regardless of party; top two advance to November, even if same party."]
+  ];
+  return terms.map(([t, d]) => `<div class="gloss-term"><strong>${t}.</strong> ${d}</div>`).join('');
+}
+
+render();
+</script>
+</body>
+</html>

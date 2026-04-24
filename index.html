@@ -1798,7 +1798,7 @@ function buildReasons(winnerKey) {
     q: null,
     html: `<div class="vs-box">
       <div class="vs-header">Why ${winnerFirst}, not ${runner.name.split(' ')[0]}?</div>
-      <div class="vs-body">${winnerFirst} scored <strong>${winnerScore}</strong>, ${runner.name.split(' ')[0]} scored <strong>${runnerScore}</strong>${winnerScore - runnerScore > 0 ? ` — a ${winnerScore - runnerScore}-point gap` : ''}. ${vsDetail}</div>
+      <div class="vs-body">Your answers pointed more often to ${winnerFirst}. ${vsDetail}</div>
     </div>`
   });
 
@@ -1859,7 +1859,7 @@ function buildHeadToHead(winnerKey, runnerKey) {
   }
 
   const top = winnerAdvantages[0];
-  let text = `The biggest edge was on <strong>${top.qLabel.toLowerCase()}</strong>, where ${winnerFirst} scored ${top.diff} points higher than ${runnerFirst}.`;
+  let text = `The biggest edge was on <strong>${top.qLabel.toLowerCase()}</strong> — ${winnerFirst} lined up more closely with your answer than ${runnerFirst}.`;
 
   const moreWins = winnerAdvantages.slice(1, 3);
   if (moreWins.length > 0) {

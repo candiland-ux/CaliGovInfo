@@ -1402,8 +1402,8 @@ function computeScores() {
       }
     }
   });
-  // Round to whole numbers for display
-  Object.keys(scores).forEach(k => scores[k] = Math.round(scores[k]));
+  // Note: do NOT round here — fractional scores from rank multipliers (1.0/0.6/0.3)
+  // are what prevent false ties. Rounding happens only at display time for percentages.
   return scores;
 }
 

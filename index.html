@@ -196,6 +196,28 @@
   }
   .disclaimer strong { color: #111 !important; -webkit-text-fill-color: #111; }
 
+  .data-banner {
+    padding: 10px 14px;
+    background: #fef5f2 !important;
+    border-left: 3px solid #c8441c;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #4a2a20 !important;
+    -webkit-text-fill-color: #4a2a20;
+  }
+  .data-banner strong {
+    color: #8a2010 !important;
+    -webkit-text-fill-color: #8a2010;
+    font-weight: 700;
+  }
+  .data-banner a {
+    color: #8a2010 !important;
+    -webkit-text-fill-color: #8a2010;
+    text-decoration: underline;
+  }
+
   /* ==========================================================
      BRIEFING — full-screen overlay
      ========================================================== */
@@ -1146,6 +1168,8 @@ function renderIntro() {
       <span class="tag">Primary · June 2, 2026</span>
       <h1>Which candidate for California Governor matches your priorities?</h1>
 
+      <div class="data-banner"><strong>Data as of April 23, 2026.</strong> Polls, fundraising totals, endorsements, and campaign status all change. Anything published after this date won't be reflected here. For live data, check <a href="https://www.fec.gov" target="_blank" rel="noopener">FEC.gov</a>, <a href="https://ballotpedia.org" target="_blank" rel="noopener">Ballotpedia</a>, or <a href="https://emersoncollegepolling.com" target="_blank" rel="noopener">Emerson Polling</a>.</div>
+
       <div class="intro-card">
         <h3>How it works</h3>
         <ol class="intro-steps">
@@ -1166,7 +1190,7 @@ function renderIntro() {
       </div>
 
       <div class="disclaimer">
-        This tool doesn't tell you who to vote for. It just shows you which candidate best matches what you said matters. All data comes from public filings, news reporting, and each candidate's own published plans.
+        This tool doesn't tell you who to vote for. It just shows you which candidate best matches what you said matters. All data is a snapshot from April 23, 2026 drawn from FEC filings, public polling, Ballotpedia, and each candidate's published plans. Always verify current status before voting.
       </div>
 
       <div class="briefing-link-row">
@@ -1946,6 +1970,7 @@ document.addEventListener('keydown', (e) => {
 function buildBriefing() {
   return `
     <h2 class="b-h1" id="top">California Governor 2026 — Voter Briefing</h2>
+    <div class="data-banner"><strong>Data as of April 23, 2026.</strong> Polls, fundraising, and endorsements change. For live data see FEC.gov, Ballotpedia, and Emerson Polling.</div>
     <p class="b-p">Primary: June 2, 2026. Mail ballots begin arriving in early May. Top-two primary means the two highest finishers — even from the same party — advance to November.</p>
 
     <div class="briefing-toc">

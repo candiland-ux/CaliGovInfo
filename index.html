@@ -1357,7 +1357,7 @@ const QUESTIONS = [
     maxPicks: 3,
     options: [
       { key: "housing", label: "Housing cost and supply", sub: "Rent, home prices, not enough building",
-        weights: { porter: 4, steyer: 4, mahan: 4, villaraigosa: 2, becerra: 1, hilton: 2, thurmond: 1, bianco: 0 },
+        weights: { porter: 4, steyer: 4, mahan: 4, villaraigosa: 4, becerra: 1, hilton: 2, thurmond: 1, bianco: 0 },
         reason: "You put housing first. Porter, Steyer, and Mahan have the three deepest housing plans. Porter wrote a 10-point Housing for All and endorsed SB 79, Steyer published a 1M-homes target with state-approved blueprints, and Mahan got 2,000 stalled San Jose units moving by cutting fees and permitting friction." },
       { key: "homelessness", label: "Homelessness", sub: "Encampments, shelter, mental health, addiction",
         weights: { mahan: 4, steyer: 4, bianco: 2, hilton: 2, becerra: 1, porter: 2, villaraigosa: 1, thurmond: 2 },
@@ -1394,11 +1394,11 @@ const QUESTIONS = [
     sub: "Governing style matters.",
     options: [
       { key: "fighter", label: "A fighter", sub: "Pushes back hard, publicly",
-        weights: { porter: 4, bianco: 3, steyer: 1, becerra: 2, hilton: 2, thurmond: 1, villaraigosa: 0, mahan: 0 } },
+        weights: { bianco: 5, porter: 4, becerra: 2, hilton: 2, steyer: 1, thurmond: 1, villaraigosa: 0, mahan: 0 } },
       { key: "manager", label: "An operator", sub: "Manages and delivers quietly",
-        weights: { becerra: 3, mahan: 4, villaraigosa: 3, steyer: 2, thurmond: 2, porter: 0, hilton: 1, bianco: 0 } },
+        weights: { thurmond: 4, mahan: 4, becerra: 3, villaraigosa: 3, steyer: 2, porter: 0, hilton: 1, bianco: 0 } },
       { key: "coalition", label: "A coalition-builder", sub: "Negotiates across labor, business, and government",
-        weights: { villaraigosa: 4, becerra: 3, thurmond: 2, steyer: 2, mahan: 1, porter: 1, hilton: 2, bianco: 0 } },
+        weights: { villaraigosa: 5, becerra: 5, thurmond: 2, steyer: 2, mahan: 1, porter: 1, hilton: 2, bianco: 0 } },
       { key: "outsider", label: "An outsider", sub: "Doesn't come from Sacramento",
         weights: { bianco: 3, hilton: 4, steyer: 3, mahan: 3, porter: 1, thurmond: 1, becerra: 0, villaraigosa: 0 } }
     ]
@@ -1411,7 +1411,7 @@ const QUESTIONS = [
       { key: "resist", label: "Full resistance", sub: "Sue, defy, protect California from federal actions",
         weights: { becerra: 5, porter: 4, steyer: 4, villaraigosa: 3, thurmond: 3, mahan: 1, hilton: 0, bianco: 0 } },
       { key: "selective", label: "Selective pushback", sub: "Fight on some issues, cooperate on others",
-        weights: { porter: 2, mahan: 4, becerra: 2, villaraigosa: 3, steyer: 1, thurmond: 2, hilton: 1, bianco: 0 } },
+        weights: { villaraigosa: 5, mahan: 4, porter: 2, becerra: 2, steyer: 1, thurmond: 2, hilton: 1, bianco: 0 } },
       { key: "cooperate", label: "Cooperative working relationship", sub: "Partner with the federal government where possible",
         weights: { hilton: 5, bianco: 4, mahan: 1, villaraigosa: 0, porter: 0, becerra: 0, steyer: 0, thurmond: 0 } }
     ]
@@ -1440,6 +1440,8 @@ const QUESTIONS = [
         weights: { steyer: 5, porter: 1, mahan: 0, villaraigosa: 0, becerra: 0, thurmond: 0, hilton: 0, bianco: 0 } },
       { key: "labor", label: "Backed by organized labor", sub: "Unions, trades, working-class base",
         weights: { villaraigosa: 4, porter: 4, steyer: 3, thurmond: 3, becerra: 2, mahan: 0, hilton: 0, bianco: 1 } },
+      { key: "law_enforcement", label: "Backed by law enforcement and public safety", sub: "Police associations, sheriffs, gun-rights groups",
+        weights: { bianco: 5, hilton: 2, mahan: 1, villaraigosa: 1, becerra: 1, porter: 0, steyer: 0, thurmond: 0 } },
       { key: "business", label: "Backed by business and industry", sub: "Tech, developers, Chamber-style donors",
         weights: { mahan: 5, hilton: 4, villaraigosa: 2, becerra: 2, bianco: 2, steyer: 1, porter: 0, thurmond: 0 } },
       { key: "dontcare", label: "I don't really care", sub: "I just want results",
@@ -1452,7 +1454,7 @@ const QUESTIONS = [
     sub: "",
     options: [
       { key: "statewide_exec", label: "Proven statewide government executive", sub: "Ran a large public agency, won statewide office",
-        weights: { becerra: 5, thurmond: 3, villaraigosa: 3, porter: 1, mahan: 1, bianco: 1, hilton: 0, steyer: 0 } },
+        weights: { becerra: 5, thurmond: 5, villaraigosa: 5, porter: 1, mahan: 1, bianco: 1, hilton: 0, steyer: 0 } },
       { key: "local_exec", label: "Active city or county leader", sub: "Currently running something, right now",
         weights: { mahan: 5, villaraigosa: 3, bianco: 3, thurmond: 2, hilton: 0, becerra: 0, porter: 0, steyer: 0 } },
       { key: "legislator", label: "Legislator or oversight role", sub: "Writes laws, grills witnesses, builds policy",
@@ -1919,6 +1921,7 @@ const ANSWER_LABELS = {
     grassroots: "grassroots funding with no corporate PACs",
     self_funded: "self-funded campaigns",
     labor: "organized labor backing",
+    law_enforcement: "law enforcement and public safety backing",
     business: "business and industry backing",
     dontcare: "any funding model"
   },
@@ -1961,7 +1964,8 @@ const CANDIDATE_STANCES = {
     },
     donorModel: {
       grassroots: "Donors: law enforcement associations, CRPA, small-dollar conservative. Raised ~$3.7M.",
-      labor: "Backed by law-enforcement associations specifically."
+      labor: "Backed by law-enforcement associations specifically.",
+      law_enforcement: "Directly backed by law enforcement associations and CRPA. 30-year sheriff career."
     },
     experience: {
       local_exec: "Sheriff of Riverside County since 2019."

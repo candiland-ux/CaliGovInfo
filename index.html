@@ -1742,6 +1742,8 @@ function renderResult() {
 
   // Runner-up block with tie detection (exclude winner from tied list)
   const runnerPct = Math.round((runnerScore / maxPossible) * 100);
+  const winnerPct = Math.round((sorted[0][1] / maxPossible) * 100);
+  const isClose = (winnerPct - runnerPct) <= 5;
   const tied = sorted.filter(([k, s]) => s === runnerScore && k !== winnerKey);
   const firstPlaceTie = sorted[0][1] === runnerScore;
   let runnerBlockHtml;
@@ -1749,7 +1751,7 @@ function renderResult() {
     runnerBlockHtml = `
       <div class="runner">
         <div class="runner-body">
-          <div class="runner-label">${firstPlaceTie ? 'Tied for Top' : 'Close Runner-Up'}</div>
+          <div class="runner-label">${firstPlaceTie ? 'Tied for Top' : (isClose ? 'Close Runner-Up' : 'Runner-Up')}</div>
           <div class="runner-name">${runner.name}</div>
           <div class="runner-note">${runner.oneLiner}</div>
         </div>
@@ -1884,7 +1886,7 @@ function computeMaxPossible() {
       max += qMax;
     }
   });
-  return Math.round(max);
+  return max;
 }
 
 // Human-friendly labels for each question's answer, for use in alignment explanations

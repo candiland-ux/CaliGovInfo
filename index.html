@@ -1503,11 +1503,11 @@ const TEMPERAMENTS = {
 };
 
 const CAVEATS = {
-  bianco: "Your top match has California's <strong>worst crime-clearance rate</strong> (9.2%) and an open California DOJ pattern-or-practice investigation. He also seized 650,000 ballots from California's 2025 Prop 50 election based on evidence a court-unsealed warrant showed came from one activist group.",
+  bianco: "Your top match has California's <strong>worst crime-clearance rate</strong> (9.2%) and an open California DOJ pattern-or-practice investigation. He also seized 650,000 ballots from California's 2025 Prop 50 election based on evidence a court-unsealed warrant showed came from one activist group, and is <strong>currently facing active lawsuits</strong> over that seizure.",
   hilton: "Your top match has <strong>never held U.S. elected office</strong>, became a U.S. citizen only in 2021, and is <strong>still a paid Fox News contributor</strong> during his campaign. His spouse has held senior roles at Google, Uber, Facebook, and Netflix, a continuing regulatory-conflict question.",
-  becerra: "Your top match's chief of staff <strong>pleaded guilty</strong> to siphoning around $225,000 from a dormant Becerra campaign account over two years. Becerra himself faces no charges but did not notice the theft until federal investigators approached him.",
+  becerra: "Your top match has accepted <strong>Chevron contributions</strong> in his 2026 campaign (and previously took the legal maximum from Chevron in his 2018 AG race), even as the governor regulates oil and gas. Separately, his longtime chief of staff <strong>pleaded guilty</strong> to siphoning around $225,000 from a dormant Becerra campaign account over two years; Becerra himself faces no charges and cooperated with the FBI, but did not notice the theft until federal investigators approached him.",
   porter: "Your top match has documented <strong>staff-treatment issues</strong> and a 2024 viral CBS Sacramento interview where she said she \"would not need\" the 40% of Californians who voted for Trump. Betty Yee publicly called Porter \"unfit to lead California\" before dropping out.",
-  steyer: "Your top match's hedge fund Farallon <strong>held around $90M in Corrections Corporation of America stock</strong> during his tenure (now CoreCivic, a major ICE contractor). He says he ordered the position sold and regrets it, but his 2024 disclosure shows continuing hedge-fund income.",
+  steyer: "Your top match's hedge fund Farallon <strong>held around $90M in Corrections Corporation of America stock</strong> during his tenure (now CoreCivic, a major ICE contractor), and also held coal-mining investments. He says he sold those positions and regrets them, but his 2024 disclosure shows continuing hedge-fund income.",
   villaraigosa: "Your top match co-chaired <strong>Mercury Public Affairs</strong> 2018-2021, during which federal prosecutors investigated the firm over a Paul Manafort-linked Belgian NGO's FARA failure. He also advised <strong>Herbalife</strong> (which LULAC publicly condemned) and has been out of elected office for 13 years.",
   mahan: "Your top match faces an <strong>active FPPC complaint</strong> (filed April 17, 2026) alleging illegal coordination with a pro-Mahan super PAC funded by Michael Moritz and Rick Caruso. He has also <strong>never finished a term</strong> in any elected role.",
   thurmond: "Your top match was subject of a <strong>2021 Politico report</strong> on a nepotism and residency issue. He helped hire longtime associate Daniel Lee (Philadelphia-based) as California's \"superintendent of equity\" at up to $179,832/year without public posting. Lee resigned December 14, 2021."
@@ -1528,7 +1528,7 @@ function renderIntro() {
       <span class="tag">Primary · June 2, 2026</span>
       <h1>Which candidate for California Governor matches your priorities?</h1>
 
-      <div class="data-banner"><strong>Data as of April 23, 2026.</strong> Polls, fundraising totals, endorsements, and campaign status all change. Anything published after this date won't be reflected here. For live data, check <a href="https://www.fec.gov" target="_blank" rel="noopener">FEC.gov</a>, <a href="https://ballotpedia.org" target="_blank" rel="noopener">Ballotpedia</a>, or <a href="https://emersoncollegepolling.com" target="_blank" rel="noopener">Emerson Polling</a>.</div>
+      <div class="data-banner"><strong>Data as of May 3, 2026.</strong> Polls, fundraising totals, endorsements, and campaign status all change. Anything published after this date won't be reflected here. For live data, check <a href="https://www.fec.gov" target="_blank" rel="noopener">FEC.gov</a>, <a href="https://ballotpedia.org" target="_blank" rel="noopener">Ballotpedia</a>, or <a href="https://emersoncollegepolling.com" target="_blank" rel="noopener">Emerson Polling</a>.</div>
 
       <div class="intro-card">
         <h3>How it works</h3>
@@ -1550,7 +1550,7 @@ function renderIntro() {
       </div>
 
       <div class="disclaimer">
-        This tool doesn't tell you who to vote for. It just shows you which candidate best matches what you said matters. All data is a snapshot from April 23, 2026 drawn from FEC filings, public polling, Ballotpedia, and each candidate's published plans. Always verify current status before voting.
+        This tool doesn't tell you who to vote for. It just shows you which candidate best matches what you said matters. All data is a snapshot from May 3, 2026 drawn from FEC filings, public polling, Ballotpedia, and each candidate's published plans. Always verify current status before voting.
       </div>
 
       <div class="econ-callout">
@@ -2474,7 +2474,7 @@ function buildEconContext() {
 function buildBriefing() {
   return `
     <h2 class="b-h1" id="top">California Governor 2026 — Voter Briefing</h2>
-    <div class="data-banner"><strong>Data as of April 23, 2026.</strong> Polls, fundraising, and endorsements change. For live data see FEC.gov, Ballotpedia, and Emerson Polling.</div>
+    <div class="data-banner"><strong>Data as of May 3, 2026.</strong> Polls, fundraising, and endorsements change. For live data see FEC.gov, Ballotpedia, and Emerson Polling.</div>
     <p class="b-p">Primary: June 2, 2026. Mail ballots begin arriving in early May. Top-two primary means the two highest finishers — even from the same party — advance to November.</p>
 
     <div class="briefing-toc">
@@ -2488,36 +2488,47 @@ function buildBriefing() {
     </div>
 
     <h2 class="b-h1" id="summary">Executive Summary</h2>
-    <p class="b-p">Eight major candidates are competing. Polling leaders in late April 2026 are Republicans Steve Hilton and Chad Bianco, followed by Democrats Xavier Becerra, Tom Steyer, and Katie Porter. Matt Mahan, Antonio Villaraigosa, and Tony Thurmond trail. Eric Swalwell suspended his campaign April 12 amid sexual-assault allegations. Betty Yee dropped out April 21 and endorsed Steyer.</p>
+    <p class="b-p">Eight major candidates are competing. As of late April / early May 2026, polling leaders are Republican Steve Hilton (~16%) and Democrat Tom Steyer (~15%), in a statistical tie. Becerra has surged to ~13% (up from ~10%) following Swalwell's exit. Bianco has dropped to ~10% (from ~14%). Porter (~10%), Mahan (~4-5%), Villaraigosa (~4-5%), and Thurmond (~4%) trail. About 26% of voters remain undecided. Eric Swalwell suspended his campaign April 12 amid sexual-assault allegations. Betty Yee dropped out April 21 and endorsed Steyer. Two debates have happened (April 22 KRON, April 28 Pomona), with a CNN debate scheduled for May 5.</p>
+
+    <h4 class="b-h3">Recent campaign developments (late April 2026)</h4>
+    <ul class="b-ul">
+      <li><strong>April 22:</strong> KRON4/Nexstar debate in San Francisco was the first major head-to-head.</li>
+      <li><strong>April 28:</strong> CBS-broadcast debate at Pomona College — described by one Pomona student as making her "more confused on who to vote for than ever." Six Democrats targeted Steyer and Becerra.</li>
+      <li><strong>April 2026 CA GOP convention:</strong> No endorsement issued; neither Hilton nor Bianco hit the 60% threshold.</li>
+      <li><strong>Steyer momentum:</strong> Won endorsements from Hillary Clinton, former Senate pro tem Toni Atkins, California Federation of Teachers, AFSCME. Has spent $130M+, more than all others combined.</li>
+      <li><strong>Becerra momentum:</strong> Biggest poll gain in field (10% → 13%); positioning as 'most experienced' against Steyer's wealth.</li>
+      <li><strong>New scrutiny:</strong> Steyer hit on past Farallon coal-mining and Corrections Corp of America investments (now used for ICE detention). Bianco facing lawsuits over the 650,000-ballot seizure.</li>
+    </ul>
 
     <h4 class="b-h3">Deepest published plans</h4>
     <ul class="b-ul">
-      <li><strong>Tom Steyer</strong> — most developed overall agenda (housing, climate, insurance, homelessness, AI compute fee).</li>
-      <li><strong>Matt Mahan</strong> — most implementation-tested affordability and housing plan, San Jose track record.</li>
-      <li><strong>Katie Porter</strong> — 10-point Housing for All plan; priced zero-tuition pathway ($4B).</li>
-      <li><strong>Tony Thurmond</strong> — deepest education agenda; only candidate openly supporting both a billionaire's tax and Prop 13 commercial reform.</li>
-      <li><strong>Xavier Becerra</strong> — deepest delivered health care record (Medicare drug-price negotiation).</li>
+      <li><strong>Tom Steyer:</strong> most developed overall agenda (housing, climate, AI compute fee, sovereign wealth fund). Insurance plan now adds wildfire-risk reduction (controlled burns, home hardening) before insurer negotiation.</li>
+      <li><strong>Matt Mahan:</strong> most implementation-tested affordability and housing plan, with San Jose track record (1,000 shelter beds in one year, one-third street-homelessness reduction reported).</li>
+      <li><strong>Katie Porter:</strong> 10-point Housing for All plan; priced zero-tuition pathway ($4B). New tax specifics: cut income taxes for middle earners, raise on large corporations.</li>
+      <li><strong>Tony Thurmond:</strong> deepest education agenda; only candidate openly supporting both a billionaire's tax and Prop 13 commercial reform. Insurance plan: restrict rate increases unless insurers continue offering coverage.</li>
+      <li><strong>Xavier Becerra:</strong> deepest delivered health care record (Medicare drug-price negotiation). New: state-of-emergency proposal to freeze home insurance and utility rates (legality contested by Porter and others).</li>
+      <li><strong>Antonio Villaraigosa:</strong> Fair Plan expansion as insurance backstop; transit-adjacent density via executive order; CEQA reform limiting private lawsuits.</li>
     </ul>
 
     <h4 class="b-h3">Biggest risk factors</h4>
     <ul class="b-ul">
-      <li><strong>Bianco:</strong> worst jail death rate and worst crime-clearance rate in CA; seized 650,000 ballots on activist-group evidence; open DOJ pattern-or-practice investigation; Oath Keepers 2014.</li>
-      <li><strong>Hilton:</strong> never held U.S. elected office; citizen since 2021; still a paid Fox News contributor; wife is senior tech executive.</li>
-      <li><strong>Becerra:</strong> chief of staff pleaded guilty to siphoning $225K from a dormant Becerra account; 2024 Politico report flagged possible Hatch Act issue.</li>
-      <li><strong>Porter:</strong> lost 2024 Senate primary; documented temperament incidents; housing plan built for federal, not state, tools.</li>
-      <li><strong>Steyer:</strong> $122M self-funded but stuck mid-teens; Farallon past included ~$90M position in private-prison operator CCA; still receives hedge-fund income.</li>
-      <li><strong>Villaraigosa:</strong> out of office 13 years; Mercury Public Affairs co-chair during Manafort-FARA episode; Herbalife consulting; 2010 ethics investigation over 81 unreported tickets.</li>
+      <li><strong>Bianco:</strong> worst jail death rate and worst crime-clearance rate in CA; currently facing lawsuits over seized 650,000+ ballots from the November 2025 special election; open DOJ pattern-or-practice investigation; Oath Keepers 2014.</li>
+      <li><strong>Hilton:</strong> never held U.S. elected office; citizen since 2021; still a paid Fox News contributor; wife is senior tech executive; would not specify clean-energy plan at April 28 debate.</li>
+      <li><strong>Becerra:</strong> chief of staff pleaded guilty to siphoning $225K from a dormant Becerra account (Becerra was the victim, cooperated with FBI); accepted Chevron contributions in 2026 race and previously took max-allowable Chevron in 2018; HHS record (85K migrant kids losing federal contact) under fresh scrutiny.</li>
+      <li><strong>Porter:</strong> lost 2024 Senate primary; documented temperament incidents including 2024 viral CBS Sacramento staff video; housing plan built for federal, not state, tools.</li>
+      <li><strong>Steyer:</strong> $130M+ self-funded but stuck mid-teens; Farallon past included ~$90M position in CoreCivic (operates ICE detention) plus coal-mining investments — both now under fresh attack; still receives hedge-fund income.</li>
+      <li><strong>Villaraigosa:</strong> out of office 13 years; Mercury Public Affairs co-chair during Manafort-FARA episode; Herbalife consulting; Chevron contributions; 2010 ethics investigation over 81 unreported tickets.</li>
       <li><strong>Mahan:</strong> never finished a term in any elected role; April 2026 FPPC complaint over alleged super PAC coordination with Moritz and Caruso.</li>
-      <li><strong>Thurmond:</strong> polling ~5%; 2021 Daniel Lee hiring scandal raised residency-rule and nepotism questions.</li>
+      <li><strong>Thurmond:</strong> polling ~4% (lowest of 8); 2021 Daniel Lee hiring scandal raised residency-rule and nepotism questions.</li>
     </ul>
 
     <h4 class="b-h3">Money raised (2026 cycle)</h4>
     <ul class="b-ul">
-      <li><strong>Steyer:</strong> ~$122.7M raised, 99.9% self-funded.</li>
+      <li><strong>Steyer:</strong> ~$130M+ raised, ~99.9% self-funded. More than all other candidates combined per AdImpact.</li>
       <li><strong>Mahan:</strong> ~$12.7M; Silicon Valley donors; outside super PAC $15M+ including Super Bowl LX ad.</li>
-      <li><strong>Porter:</strong> $6.1M in 2025; avg donation ~$68; no corporate PAC money.</li>
+      <li><strong>Porter:</strong> $6.1M; avg donation ~$68; no corporate PAC money.</li>
       <li><strong>Hilton:</strong> ~$5.7M; Fox-adjacent donor network, Murdoch cited as donor.</li>
-      <li><strong>Becerra:</strong> ~$5.2M; Chevron donor flagged.</li>
+      <li><strong>Becerra:</strong> ~$5.2M; Chevron contributions confirmed.</li>
       <li><strong>Bianco:</strong> ~$3.7M; law-enforcement and CRPA; separate legal-defense fund Oct 2025.</li>
       <li><strong>Villaraigosa:</strong> ~$3.2M; labor trades and LA business.</li>
       <li><strong>Thurmond:</strong> ~$101K+; electrical, plumber, boilermaker locals; Oakland POA.</li>
@@ -2554,9 +2565,10 @@ function buildBriefing() {
       exp: "30+ years at Riverside Sheriff's Department. No state-level experience.",
       money: "~$3.7M. Law enforcement + CRPA donors. Legal defense fund opened Oct 2025.",
       pros: "30+ year LE career. Disciplined county budget. Clear positions on Prop 36, ICE cooperation, agricultural deregulation.",
-      cons: "Worst CA crime-clearance rate (9.2%). 18 jail deaths in 2022 (15-yr high). Ballot seizure based on activist-group evidence. Oath Keepers 2014. $100M Vem Miller federal lawsuit.",
+      cons: "Worst CA crime-clearance rate (9.2%). 18 jail deaths in 2022 (15-yr high). Currently facing lawsuits over seizing 650,000+ ballots from Nov 2025 special election (basis: activist-group evidence). Oath Keepers 2014. $100M Vem Miller federal lawsuit.",
       platform: "Prop 36 + prison expansion. Weaken SB 54 sanctuary law. Agriculture deregulation. Election integrity is central theme.",
-      polling: "~14%"
+      endorsements: "<strong>For:</strong> California State Sheriffs' Association; CRPA (gun rights). <strong>Against / opposition:</strong> CA Democratic Party leadership and pro-democracy groups citing ballot seizure suit. <strong>Notable:</strong> CA GOP did NOT endorse at April 2026 convention (neither Hilton nor Bianco hit 60% threshold).",
+      polling: "~10% (CBS/YouGov, late April 2026, down from ~14%)"
     })}
 
     ${buildCandidateCard({
@@ -2565,20 +2577,22 @@ function buildBriefing() {
       exp: "No US elected office. UK political staff 2010-2012. Fox Next Revolution host 2017-2023. US citizen since 2021.",
       money: "~$5.7M. Rupert Murdoch cited as donor. Fox-adjacent network.",
       pros: "Strongest GOP policy background. Specific tax plan (no income tax under $100K; 7.5% flat above). Trump-endorsed April 6, 2026.",
-      cons: "Never held US elected office. Still a paid Fox News contributor during campaign. Spouse Rachel Whetstone is senior tech exec (Google, Uber, Facebook, Netflix). Crowdpac 2018 exit controversy.",
-      platform: "Flat tax above $100K. Cap housing taxes. CEQA reform. Cooperate with ICE. Roll back environmental rules.",
-      polling: "~17% (leads the field)"
+      cons: "Never held US elected office. Still a paid Fox News contributor during campaign. Spouse Rachel Whetstone is senior tech exec (Google, Uber, Facebook, Netflix). Crowdpac 2018 exit controversy. At April 28 Pomona debate, would not say what he'd do to support clean energy.",
+      platform: "Flat tax above $100K. Cap housing taxes. CEQA reform. Cooperate with ICE. Roll back environmental rules. Suspend gas tax. Eliminate many state climate goals.",
+      endorsements: "<strong>For:</strong> President Donald Trump (April 6, 2026); some local CA GOP committees. <strong>Notable:</strong> CA GOP did NOT endorse at April 2026 convention (Hilton fell short of 60% threshold despite Trump backing). Considered front-runner among R voters but Republicans split with Bianco.",
+      polling: "~16% (CBS/YouGov late April 2026, leads field but field is fragmented)"
     })}
 
     ${buildCandidateCard({
       name: "Xavier Becerra (D)",
       role: "Former HHS Secretary (2021-25); former CA AG (2017-21); 12 terms in Congress",
       exp: "Federal cabinet, statewide AG, 12 Congressional terms. Most diverse resume in field. First Latino CA AG; first Latino HHS Sec.",
-      money: "~$5.2M. Traditional Dem donors. Chevron flagged.",
-      pros: "Sued Trump 122 times as AG, won DACA/ACA. Medicare drug-price negotiation 38-79% cuts. Won CA AG 61% in 2018.",
-      cons: "2025 chief-of-staff pleaded guilty to $225K theft from dormant Becerra account. 2024 Politico Hatch Act report. 85,000 migrant kids lost contact at HHS. NIFLA SCOTUS loss.",
-      platform: "Stabilize rents, freeze insurance rate increases. Protect Medicare/Medicaid. Expand early childhood ed. Sanctuary defender.",
-      polling: "~10-13%"
+      money: "~$5.2M. Traditional Dem donors. Chevron contributions confirmed in 2026 race; previously accepted maximum-allowable Chevron in 2018 AG race.",
+      pros: "Sued Trump 122 times as AG, won DACA/ACA. Medicare drug-price negotiation 38-79% cuts. Won CA AG 61% in 2018. Recent polling and fundraising boost; 'most experienced candidate' positioning.",
+      cons: "2025 chief-of-staff Sean McCluskie pleaded guilty to $225K theft scheme from dormant Becerra account (Becerra was the victim, cooperated with FBI, not implicated). 85,000 migrant kids lost contact at HHS. NIFLA SCOTUS loss. At April 28 Pomona debate, Mahan attacked his HHS record and Becerra argued with moderator over insurance-rate-freeze legality.",
+      platform: "Declare state of emergency to freeze home insurance and utility rate increases (legality contested; willing to defend in court). Open to revising state climate goals to keep fuel affordable for middle-class Californians. Stabilize rents. Protect Medicare/Medicaid. Expand early childhood ed. Sanctuary defender. Opposes gas tax suspension.",
+      endorsements: "<strong>For:</strong> California Faculty Association (split with Thurmond); some Latino political organizations; growing online influencer presence. <strong>Notable:</strong> Despite long resume, no major union or top-tier elected-official endorsements yet.",
+      polling: "~13% (CBS/YouGov late April 2026, biggest gain in field, up from ~10%)"
     })}
 
     ${buildCandidateCard({
@@ -2586,43 +2600,47 @@ function buildBriefing() {
       role: "Former US Rep CA-47 (2019-25); UC Irvine law professor",
       exp: "6 yrs US House (Oversight, Natural Resources). Lost 2024 Senate primary (3rd).",
       money: "$6.1M in 2025. Avg donation ~$68. No corporate PAC money.",
-      pros: "Deepest Democratic policy work (10-pt housing plan, $4B zero-tuition pathway). Most labor endorsements of any Dem. Grassroots donor model.",
-      cons: "Lost 2024 Senate primary. Documented staff-treatment issues. 2024 CBS Sacramento viral incident. Housing plan written for federal, not state, tools.",
-      platform: "Housing for All (10 pts, endorses SB 79). Zero-tuition pathway. \"Health-care governor.\" 100% renewable.",
-      polling: "~8-10%"
+      pros: "Deepest Democratic policy work (10-pt housing plan, $4B zero-tuition pathway). Strong labor support. Grassroots donor model. At April 28 debate, declared 'this is worse than my teenagers at dinner' as moderators struggled to control crosstalk.",
+      cons: "Lost 2024 Senate primary. Documented staff-treatment issues including 2024 viral CBS Sacramento incident. Housing plan written for federal, not state, tools. Has not locked down women voters per CBS poll demographics.",
+      platform: "Housing for All (10 pts, endorses SB 79). Cut income taxes for middle-income earners; raise corporate taxes on large businesses. Zero-tuition pathway by raising corporate taxes. \"Health-care governor.\" 100% renewable. Opposes gas tax suspension. Wants to keep oil refineries open while electrifying. Has called Becerra's insurance freeze 'unconstitutional' and Villaraigosa's Fair Plan expansion insufficient.",
+      endorsements: "<strong>For:</strong> Sen. Elizabeth Warren; California Federation of Labor Unions (co-endorsement with Steyer and Villaraigosa). <strong>Against:</strong> Mahan campaign explicitly framing Porter's staff incidents as 'baggage' she carries. <strong>Notable:</strong> Lost some momentum after Swalwell exit didn't consolidate behind her as expected.",
+      polling: "~10% (CBS/YouGov late April 2026, mostly flat)"
     })}
 
     ${buildCandidateCard({
       name: "Tom Steyer (D)",
       role: "Founder Farallon Capital (1986-2012); founder NextGen Climate",
       exp: "Private-sector exec at scale. Chaired Newsom's pandemic econ-recovery task force 2020. No elected office. 2020 presidential run ($200M+, finished 3rd SC).",
-      money: "~$122.7M raised, 99.9% self-funded.",
-      pros: "Deepest overall policy agenda. Self-funded = donor-independent. Proven at $10B+ scale. Climate policy unrivaled. Only billionaire backing a wealth tax on billionaires.",
-      cons: "Farallon held ~$90M in Corrections Corporation of America (now CoreCivic/ICE). Still hedge-fund income per 2024 disclosure. Polling mid-teens after $122M. Never elected.",
-      platform: "1M homes in 4 years. Rent tax-deduction, rent-spike protection. AI compute fee → Worker Transition Fund. Golden State Sovereign Wealth Fund. Abolish ICE.",
-      polling: "~14%"
+      money: "~$130M+ raised, ~99.9% self-funded. Has spent more than all other candidates combined per AdImpact data.",
+      pros: "Deepest overall policy agenda. Self-funded = donor-independent. Proven at $10B+ scale. Climate policy unrivaled. Only billioneer backing a wealth tax on billionaires. Top-tier union backing.",
+      cons: "Past investments under fresh scrutiny: Farallon held ~$90M in Corrections Corp of America (now CoreCivic, used as ICE detention) and coal mining. Still hedge-fund income per 2024 disclosure. Spent $130M+ but stuck mid-teens in polls. Mahan campaign attacking him as 'trying to buy it.'",
+      platform: "1M homes in 4 years. Rent tax-deduction, rent-spike protection. Insurance: reduce wildfire risk first (controlled burns to clear dry timber, home hardening), then negotiate with insurers based on actual reduced risk. AI compute fee → Worker Transition Fund. Golden State Sovereign Wealth Fund. More taxes on oil industry profits. Free education from preschool through community college. Abolish ICE. Opposes gas tax suspension.",
+      endorsements: "<strong>For:</strong> Hillary Clinton; former State Controller Betty Yee; former CA Senate pro tem Toni Atkins; California Federation of Teachers; California School Employees Association; AFSCME; California Federation of Labor Unions (co-endorsement with Porter and Villaraigosa); John Podesta; Ali Zaidi. <strong>Against:</strong> Becerra campaign explicitly running 'earned vs bought' framing against him.",
+      polling: "~15% (CBS/YouGov late April 2026, statistically tied with Hilton at top)"
     })}
 
     ${buildCandidateCard({
       name: "Antonio Villaraigosa (D)",
       role: "Former 2-term LA Mayor (2005-13); former Assembly Speaker",
       exp: "8 yrs LA Mayor; Assembly Speaker; LA City Council. Most operating-executive experience in Dem field. Lost 2018 governor primary.",
-      money: "~$3.2M. Labor trades + LA business.",
-      pros: "Most operating-exec experience. Delivered Measure R (2008, ~$40B LA transit). Sophisticated CEQA reform. Deep labor (former teachers'-union organizer).",
-      cons: "13 yrs out of office. Mercury Public Affairs co-chair 2018-21 during Manafort-FARA episode. Herbalife advisor (LULAC condemned). Banc of CA. 2010: 81 unreported tickets (courtside Lakers $3,100 ea, Oscars tickets $21,000 ea).",
-      platform: "Executive orders on transit-adjacent density. CEQA reform (limit private lawsuits). Statewide community policing surge. Refinery deregulation.",
-      polling: "~5-7%"
+      money: "~$3.2M. Labor trades + LA business. Chevron contributions confirmed.",
+      pros: "Most operating-exec experience. Delivered Measure R (2008, ~$40B LA transit). Sophisticated CEQA reform. Deep labor (former teachers'-union organizer). Launched website cataloging Becerra's controversies, drawing scrutiny to top rivals.",
+      cons: "13 yrs out of office. Mercury Public Affairs co-chair 2018-21 during Manafort-FARA episode. Herbalife advisor (LULAC condemned). Banc of CA. 2010: 81 unreported tickets (courtside Lakers $3,100 ea, Oscars tickets $21,000 ea). Polling stuck at 4-7%.",
+      platform: "Affordable housing and energy infrastructure. Executive orders on transit-adjacent density. CEQA reform (limit private lawsuits). Statewide community policing surge. Refinery deregulation (keep refineries open). Expand the state's Fair Plan as an insurance backstop (Porter has called this approach insufficient). Opposes gas tax suspension. Expand financial aid (no free tuition pledge).",
+      endorsements: "<strong>For:</strong> LA Mayor Karen Bass; former US Sen. Barbara Boxer (after Kounalakis withdrew); California Federation of Labor Unions (co-endorsement with Porter and Steyer); some Latino political organizations.",
+      polling: "~4-5% (CBS/YouGov late April 2026)"
     })}
 
     ${buildCandidateCard({
       name: "Matt Mahan (D)",
       role: "Mayor of San Jose since January 2023",
       exp: "SJ Council 2021-23. Never finished a full elected term. Harvard '05. CEO Causes + Brigade Media.",
-      money: "~$12.7M. Brin, Lonsdale, Moritz, Caruso. Super PAC $15M+, Super Bowl LX ad.",
-      pros: "Currently operating major city. 2,000 stalled SJ housing units moving after fee/permit reform. Performance-based budgeting. Most operationally specific moderate Dem platform.",
+      money: "~$12.7M. Brin, Lonsdale, Moritz, Caruso. Super PAC $15M+, Super Bowl LX ad. Ami Bera (CA-6) endorsed after Swalwell exit.",
+      pros: "Currently operating major city. 1,000 shelter beds added in San Jose in one year, with reported one-third reduction in street homelessness. 2,000 stalled SJ housing units moving after fee/permit reform. Performance-based budgeting. Most operationally specific moderate Dem platform. Aggressively positioning as 'no baggage' candidate vs. Porter/Steyer/Becerra.",
       cons: "April 17, 2026 FPPC complaint: alleges illegal coordination with pro-Mahan super PAC; Zoom call with Moritz ($1M) and Caruso ($1.5M) April 6 as evidence. Never finished a term. Silicon Valley billionaire donor concentration. No labor support.",
-      platform: "Two-year housing tax holiday. Gas-tax suspension. Impact-fee caps. Shelter-or-arrest. Tiny-home villages. Cellphone ban in schools. Pathway to citizenship.",
-      polling: "~5%"
+      platform: "Two-year housing tax holiday. Gas-tax suspension (one of two Dems supporting). Impact-fee caps. Shelter-or-arrest. Tiny-home villages. Cellphone ban in schools. Pathway to citizenship. Wants to keep oil refineries open while electrifying. Opposes single-payer ('we don't know how to pay for it').",
+      endorsements: "<strong>For:</strong> Rep. Ami Bera (CA-6, after rescinding Swalwell endorsement); Silicon Valley business leaders; tech investors. <strong>Against:</strong> Labor unions broadly skeptical given his business-backing; San Jose progressives have criticized homeless-arrest stance.",
+      polling: "~4-5% (CBS/YouGov late April 2026)"
     })}
 
     ${buildCandidateCard({
@@ -2630,10 +2648,11 @@ function buildBriefing() {
       role: "CA Superintendent of Public Instruction since 2019",
       exp: "Richmond City Council, WCCUSD school board, Assembly 2014-18, Superintendent. Won statewide twice (2018, 2022).",
       money: "Lowest-funded top-8. ~$101K+. Electrical/plumber/boilermaker locals. Oakland POA.",
-      pros: "Lived experience of CA poverty. Won statewide twice with limited funds. Deepest K-12 plan. Only Dem backing both billionaire's tax AND Prop 13 commercial reform.",
-      cons: "Polling ~5%. 2021 Daniel Lee hiring scandal (Politico): longtime associate hired as \"superintendent of equity\" at $179,832/yr, no public posting, Philadelphia-based (residency rule concern). Seven elected offices pursued since 2004.",
-      platform: "State tax credit for working families. Raise taxes on billionaires; commercial Prop 13 reform. CS graduation requirement, dual-language expansion, $10K school mental-health clinicians. Abolish ICE.",
-      polling: "~5%"
+      pros: "Lived experience of CA poverty. Won statewide twice with limited funds. Deepest K-12 plan. Only Dem backing both billionaire's tax AND Prop 13 commercial reform. Won Akilah Weber endorsement after Atkins withdrew.",
+      cons: "Polling ~5%. 2021 Daniel Lee hiring scandal (Politico): longtime associate hired as \"superintendent of equity\" at $179,832/yr, no public posting, Philadelphia-based (residency rule concern). Seven elected offices pursued since 2004. Joined Republicans in supporting gas tax suspension at April 28 debate, splitting from Becerra/Porter/Steyer/Villaraigosa.",
+      platform: "State tax credit for working families. Raise taxes on billionaires; commercial Prop 13 reform. Insurance: restrict rate increases unless insurers keep offering coverage; use financial pressure to force compliance. CS graduation requirement, dual-language expansion, $10K school mental-health clinicians. Suspend gas tax. Abolish ICE.",
+      endorsements: "<strong>For:</strong> California Faculty Association (split with Becerra); Sen. Akilah Weber (SD-39); some labor locals (electrical, plumber, boilermaker); Oakland POA. <strong>Notable:</strong> Most progressive tax positions in field but lowest budget — visibility issue, not platform issue.",
+      polling: "~4% (CBS/YouGov late April 2026, lowest of 8 qualifying candidates)"
     })}
 
     <h2 class="b-h1" id="detail">Business Holdings & Complaints (Detail)</h2>
@@ -2780,7 +2799,7 @@ function buildBriefing() {
       <li>tonythurmond.com</li>
     </ul>
 
-    <p class="b-p" style="margin-top: 28px; font-style: italic; color: #6a6a67; font-size: 13px;">Compiled April 23, 2026. Polling figures reflect late-April 2026 snapshots and will shift between now and June 2. This briefing does not recommend a vote — it helps you make your own informed decision.</p>
+    <p class="b-p" style="margin-top: 28px; font-style: italic; color: #6a6a67; font-size: 13px;">Compiled May 3, 2026. Polling figures reflect late-April / early-May 2026 snapshots and will shift between now and June 2. This briefing does not recommend a vote — it helps you make your own informed decision.</p>
 
     ${buildEconContext()}
 
@@ -2791,6 +2810,9 @@ function buildBriefing() {
 }
 
 function buildCandidateCard(d) {
+  const endorsementsBlock = d.endorsements ? `
+      <div class="bcard-label">Key endorsements & opposition</div>
+      <div class="bcard-body">${d.endorsements}</div>` : '';
   return `
     <div class="bcard">
       <div class="bcard-head">${d.name}</div>
@@ -2804,7 +2826,7 @@ function buildCandidateCard(d) {
       <div class="bcard-label">Top cons</div>
       <div class="bcard-body">${d.cons}</div>
       <div class="bcard-label">Platform headlines</div>
-      <div class="bcard-body">${d.platform}</div>
+      <div class="bcard-body">${d.platform}</div>${endorsementsBlock}
       <div class="bcard-label">Current polling</div>
       <div class="bcard-body">${d.polling}</div>
     </div>

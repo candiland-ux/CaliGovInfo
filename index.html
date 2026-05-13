@@ -196,6 +196,90 @@
   }
   .disclaimer strong { color: #111 !important; -webkit-text-fill-color: #111; }
 
+  .resources {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .resource-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    background: #faf7f0 !important;
+    border: 1px solid #e3ddc9;
+    border-left: 3px solid #c8321a;
+    border-radius: 4px;
+    text-decoration: none;
+    color: inherit;
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+  }
+  .resource-link:hover, .resource-link:active {
+    background: #f3eedc !important;
+  }
+  .resource-label {
+    color: #2a251e !important;
+    -webkit-text-fill-color: #2a251e;
+    font-weight: 500;
+  }
+  .resource-host {
+    color: #c8321a !important;
+    -webkit-text-fill-color: #c8321a;
+    font-size: 12px;
+    white-space: nowrap;
+    margin-left: 12px;
+  }
+  .prompt-body {
+    margin-top: -4px;
+    padding: 16px 18px;
+    background: #faf7f0 !important;
+    border: 1px solid #e3ddc9;
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .prompt-intro {
+    margin: 0 0 12px;
+    color: #5a544a !important;
+    -webkit-text-fill-color: #5a544a;
+  }
+  .prompt-text {
+    background: #fff !important;
+    border: 1px solid #e3ddc9;
+    border-radius: 4px;
+    padding: 12px 14px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #2a251e !important;
+    -webkit-text-fill-color: #2a251e;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-height: 360px;
+    overflow-y: auto;
+    margin: 0 0 12px;
+  }
+  .prompt-copy {
+    background: #c8321a !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .prompt-copy:hover, .prompt-copy:active {
+    background: #a82914 !important;
+  }
+
   .data-banner {
     padding: 10px 14px;
     background: #fef5f2 !important;
@@ -1528,7 +1612,7 @@ function renderIntro() {
       <span class="tag">Primary · June 2, 2026</span>
       <h1>Which candidate for California Governor matches your priorities?</h1>
 
-      <div class="data-banner"><strong>Data as of May 3, 2026.</strong> Polls, fundraising totals, endorsements, and campaign status all change. Anything published after this date won't be reflected here. For live data, check <a href="https://www.fec.gov" target="_blank" rel="noopener">FEC.gov</a>, <a href="https://ballotpedia.org" target="_blank" rel="noopener">Ballotpedia</a>, or <a href="https://emersoncollegepolling.com" target="_blank" rel="noopener">Emerson Polling</a>.</div>
+      <div class="data-banner"><strong>Data as of May 13, 2026.</strong> Polls, fundraising totals, endorsements, and campaign status all change. Anything published after this date won't be reflected here. For live data, check <a href="https://www.fec.gov" target="_blank" rel="noopener">FEC.gov</a>, <a href="https://ballotpedia.org" target="_blank" rel="noopener">Ballotpedia</a>, or <a href="https://emersoncollegepolling.com" target="_blank" rel="noopener">Emerson Polling</a>.</div>
 
       <div class="intro-card">
         <h3>How it works</h3>
@@ -1549,8 +1633,46 @@ function renderIntro() {
         <button class="cta" onclick="begin()">Find my match</button>
       </div>
 
+      <div class="resources">
+        <a class="resource-link" href="https://anthropic.turbovote.org/" target="_blank" rel="noopener">
+          <span class="resource-label">Register to vote or check your registration</span>
+          <span class="resource-host">turbovote.org →</span>
+        </a>
+        <button class="resource-link" onclick="togglePrompt()">
+          <span class="resource-label">In a different state? Build your own matcher</span>
+          <span class="resource-host" id="promptToggle">show the AI prompt ↓</span>
+        </button>
+        <div class="prompt-body" id="promptBody" style="display:none;">
+          <p class="prompt-intro">Copy and paste this into Claude (or any capable AI assistant). Edit the bracketed parts before sending. The AI will research candidates, build the question set, and generate a working tool. Always verify the results before sharing.</p>
+          <pre class="prompt-text" id="promptText">I want to build a non-partisan voter matcher for the [STATE NAME] [RACE TYPE — e.g. "Senate primary", "Governor's race", "Mayor's race"] in [YEAR]. Two working examples to study: https://candiland-ux.github.io/KY_Match/ (Kentucky Senate + House) and https://candiland-ux.github.io/CaliGovInfo/ (California Governor). Use the same structural approach. Here's what I need:
+
+1. Research the candidates. For each major candidate (5%+ polling or significant media attention), pull together: background and current role, money raised (FEC filings or state campaign-finance database), top platform positions on the issues that actually matter in this race, known controversies or lawsuits, endorsements for and against, and latest polling.
+
+2. Build 6 to 8 questions that distinguish the candidates from each other on the dimensions that actually divide them. One question should be a multi-select top-issue ranker (let the voter rank 3 in order, with the first counting more than the second). The others should be single-select on things like temperament, money model, experience type, and a "red flag" deal-breaker question.
+
+3. Score every candidate 0 to 5 on every answer option, based on how closely their public record and platform align with that answer. Don't inflate. If a candidate doesn't fit, give them a 0. Every candidate should have at least one 5 somewhere so their ceiling reaches at least 80%.
+
+4. Display alignment as a percentage of the theoretical maximum (the highest score any candidate could earn if the voter answered every question to match that candidate's strongest positions). Explain in plain terms that no candidate hits 100% because no candidate is the strongest voice on every issue.
+
+5. For every candidate, write a "one thing to know before you vote" caveat that names their biggest documented liability. Neutral language, specific facts, never inflated.
+
+6. Build an Executive Summary of the race, recent developments (debates, endorsements, attacks, polling shifts), the candidates' deepest plans, and the biggest risk factors.
+
+7. Style rules: no em dashes (they read as AI-generated), plain English not jargon, past tense for any role the candidate no longer holds, be specific about what the candidate personally did versus their team. If you cannot verify a fact, leave it out.
+
+8. Output as a single HTML file that works on mobile, with a clear flow: party gate (if it's a closed primary), then questions one at a time, then a result page with the top match, runner-up, scoreboard, methodology explanation, and a "read the full briefing" button.
+
+9. Add a timestamp banner that says when the data was last updated, and link out to FEC.gov, Ballotpedia, and the major polling source for the race so voters can check fresher numbers.
+
+10. Never recommend a vote. The tool exists to show how the voter's stated priorities map onto the field. It should make that comparison legible, not pick a winner for them.
+
+If you're building this for a state with very different politics, adjust the questions accordingly. Start by asking me what races I want to cover and what's most contested in my state, before writing any code.</pre>
+          <button class="prompt-copy" onclick="copyPrompt()">Copy prompt</button>
+        </div>
+      </div>
+
       <div class="disclaimer">
-        This tool doesn't tell you who to vote for. It just shows you which candidate best matches what you said matters. All data is a snapshot from May 3, 2026 drawn from FEC filings, public polling, Ballotpedia, and each candidate's published plans. Always verify current status before voting.
+        This tool doesn't tell you who to vote for. It just shows you which candidate best matches what you said matters. All data is a snapshot from May 13, 2026 drawn from FEC filings, public polling, Ballotpedia, and each candidate's published plans. Always verify current status before voting.
       </div>
 
       <div class="econ-callout">
@@ -2382,6 +2504,34 @@ function restart() { state.step = -1; state.answers = {}; state.showScores = fal
 function toggleScores() { state.showScores = !state.showScores; render(); }
 function toggleMethod() { state.showMethod = !state.showMethod; render(); }
 
+function togglePrompt() {
+  const body = document.getElementById('promptBody');
+  const toggle = document.getElementById('promptToggle');
+  if (body.style.display === 'none') {
+    body.style.display = 'block';
+    toggle.textContent = 'hide prompt ↑';
+  } else {
+    body.style.display = 'none';
+    toggle.textContent = 'show the AI prompt ↓';
+  }
+}
+
+function copyPrompt() {
+  const text = document.getElementById('promptText').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.prompt-copy');
+    const original = btn.textContent;
+    btn.textContent = 'Copied ✓';
+    setTimeout(() => { btn.textContent = original; }, 2000);
+  }).catch(() => {
+    // Fallback: select text for manual copy
+    const range = document.createRange();
+    range.selectNode(document.getElementById('promptText'));
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+  });
+}
+
 // ==========================================================
 // FULL BRIEFING — overlay content
 // ==========================================================
@@ -2474,8 +2624,8 @@ function buildEconContext() {
 function buildBriefing() {
   return `
     <h2 class="b-h1" id="top">California Governor 2026 — Voter Briefing</h2>
-    <div class="data-banner"><strong>Data as of May 3, 2026.</strong> Polls, fundraising, and endorsements change. For live data see FEC.gov, Ballotpedia, and Emerson Polling.</div>
-    <p class="b-p">Primary: June 2, 2026. Mail ballots begin arriving in early May. Top-two primary means the two highest finishers — even from the same party — advance to November.</p>
+    <div class="data-banner"><strong>Data as of May 13, 2026.</strong> Polls, fundraising, and endorsements change. For live data see FEC.gov, Ballotpedia, and Emerson Polling.</div>
+    <p class="b-p">Primary: June 2, 2026 — about three weeks away. Mail ballots are arriving in mailboxes now. Top-two primary means the two highest finishers — even from the same party — advance to November.</p>
 
     <div class="briefing-toc">
       <h4>In this briefing</h4>
@@ -2488,15 +2638,18 @@ function buildBriefing() {
     </div>
 
     <h2 class="b-h1" id="summary">Executive Summary</h2>
-    <p class="b-p">Eight major candidates are competing. As of late April / early May 2026, polling leaders are Republican Steve Hilton (~16%) and Democrat Tom Steyer (~15%), in a statistical tie. Becerra has surged to ~13% (up from ~10%) following Swalwell's exit. Bianco has dropped to ~10% (from ~14%). Porter (~10%), Mahan (~4-5%), Villaraigosa (~4-5%), and Thurmond (~4%) trail. About 26% of voters remain undecided. Eric Swalwell suspended his campaign April 12 amid sexual-assault allegations. Betty Yee dropped out April 21 and endorsed Steyer. Two debates have happened (April 22 KRON, April 28 Pomona), with a CNN debate scheduled for May 5.</p>
+    <p class="b-p">Eight major candidates are competing. As of May 13, 2026, the latest Emerson College poll (May 9-10) shows Becerra now LEADING at 19%, with Steve Hilton and Tom Steyer tied at 17%. Becerra has surged 9 points since mid-April, driven by becoming the top choice among Democratic voters at 31%. Porter at 10%, Mahan at 8%. Bianco, Villaraigosa, and Thurmond trail below 5%. About 12% of voters remain undecided. Eric Swalwell suspended his campaign April 12 amid sexual-assault allegations. Betty Yee dropped out April 21 and endorsed Steyer. Three debates have happened (April 22 KRON, April 28 Pomona, May 5 CNN), and the CNN debate at East LA College was the most direct head-to-head yet, with Becerra a frequent target from both parties.</p>
 
-    <h4 class="b-h3">Recent campaign developments (late April 2026)</h4>
+    <h4 class="b-h3">Recent campaign developments</h4>
     <ul class="b-ul">
+      <li><strong>May 9-10:</strong> Emerson poll shows Becerra at 19% (now leading), Hilton 17%, Steyer 17%, Porter 10%, Mahan 8%. Becerra leads Democratic voters at 31%.</li>
+      <li><strong>May 5:</strong> CNN debate at East LA College, Monterey Park. First real debate format. Becerra targeted by both parties. Hilton and Bianco mostly stuck to standard GOP attacks blaming Democratic state control for high poverty, unemployment, housing costs.</li>
+      <li><strong>April 28:</strong> CBS-broadcast debate at Pomona College.</li>
       <li><strong>April 22:</strong> KRON4/Nexstar debate in San Francisco was the first major head-to-head.</li>
-      <li><strong>April 28:</strong> CBS-broadcast debate at Pomona College — described by one Pomona student as making her "more confused on who to vote for than ever." Six Democrats targeted Steyer and Becerra.</li>
       <li><strong>April 2026 CA GOP convention:</strong> No endorsement issued; neither Hilton nor Bianco hit the 60% threshold.</li>
-      <li><strong>Steyer momentum:</strong> Won endorsements from Hillary Clinton, former Senate pro tem Toni Atkins, California Federation of Teachers, AFSCME. Has spent $130M+, more than all others combined.</li>
-      <li><strong>Becerra momentum:</strong> Biggest poll gain in field (10% → 13%); positioning as 'most experienced' against Steyer's wealth.</li>
+      <li><strong>Becerra surge:</strong> Up 9 points since mid-April. Now top Dem voter choice. 48% of Becerra voters say they could still change their mind.</li>
+      <li><strong>Steyer attacks Becerra:</strong> Series of anti-Becerra TV ads and press releases. At May 5 debate, charged that Becerra opposed single-payer to secure California Medical Association endorsement ("the CMA maxed out for Becerra"). Steyer touts California Nurses Association backing (the main single-payer advocacy union).</li>
+      <li><strong>Becerra on single-payer:</strong> Refused to endorse single-payer; said he backs "Medicare for All" as an answer to health-care disparities. Porter was the only other Democrat to unreservedly endorse single-payer at the debate.</li>
       <li><strong>New scrutiny:</strong> Steyer hit on past Farallon coal-mining and Corrections Corp of America investments (now used for ICE detention). Bianco facing lawsuits over the 650,000-ballot seizure.</li>
     </ul>
 
@@ -2568,7 +2721,7 @@ function buildBriefing() {
       cons: "Worst CA crime-clearance rate (9.2%). 18 jail deaths in 2022 (15-yr high). Currently facing lawsuits over seizing 650,000+ ballots from Nov 2025 special election (basis: activist-group evidence). Oath Keepers 2014. $100M Vem Miller federal lawsuit.",
       platform: "Prop 36 + prison expansion. Weaken SB 54 sanctuary law. Agriculture deregulation. Election integrity is central theme.",
       endorsements: "<strong>For:</strong> California State Sheriffs' Association; CRPA (gun rights). <strong>Against / opposition:</strong> CA Democratic Party leadership and pro-democracy groups citing ballot seizure suit. <strong>Notable:</strong> CA GOP did NOT endorse at April 2026 convention (neither Hilton nor Bianco hit 60% threshold).",
-      polling: "~10% (CBS/YouGov, late April 2026, down from ~14%)"
+      polling: "below 5% (Emerson May 9-10, dropped from 10% as Hilton consolidates GOP support)"
     })}
 
     ${buildCandidateCard({
@@ -2580,7 +2733,7 @@ function buildBriefing() {
       cons: "Never held US elected office. Still a paid Fox News contributor during campaign. Spouse Rachel Whetstone is senior tech exec (Google, Uber, Facebook, Netflix). Crowdpac 2018 exit controversy. At April 28 Pomona debate, would not say what he'd do to support clean energy.",
       platform: "Flat tax above $100K. Cap housing taxes. CEQA reform. Cooperate with ICE. Roll back environmental rules. Suspend gas tax. Eliminate many state climate goals.",
       endorsements: "<strong>For:</strong> President Donald Trump (April 6, 2026); some local CA GOP committees. <strong>Notable:</strong> CA GOP did NOT endorse at April 2026 convention (Hilton fell short of 60% threshold despite Trump backing). Considered front-runner among R voters but Republicans split with Bianco.",
-      polling: "~16% (CBS/YouGov late April 2026, leads field but field is fragmented)"
+      polling: "~17% (Emerson May 9-10, tied with Steyer for 2nd, stagnant since April; Hilton voters most committed at 73%)"
     })}
 
     ${buildCandidateCard({
@@ -2588,11 +2741,11 @@ function buildBriefing() {
       role: "Former HHS Secretary (2021-25); former CA AG (2017-21); 12 terms in Congress",
       exp: "Federal cabinet, statewide AG, 12 Congressional terms. Most diverse resume in field. First Latino CA AG; first Latino HHS Sec.",
       money: "~$5.2M. Traditional Dem donors. Chevron contributions confirmed in 2026 race; previously accepted maximum-allowable Chevron in 2018 AG race.",
-      pros: "Sued Trump 122 times as AG, won DACA/ACA. Medicare drug-price negotiation 38-79% cuts. Won CA AG 61% in 2018. Recent polling and fundraising boost; 'most experienced candidate' positioning.",
-      cons: "2025 chief-of-staff Sean McCluskie pleaded guilty to $225K theft scheme from dormant Becerra account (Becerra was the victim, cooperated with FBI, not implicated). 85,000 migrant kids lost contact at HHS. NIFLA SCOTUS loss. At April 28 Pomona debate, Mahan attacked his HHS record and Becerra argued with moderator over insurance-rate-freeze legality.",
+      pros: "Sued Trump 122 times as AG, won DACA/ACA. Medicare drug-price negotiation 38-79% cuts. Won CA AG 61% in 2018. Now top Dem voter choice at 31% (Emerson May 9-10). Has California Medical Association endorsement. 'Most experienced candidate' positioning gaining traction.",
+      cons: "2025 chief-of-staff Sean McCluskie pleaded guilty to $225K theft scheme from dormant Becerra account (Becerra was the victim, cooperated with FBI, not implicated). 85,000 migrant kids lost contact at HHS. NIFLA SCOTUS loss. At the May 5 CNN debate, faced direct attacks from both parties (Becerra is now the candidate to beat in the Dem primary). Steyer charged he opposed single-payer to secure CMA endorsement. 48% of his own voters say they could still change their mind.",
       platform: "Declare state of emergency to freeze home insurance and utility rate increases (legality contested; willing to defend in court). Open to revising state climate goals to keep fuel affordable for middle-class Californians. Stabilize rents. Protect Medicare/Medicaid. Expand early childhood ed. Sanctuary defender. Opposes gas tax suspension.",
-      endorsements: "<strong>For:</strong> California Faculty Association (split with Thurmond); some Latino political organizations; growing online influencer presence. <strong>Notable:</strong> Despite long resume, no major union or top-tier elected-official endorsements yet.",
-      polling: "~13% (CBS/YouGov late April 2026, biggest gain in field, up from ~10%)"
+      endorsements: "<strong>For:</strong> California Medical Association (Becerra's largest health-care endorsement); California Faculty Association (split with Thurmond); some Latino political organizations; growing online influencer presence. <strong>Notable:</strong> Becerra opposes single-payer; Steyer charges this position was tied to securing the CMA endorsement.",
+      polling: "~19% (Emerson May 9-10, leads field, top among Dem voters at 31%, up 9 pts since mid-April)"
     })}
 
     ${buildCandidateCard({
@@ -2604,7 +2757,7 @@ function buildBriefing() {
       cons: "Lost 2024 Senate primary. Documented staff-treatment issues including 2024 viral CBS Sacramento incident. Housing plan written for federal, not state, tools. Has not locked down women voters per CBS poll demographics.",
       platform: "Housing for All (10 pts, endorses SB 79). Cut income taxes for middle-income earners; raise corporate taxes on large businesses. Zero-tuition pathway by raising corporate taxes. \"Health-care governor.\" 100% renewable. Opposes gas tax suspension. Wants to keep oil refineries open while electrifying. Has called Becerra's insurance freeze 'unconstitutional' and Villaraigosa's Fair Plan expansion insufficient.",
       endorsements: "<strong>For:</strong> Sen. Elizabeth Warren; California Federation of Labor Unions (co-endorsement with Steyer and Villaraigosa). <strong>Against:</strong> Mahan campaign explicitly framing Porter's staff incidents as 'baggage' she carries. <strong>Notable:</strong> Lost some momentum after Swalwell exit didn't consolidate behind her as expected.",
-      polling: "~10% (CBS/YouGov late April 2026, mostly flat)"
+      polling: "~10% (Emerson May 9-10, holding steady; only Dem besides Steyer unreservedly endorsing single-payer at May 5 debate)"
     })}
 
     ${buildCandidateCard({
@@ -2615,8 +2768,8 @@ function buildBriefing() {
       pros: "Deepest overall policy agenda. Self-funded = donor-independent. Proven at $10B+ scale. Climate policy unrivaled. Only billioneer backing a wealth tax on billionaires. Top-tier union backing.",
       cons: "Past investments under fresh scrutiny: Farallon held ~$90M in Corrections Corp of America (now CoreCivic, used as ICE detention) and coal mining. Still hedge-fund income per 2024 disclosure. Spent $130M+ but stuck mid-teens in polls. Mahan campaign attacking him as 'trying to buy it.'",
       platform: "1M homes in 4 years. Rent tax-deduction, rent-spike protection. Insurance: reduce wildfire risk first (controlled burns to clear dry timber, home hardening), then negotiate with insurers based on actual reduced risk. AI compute fee → Worker Transition Fund. Golden State Sovereign Wealth Fund. More taxes on oil industry profits. Free education from preschool through community college. Abolish ICE. Opposes gas tax suspension.",
-      endorsements: "<strong>For:</strong> Hillary Clinton; former State Controller Betty Yee; former CA Senate pro tem Toni Atkins; California Federation of Teachers; California School Employees Association; AFSCME; California Federation of Labor Unions (co-endorsement with Porter and Villaraigosa); John Podesta; Ali Zaidi. <strong>Against:</strong> Becerra campaign explicitly running 'earned vs bought' framing against him.",
-      polling: "~15% (CBS/YouGov late April 2026, statistically tied with Hilton at top)"
+      endorsements: "<strong>For:</strong> Hillary Clinton; California Nurses Association (the main single-payer advocacy union); former State Controller Betty Yee; former CA Senate pro tem Toni Atkins; California Federation of Teachers; California School Employees Association; AFSCME; California Federation of Labor Unions (co-endorsement with Porter and Villaraigosa); John Podesta; Ali Zaidi. <strong>Against:</strong> Becerra campaign explicitly running 'earned vs bought' framing against him.",
+      polling: "~17% (Emerson May 9-10, up 3 pts since April, tied with Hilton; 52% of Steyer voters could change their mind)"
     })}
 
     ${buildCandidateCard({
@@ -2628,7 +2781,7 @@ function buildBriefing() {
       cons: "13 yrs out of office. Mercury Public Affairs co-chair 2018-21 during Manafort-FARA episode. Herbalife advisor (LULAC condemned). Banc of CA. 2010: 81 unreported tickets (courtside Lakers $3,100 ea, Oscars tickets $21,000 ea). Polling stuck at 4-7%.",
       platform: "Affordable housing and energy infrastructure. Executive orders on transit-adjacent density. CEQA reform (limit private lawsuits). Statewide community policing surge. Refinery deregulation (keep refineries open). Expand the state's Fair Plan as an insurance backstop (Porter has called this approach insufficient). Opposes gas tax suspension. Expand financial aid (no free tuition pledge).",
       endorsements: "<strong>For:</strong> LA Mayor Karen Bass; former US Sen. Barbara Boxer (after Kounalakis withdrew); California Federation of Labor Unions (co-endorsement with Porter and Steyer); some Latino political organizations.",
-      polling: "~4-5% (CBS/YouGov late April 2026)"
+      polling: "below 5% (Emerson May 9-10, has not broken into top tier)"
     })}
 
     ${buildCandidateCard({
@@ -2640,7 +2793,7 @@ function buildBriefing() {
       cons: "April 17, 2026 FPPC complaint: alleges illegal coordination with pro-Mahan super PAC; Zoom call with Moritz ($1M) and Caruso ($1.5M) April 6 as evidence. Never finished a term. Silicon Valley billionaire donor concentration. No labor support.",
       platform: "Two-year housing tax holiday. Gas-tax suspension (one of two Dems supporting). Impact-fee caps. Shelter-or-arrest. Tiny-home villages. Cellphone ban in schools. Pathway to citizenship. Wants to keep oil refineries open while electrifying. Opposes single-payer ('we don't know how to pay for it').",
       endorsements: "<strong>For:</strong> Rep. Ami Bera (CA-6, after rescinding Swalwell endorsement); Silicon Valley business leaders; tech investors. <strong>Against:</strong> Labor unions broadly skeptical given his business-backing; San Jose progressives have criticized homeless-arrest stance.",
-      polling: "~4-5% (CBS/YouGov late April 2026)"
+      polling: "~8% (Emerson May 9-10, up from ~5%, rising)"
     })}
 
     ${buildCandidateCard({
@@ -2652,7 +2805,7 @@ function buildBriefing() {
       cons: "Polling ~5%. 2021 Daniel Lee hiring scandal (Politico): longtime associate hired as \"superintendent of equity\" at $179,832/yr, no public posting, Philadelphia-based (residency rule concern). Seven elected offices pursued since 2004. Joined Republicans in supporting gas tax suspension at April 28 debate, splitting from Becerra/Porter/Steyer/Villaraigosa.",
       platform: "State tax credit for working families. Raise taxes on billionaires; commercial Prop 13 reform. Insurance: restrict rate increases unless insurers keep offering coverage; use financial pressure to force compliance. CS graduation requirement, dual-language expansion, $10K school mental-health clinicians. Suspend gas tax. Abolish ICE.",
       endorsements: "<strong>For:</strong> California Faculty Association (split with Becerra); Sen. Akilah Weber (SD-39); some labor locals (electrical, plumber, boilermaker); Oakland POA. <strong>Notable:</strong> Most progressive tax positions in field but lowest budget — visibility issue, not platform issue.",
-      polling: "~4% (CBS/YouGov late April 2026, lowest of 8 qualifying candidates)"
+      polling: "below 5% (Emerson May 9-10, lowest of 8 qualifying candidates)"
     })}
 
     <h2 class="b-h1" id="detail">Business Holdings & Complaints (Detail)</h2>
@@ -2799,7 +2952,7 @@ function buildBriefing() {
       <li>tonythurmond.com</li>
     </ul>
 
-    <p class="b-p" style="margin-top: 28px; font-style: italic; color: #6a6a67; font-size: 13px;">Compiled May 3, 2026. Polling figures reflect late-April / early-May 2026 snapshots and will shift between now and June 2. This briefing does not recommend a vote — it helps you make your own informed decision.</p>
+    <p class="b-p" style="margin-top: 28px; font-style: italic; color: #6a6a67; font-size: 13px;">Compiled May 13, 2026. Polling figures reflect May 2026 snapshots and will shift between now and June 2. This briefing does not recommend a vote — it helps you make your own informed decision.</p>
 
     ${buildEconContext()}
 

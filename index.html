@@ -2326,7 +2326,7 @@ function buildReasons(winnerKey) {
       if (weight <= 1) {
         const topScorer = opt.weights ? Object.entries(opt.weights).sort((a,b) => b[1]-a[1])[0] : null;
         if (topScorer && topScorer[0] !== winnerKey) {
-          body += ` <em>Note: ${lastName(CANDIDATES[topScorer[0]].name)} has the strongest record on this specific issue.</em>`;
+          body += ` <em>Note: ${lastName(CANDIDATES[topScorer[0]].name)} has the strongest focus on this issue.</em>`;
         }
       }
       reasons.push({ q: rankLabels[idx], body });

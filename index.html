@@ -1494,6 +1494,13 @@
   .yn.n { background: #fdf4f2 !important; border-left: 3px solid #c8321a; }
   .yn b { color: #111 !important; -webkit-text-fill-color: #111; }
   html, body, .stage { overflow-anchor: none; }
+  .race-card { border: 1.5px solid #e5e3de; border-left-width: 5px; border-radius: 8px; padding: 14px 16px; margin: 12px 0; background: #fff !important; }
+  .race-card.D { border-left-color: #2c5aa0; } .race-card.R { border-left-color: #c8321a; } .race-card.N { border-left-color: #5a544a; }
+  .race-name { font-size: 18px; font-weight: 700; color: #111 !important; -webkit-text-fill-color: #111; }
+  .race-party { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #6a6a67 !important; -webkit-text-fill-color: #6a6a67; margin-bottom: 8px; }
+  .race-row { margin-top: 10px; } .race-row .prop-label { margin-bottom: 2px; }
+  .pick-row { display: flex; flex-direction: column; gap: 8px; }
+  .pick-row .vote-btn { width: 100%; }
   .county-select { width: 100%; font: inherit; font-size: 16px; padding: 12px 14px; border: 1.5px solid #c9c5bd; border-radius: 10px; background: #fff; color: #1a1814; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%236a6a67' stroke-width='2'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
   .prop-list { margin: 4px 0 0 0; padding-left: 18px; }
   .prop-list li { font-size: 15px; line-height: 1.5; color: #222 !important; -webkit-text-fill-color: #222; margin-bottom: 8px; }
@@ -1954,7 +1961,7 @@ const PROPS = [
     poll: "49% yes, 46% no", gov: "Neither candidate has a public position on Prop 45 that we could find. Hilton separately says he wants to stop CEQA lawsuits from blocking construction." }
 ];
 
-const state = { view: "home", step: 0, answers: {}, showMethod: false, propIdx: 0, propVotes: {}, propReview: null, localCounty: "", localVotes: {}, localOpen: {} };
+const state = { view: "home", step: 0, answers: {}, showMethod: false, propIdx: 0, propVotes: {}, propReview: null, localCounty: "", localVotes: {}, localOpen: {}, raceIdx: 0, raceVotes: {}, raceReview: null, houseDistrict: "" };
 const app = document.getElementById('app');
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
@@ -1979,6 +1986,7 @@ function render() {
   if (state.view === "props") return renderProp();
   if (state.view === "sheet") return renderSheet();
   if (state.view === "local") return renderLocal();
+  if (state.view === "races") return renderRace();
 }
 
 function datesCardHtml() {
@@ -2010,8 +2018,13 @@ function renderHome() {
           <button class="cta" onclick="beginGov()">Find my match</button>
         </div>
         <div class="home-card">
+          <h2>The other statewide offices</h2>
+          <p>Lieutenant governor, attorney general, secretary of state, treasurer, controller, insurance commissioner, schools chief, and the tax board. Who they are, who is paying, and the one thing to know. Pick as you go.</p>
+          <button class="cta dark" onclick="beginRaces()">Walk me through them</button>
+        </div>
+        <div class="home-card">
           <h2>The 14 propositions</h2>
-          <p>What each one does, who is for and against, who is paying for the campaigns, and what the fine print also does. Mark your picks and leave with a cheat sheet. Riverside and San Bernardino County voters: the biggest local measures get the same treatment.</p>
+          <p>What each one does, who is for and against, who is paying for the campaigns, and what the fine print also does. Mark your picks and leave with a cheat sheet. Los Angeles, Orange, San Diego, Riverside, and San Bernardino County voters: the biggest local measures, your House race, and the LA mayor's race get the same treatment, plus every mayoral contest listed.</p>
           <button class="cta dark" onclick="beginProps()">Build my ballot</button>
         </div>
       </div>
@@ -2032,7 +2045,7 @@ function renderHome() {
           <span class="resource-host">caearlyvoting.sos.ca.gov →</span>
         </a>
         <a class="resource-link" href="javascript:void(0)" onclick="go('local')">
-          <span class="resource-label">What else is on my ballot? Local measures, with Riverside and San Bernardino in depth</span>
+          <span class="resource-label">What else is on my ballot? Local measures and House races for LA, Orange, San Diego, Riverside, and San Bernardino</span>
           <span class="resource-host">by address →</span>
         </a>
         <a class="resource-link" href="https://voterstatus.sos.ca.gov/" target="_blank" rel="noopener">
@@ -2349,8 +2362,11 @@ function renderGovResult() {
       </div>
 
       <div class="briefing-cta">
-        <button class="briefing-cta-btn" onclick="beginProps()">Next: the 14 propositions</button>
-        <p class="briefing-cta-hint">What each measure does, and a cheat sheet of your picks.</p>
+        <button class="briefing-cta-btn" onclick="beginRaces()">Next: the other statewide offices</button>
+        <p class="briefing-cta-hint">Attorney general, secretary of state, treasurer, and the rest, one screen each.</p>
+      </div>
+      <div class="briefing-cta" style="margin-top:8px;">
+        <button class="briefing-cta-btn" onclick="beginProps()">Or skip to the 14 propositions</button>
       </div>
       <div class="briefing-link-row">
         <button class="briefing-link" onclick="openBriefing()">Read the full voter briefing →</button>
@@ -2463,23 +2479,41 @@ function renderSheet() {
     warn = `<div class="prop-warn"><b>Heads up: these picks work against each other.</b> You marked yes on Prop 40 (the billionaire tax) and yes on ${which}. Props 41 and 42 were written to block Prop 40. If either one gets more yes votes than Prop 40, the billionaire tax could be stopped even if it passes. If you want the billionaire tax to take effect, a yes on 41 or 42 cuts against that.</div>`;
   }
   const lv = state.localVotes;
-  const localRows = localMeasures(state.localCounty).filter(m => lv[m.id]).map(m => `
+  const localBlock = Object.keys(LOCAL).map(county => {
+    const rowsC = localMeasures(county).filter(m => lv[m.id]).map(m => `
       <div class="sheet-row">
         <span class="sheet-num">Measure ${m.letter}</span>
-        <span class="sheet-name">${m.name} <small style="color:#6a6a67;">(${m.juris})</small><button class="no-print" onclick="state.localOpen['${m.id}']=true; go('local')">Review or change</button></span>
+        <span class="sheet-name">${m.name} <small style="color:#6a6a67;">(${m.juris})</small><button class="no-print" onclick="state.localCounty='${county}'; state.localOpen['${m.id}']=true; go('local')">Review or change</button></span>
         <span class="sheet-pick ${lv[m.id]}">${label[lv[m.id]]}</span>
       </div>`).join('');
-  const localBlock = localRows ? `<div class="section"><div class="prop-label" style="margin:14px 0 6px;">${state.localCounty} County</div>${localRows}</div>` : '';
+    return rowsC ? `<div class="section"><div class="prop-label" style="margin:14px 0 6px;">${county} County</div>${rowsC}</div>` : '';
+  }).join('');
+  const rv = state.raceVotes;
+  const raceRow = (r, idx, reviewFn) => `
+      <div class="sheet-row">
+        <span class="sheet-num">${r.short || r.office || r.district}</span>
+        <span class="sheet-name">${r.cands.map(c => lastName(c.name)).join(' vs. ')}<button class="no-print" onclick="${reviewFn}">Review or change</button></span>
+        <span class="sheet-pick ${rv[r.id] === 'und' ? 'und' : 'yes'}">${rv[r.id] === 'und' ? 'Undecided' : lastName(r.cands[rv[r.id]].name)}</span>
+      </div>`;
+  const raceRows = RACES.filter(r => rv[r.id] !== undefined).map((r) => raceRow(r, 0, `reviewRace(${RACES.indexOf(r)})`)).join('');
+  const raceBlock = raceRows ? `<div class="section"><div class="prop-label" style="margin:14px 0 6px;">Statewide offices</div>${raceRows}</div>` : '';
+  const mayorRows = MAYORS.filter(r => rv[r.id] !== undefined).map(r => raceRow(r, 0, `state.localCounty='${r.county}'; go('local')`)).join('');
+  const mayorBlock = mayorRows ? `<div class="section"><div class="prop-label" style="margin:14px 0 6px;">Mayor</div>${mayorRows}</div>` : '';
+  const houseRows = HOUSE.filter(r => rv[r.id] !== undefined).map(r => raceRow(r, 0, `reviewHouse('${r.id}')`)).join('');
+  const houseBlock = houseRows ? `<div class="section"><div class="prop-label" style="margin:14px 0 6px;">U.S. House</div>${houseRows}</div>` : '';
   const picked = PROPS.filter(p => pv[p.num]).length;
   app.innerHTML = `
     <div class="fade-in">
       <div class="result-head" style="padding-bottom:20px;">
         <div class="result-kicker">Your Ballot Cheat Sheet</div>
-        <h2 class="result-name" style="font-size:clamp(28px,6vw,36px);">14 propositions, your picks</h2>
+        <h2 class="result-name" style="font-size:clamp(28px,6vw,36px);">Your picks</h2>
         <p class="result-liner">${picked} of ${PROPS.length} marked. Screenshot or print this and keep it next to your ballot.</p>
       </div>
       ${warn}
       <div class="section">${rows}</div>
+      ${raceBlock}
+      ${houseBlock}
+      ${mayorBlock}
       ${localBlock}
       <div class="briefing-cta no-print">
         <button class="briefing-cta-btn" onclick="shareSheet()">Send my cheat sheet to myself</button>
@@ -2500,6 +2534,840 @@ function renderSheet() {
       <p class="footer">Summaries draw on the official state voter guide and the Legislative Analyst's Office. This is a study aid, not a recommendation.</p>
     </div>
   `;
+}
+
+// ==================== OTHER STATEWIDE OFFICES ====================
+// Each race: id, office, does, cands [{name, party (D/R/N), role, exp, money, priorities, endorsements, know}], primary, poll, news
+const RACES = [];
+
+RACES.push(
+  { id: "lt", office: "Lieutenant Governor", short: "Lt. Governor",
+    does: "Next in line to the governor and acting governor when the governor is away. Presides over the state Senate with a tie-breaking vote (last used in 1996). Sits on the UC Regents, CSU Trustees, community college board, and State Lands Commission. Budget under $3 million.",
+    cands: [
+      { name: "Fiona Ma", party: "D", role: "State Treasurer since 2019.",
+        exp: "Former Board of Equalization member, San Francisco supervisor, and four-term Assemblymember. A CPA and the daughter of Chinese immigrants.",
+        money: "About $3.5 million raised through October 9, heavily from labor: laborers' and pipe trades unions and United Domestic Workers at the $39,200 limit. An outside committee, \"Taxpayers Against Sexual Harassment by Government Officials,\" has spent $753,000 against her.",
+        priorities: "Calls the job \"another check on the Trump administration.\" Wants CSU campuses to raise money by leasing underused land, workforce housing on about 75,000 acres of school and college land through a zero-interest loan fund, offshore wind at Morro Bay and Humboldt into construction, and the Board of Equalization abolished.",
+        endorsements: "California Labor Federation, State Building Trades, AFSCME, Lt. Gov. Kounalakis, Mercury News. The state Democratic Party made no endorsement in this race.",
+        know: "A 2021 lawsuit by a former employee alleged sexual harassment; the state settled for $350,000 in 2024 with no admission of wrongdoing. Ma calls it a frivolous suit by a disgruntled employee and the settlement a vindication. The outside committee spending against her is built on that case." },
+      { name: "Gloria Romero", party: "R", role: "Former Democratic state Senate majority leader, now Steve Hilton's running mate.",
+        exp: "Represented East Los Angeles in the state Senate from 1998 to 2010 and was the first woman to serve as majority leader. Registered as a Republican in 2024.",
+        money: "About $260,000 raised through October 9, including $50,000 of her own money and $10,515 from Carl DeMaio's committee. She told GV Wire in July she was struggling to raise money for ads.",
+        priorities: "School vouchers, phonics, restored SAT and ACT in UC admissions, teacher tenure reform. Would call two special legislative sessions, on the budget and on \"waste, fraud, and abuse,\" and review state commissions starting with the Coastal Commission. Opposes transgender girls in girls' sports. Wants UC and CSU salary transparency.",
+        endorsements: "California Republican Party, Reform California, Steve Hilton.",
+        know: "Her switch to the Republican Party in 2024 after 12 years as a Democratic legislator; she attributes it to school choice and parental rights. No lawsuit or enforcement matter on record." }
+    ],
+    primary: "Ma 19.1%, Romero 17.8%, with two other Democrats splitting 28%.",
+    poll: "No independent poll found." },
+  { id: "ag", office: "Attorney General", short: "Attorney General",
+    does: "The state's chief lawyer and law enforcement officer. Runs the Department of Justice, which has led California's lawsuits against the Trump administration and handles consumer, environmental, and criminal cases.",
+    cands: [
+      { name: "Rob Bonta", party: "D", role: "Attorney General since 2021 (appointed, then elected in 2022).",
+        exp: "Former East Bay Assemblymember. Has filed or joined more than 50 lawsuits against the Trump administration since 2025.",
+        money: "$2.8 million raised in the primary period; more than $6.3 million on hand in April, about 13 times Gates. Fall figures were not available.",
+        priorities: "Continuity in the fight with Washington. Retail theft rings, fentanyl traffickers, gun smugglers, price gougers, landlords who raise rents illegally, cities that miss housing targets. Protecting abortion access and same-sex marriage.",
+        endorsements: "California Democratic Party, CTA, SEIU, Labor Federation, nurses, Teamsters, Planned Parenthood, Sierra Club, SF Chronicle, SF Examiner.",
+        know: "His campaign paid about $468,000 to a law firm for personal representation while he spoke with federal investigators in the Oakland corruption case involving former Mayor Sheng Thao and the Duong family, and he returned $155,000 in Duong-linked donations. He says he is not a target and investigators approached him as a possible victim. His settlement clearing the Paramount and Warner Bros. Discovery merger drew criticism from Senator Elizabeth Warren." },
+      { name: "Michael Gates", party: "R", role: "Huntington Beach city attorney for a decade, and briefly a Trump Justice Department official in 2025.",
+        exp: "Sued the state over housing mandates and defended Huntington Beach's voter ID law. Served about 10 months as a deputy assistant attorney general in the U.S. DOJ Civil Rights Division before returning to the city.",
+        money: "$1.26 million raised in the primary period, 82% from individuals. Fall figures were not available.",
+        priorities: "\"Toughest on crime.\" Voter ID, enforce Prop 36, prosecute fraud and corruption in Sacramento, parents' rights, keep \"boys out of girls' sports,\" local control over housing, defend law enforcement. Says the state is \"very, very lawless right now.\"",
+        endorsements: "California Republican Party, California Parents Union, California Rifle and Pistol Association, Reform California, Steve Hilton.",
+        know: "A federal personnel document reported by the Orange County Register indicated he was terminated from the DOJ \"for cause\" in November 2025. Gates denies being fired and calls it a fabrication. Bonta says none of Gates's court challenges to state housing or sanctuary laws succeeded." }
+    ],
+    primary: "Bonta 56.6%, Gates 37.9%.",
+    poll: "No independent poll found. Rated Safe Democratic by Sabato's Crystal Ball.",
+    news: "Bonta called the October 13 federal letter demanding California set aside ballots of suspected noncitizens \"another example of President Trump spreading false claims.\"" },
+  { id: "sos", office: "Secretary of State", short: "Sec. of State",
+    does: "Runs every state and federal election in California: certifies candidates and initiatives, publishes the voter guide, oversees the count. Also handles business filings, the state archives, and the campaign finance database.",
+    cands: [
+      { name: "Shirley Weber", party: "D", role: "Secretary of State since 2021 (appointed, then elected in 2022).",
+        exp: "Former eight-year San Diego Assemblymember and school board member, and founder of SDSU's Africana Studies department. Oversaw permanent universal mail voting and the 2021 recall.",
+        money: "About $177,000 raised in early 2026 with nearly $1 million on hand in April. Major donors: CTA, SEIU California, Pechanga Band of Indians. Fall figures were not available.",
+        priorities: "Expand voting access, register first-time voters on campuses and in rural areas, strengthen cybersecurity. \"Accuracy matters more than speed\" on counting. Opposes the federal SAVE Act's proof-of-citizenship requirement.",
+        endorsements: "California Democratic Party, CFT, SEIU, Bonta, Ma, SF Examiner.",
+        know: "On October 13 the U.S. Justice Department gave her 48 hours to set aside mail ballots from a federal list of \"likely noncitizens.\" She refused, calling the demand contrary to federal and state law and an unprecedented suspension of voting rights. On October 19 the DOJ charged 28 green-card holders with voting crimes and asked a court to stop processing listed voters' ballots. Critics also fault the 30-day county count window." },
+      { name: "Don Wagner", party: "R", role: "Orange County Supervisor since 2019; former Irvine mayor and Assemblymember.",
+        exp: "Longtime Orange County attorney who founded the county's Federalist Society chapter.",
+        money: "$182,000 raised in early 2026 with under $120,000 on hand in April. Donors include Carl DeMaio and the Building Industry Association of Southern California. Fall figures were not available.",
+        priorities: "\"Election integrity\": voter ID, end universal mail ballots, move up the certification deadline, use the office as a bully pulpit. Says he does not claim elections are stolen.",
+        endorsements: "California Republican Party, Reform California, former Governor Pete Wilson, former Secretaries of State Bill Jones and Bruce McPherson.",
+        know: "As supervisor in 2025 he urged Orange County to comply with the DOJ's demand for unredacted voter records, saying \"This is not our fight.\" His voter ID push sits alongside his statement that he does not believe fraud exists in state elections." }
+    ],
+    primary: "Weber 58.7%, Wagner 36.7%.",
+    poll: "Independent Voter Project, September 23 to October 2: Weber 41%, Wagner 31%, 26% undecided. That group is an advocacy organization; no PPIC or IGS poll found." },
+  { id: "treas", office: "State Treasurer", short: "Treasurer",
+    does: "The state's banker. Invests unspent taxpayer money, sells the state's bonds, manages its debt, and chairs the boards that finance housing, schools, and hospitals.",
+    cands: [
+      { name: "Eleni Kounalakis", party: "D", role: "Lieutenant Governor since 2019; former U.S. ambassador to Hungary.",
+        exp: "Former president of AKT Development, her father's real estate firm. Dropped a run for governor in August 2025 to run for treasurer.",
+        money: "About $9 million raised in the primary period (62% individuals, 19% PACs, 19% businesses) and $813,000 more for the general through October 9, from CFT, CTA, Blue Shield, and affordable housing groups. The California Apartment Association's committee spent $75,000 supporting her.",
+        priorities: "Responsible state finances, investment in housing and infrastructure, protecting public pensions with transparent oversight, more clean energy investment balanced against pension returns. Voted against UC and CSU tuition increases as a board member.",
+        endorsements: "Governor Newsom, Nancy Pelosi, Hillary Clinton, Senators Padilla and Schiff, CTA, Labor Federation, Teamsters, SF Chronicle, Mercury News.",
+        know: "CalMatters reported she holds partner stakes in Sacramento office buildings that rent to at least three state agencies, earned at least $1.39 million from investments in 2024, and has not put her assets in a blind trust. Her spokesperson says she is a minority owner not involved in operations. Hawks calls it a conflict of interest." },
+      { name: "Jennifer Hawks", party: "R", role: "Retired school office manager; first run for office.",
+        exp: "Spent about 20 years as an executive assistant and office manager at Sacred Heart Schools in Atherton after starting in banking. Former president of Palo Alto Republican Women; gathered signatures for the voter ID initiative.",
+        money: "About $121,000 through October 9, including $42,750 of her own money and $10,515 from Carl DeMaio's committee. $30,000 in outside support.",
+        priorities: "Concerned about the budget deficit and heavy bond issuance. \"Nothing speculative\" in state investments. A forensic audit of every division of the office and public reporting of its finances. Criticizes high-speed rail and homelessness spending.",
+        endorsements: "California Republican Party, California Republican Assembly, Reform California.",
+        know: "No elected or finance-industry experience, which she presents as independence. She did not make herself available for an LA Times interview. No controversy on record." }
+    ],
+    primary: "Kounalakis 36.7%, Hawks 24.0%, with a second Democrat at 16.4% and a second Republican at 12.9%.",
+    poll: "No independent poll found." },
+  { id: "ctrl", office: "State Controller", short: "Controller",
+    does: "The state's chief accountant. Audits state finances, pays state employees, and sits on the CalPERS and CalSTRS pension boards.",
+    cands: [
+      { name: "Malia Cohen", party: "D", role: "Controller since 2023.",
+        exp: "Chaired budget and audit committees on the San Francisco Board of Supervisors and chaired the Board of Equalization. Her office caught up on the state's annual financial reports after years of lateness.",
+        money: "More than $1.2 million raised as of May. Fall figures were not available.",
+        priorities: "Transparency, efficiency, fairness. Modernize the state's accounting and payroll systems. Urged budget restraint in 2026. Led a charter school fraud task force that produced 20 recommendations.",
+        endorsements: "California Democratic Party, Labor Federation, SEIU, nurses, Teamsters, Sierra Club, Equality California.",
+        know: "CalMatters reported she did not pursue her 2022 pledges to scrutinize homelessness spending and review the EDD and DMV, saying the state auditor covered them. Her first annual financial report was about a year late and the latest about six weeks late, though the state was late before she took office." },
+      { name: "Herb Morgan", party: "R", role: "Chief investment officer at Cantor Fitzgerald, 2017 to 2026.",
+        exp: "A 40-year finance career; founded a San Diego investment firm later acquired by Cantor Fitzgerald.",
+        money: "$367,000 raised as of April. He publishes a dashboard of his own donations. Fall figures were not available.",
+        priorities: "\"Radical transparency\": real-time public dashboards of state spending, a public record for every check, AI flagging of homelessness spending, early-warning monitoring. \"It's all about experience. I've got 40 years of finance experience, and she doesn't have any.\"",
+        endorsements: "California Republican Party, California Republican Assembly, Sacramento Bee.",
+        know: "His attack on Cohen's late reports omits that the lateness predates her and that the Department of Finance prepares the audit, per the SF Examiner. He called for her resignation over an undercover video whose contents are not independently verified. No controversy of his own on record." }
+    ],
+    primary: "Cohen 56.8%, Morgan 37.5%.",
+    poll: "No independent poll found." },
+  { id: "ins", office: "Insurance Commissioner", short: "Insurance Comm.",
+    does: "Regulates the nation's largest insurance market: approves home and auto rates and oversees the FAIR Plan, in the middle of a crisis of insurers pulling out over wildfire risk. Two Democrats advanced from the primary, a first for this office.",
+    cands: [
+      { name: "Ben Allen", party: "D", role: "State senator since 2014 for a district that includes Pacific Palisades.",
+        exp: "Authored the 2026 law letting the commissioner order insurers to fix findings, home-hardening loan and nonrenewal notice laws, and the 2024 climate bond.",
+        money: "$2.3 million raised through October 15. An outside committee funded by Ripple co-founder Chris Larsen ($1 million) and sponsored by California Environmental Voters has about $2 million supporting him.",
+        priorities: "Stabilize the private market, more staff for complaints, real-time claim-delay reporting and denial explanations, a consumer advocate, tighter FAIR Plan oversight, steer development away from high-fire areas. Calls Kim's plan \"totally unprecedented and unmoored.\"",
+        endorsements: "California Democratic Party, California Environmental Voters, firefighters, Sierra Club, Senators Padilla and Schiff, Speaker Rivas, SF Chronicle, Mercury News, La Opinión.",
+        know: "He pledged not to take insurer money; a couple of donations came in anyway and he returned them, saying they were accepted in error. The Working Families Party says he \"has taken crypto money,\" referring to Larsen's committee. Some fire survivors say his home-hardening approach has not lowered premiums." },
+      { name: "Jane Kim", party: "D", role: "Attorney and consumer advocate; former San Francisco supervisor and Working Families Party state director.",
+        exp: "Helped pass free City College and a $15 minimum wage in San Francisco. California political director for Bernie Sanders in 2020.",
+        money: "$1.3 million raised through October 15, with the Working Families Party ($365,000) and CTA ($150,000) the top backers. Business groups spent $1.5 million against her in the primary, mostly through the Chamber of Commerce's committee.",
+        priorities: "\"Natural disaster insurance for all\": a state-run nonprofit authority covering wildfire and flood, funded by premiums. Expand low-cost auto insurance to everyone, freeze rates when a claim is filed, penalize delays, require insurers to disclose fossil fuel investments. Calls the status quo \"the most expensive one.\"",
+        endorsements: "SEIU, CTA, Labor Federation, nurses, Working Families Party, Bernie Sanders, Ro Khanna, Controller Cohen, Lt. Gov. Kounalakis, Dolores Huerta.",
+        know: "Consumer Watchdog says her disaster plan would need \"tens of billions\" to start and could be wiped out by one fire; the SF Chronicle says she would blow up the system. She has no insurance industry experience and says the job is political and the department already has the actuaries. After the state party endorsed Allen, her delegates alleged a miscount; the party said the count was verified." }
+    ],
+    primary: "Kim 27.4%, Allen 19.4%, with a Republican third at 15.5%.",
+    poll: "Probolsky, late August: Kim 25%, Allen 18%, more than half undecided.",
+    news: "The two debated October 8 in Sacramento at a CalMatters event. Kim appeared with Bernie Sanders at a Prop 40 rally." },
+  { id: "spi", office: "Superintendent of Public Instruction", short: "Schools Chief",
+    does: "Heads the state Department of Education and has a platform for nearly 6 million students, but districts control budgets and curriculum. Starting January 2027 a governor-appointed education commissioner takes over running the department, so this job shrinks. Nonpartisan office.",
+    cands: [
+      { name: "Richard Barrera", party: "N", partyLabel: "Nonpartisan office; a Democrat", role: "President of the San Diego Unified school board, on it since 2008, and a senior adviser at the state Department of Education.",
+        exp: "A career labor organizer who once led the San Diego labor council.",
+        money: "About $390,000 raised through June. The teachers' union's independent committee spent $5 million supporting him in the primary; no candidate has won this office in 44 years without CTA backing.",
+        priorities: "More school funding, early childhood education, an easier path to becoming a teacher. A short list of statewide outcomes to track. Says Mississippi's early-literacy model is \"worth studying seriously.\" Protect LGBTQ+ students' rights in every district. Supports ethnic studies. Calls the governor's restructuring an \"end-around.\"",
+        endorsements: "CTA, United Domestic Workers, California Charter School Advocates, Equality California, former Speaker Rendon, SF Chronicle.",
+        know: "His union leadership background has drawn conflict-of-interest accusations from critics in San Diego. At the October 7 debate Shaw said he invoked Donald Trump in every answer; he said she turns every question into a circus." },
+      { name: "Sonja Shaw", party: "N", partyLabel: "Nonpartisan office; a Republican", role: "President of the Chino Valley Unified school board since 2022.",
+        exp: "Former small business owner and personal trainer and mother of two. Led her board's 2023 parental notification policy.",
+        money: "About $520,000 raised through June, 80% from individuals; largest gift $10,000 from Reform Local Government PAC. She says unions spent more than $6 million against her (not independently verified).",
+        priorities: "\"More than half of our kids cannot read and write and do math, that's priority number one.\" Academic basics over \"radical ideologies.\" Parental notification, transgender students out of girls' sports and locker rooms, civics over ethnic studies, bring back admissions testing. Wants more money reaching classrooms, not more spending. Calls the restructuring an \"unconstitutional power grab.\"",
+        endorsements: "California Republican Party, Moms for Liberty, California Rifle and Pistol Association, both Republican candidates for governor in the primary.",
+        know: "Attorney General Bonta sued her district in 2023 over its parental notification policy as a \"forced outing\"; she called state officials bullies. She presided over a 2023 meeting where then-Superintendent Thurmond was escorted out. At the debate she suggested Barrera has \"Trump Derangement Syndrome\" and questioned whether he needs mental health treatment." }
+    ],
+    primary: "Shaw 22.6%, Barrera 20.3%, in a crowded field.",
+    poll: "SurveyUSA, September 15 to 20: Barrera 26%, Shaw 20%, 53% undecided.",
+    news: "EdSource hosted the only debate on October 7." },
+  { id: "boe4", office: "Board of Equalization, District 4", short: "Tax Board D4",
+    does: "The elected tax board lost most of its powers after a 2017 audit. It now oversees the 58 county assessors, assesses utility and railroad property, and hears some appeals; members are paid $185,000. District 4 covers Riverside, Orange, San Diego, and Imperial counties and part of San Bernardino County. Most of San Bernardino County is in District 1 (next screen); check your sample ballot.",
+    cands: [
+      { name: "Tom Umberg", party: "D", role: "State senator from Santa Ana; former federal prosecutor and retired Army colonel.",
+        exp: "Three Assembly terms before the Senate, where he chairs the Judiciary Committee.",
+        money: "Transferred about $1.1 million from existing accounts and raised $598,000 more through the primary, largely from attorneys and law firms, including the maximum from attorney John Manly. Fall figures were not available.",
+        priorities: "Give the board real investigative power over county assessors, citing assessors in San Bernardino and Los Angeles arrested on felony charges. Make \"big monied corporations pay their fair share\" and protect homeowners, renters, and small businesses.",
+        endorsements: "SEIU, CTA, Equality California, Representative Juan Vargas, San Diego County Democratic Party (co-endorsement).",
+        know: "CalMatters reported he carried bills expanding childhood sexual abuse lawsuits, including one lobbied for by donor John Manly's firm; he says donations never drive his decisions. A former board spokesperson said of legislators seeking these seats, \"It's for the exposure.\"" },
+      { name: "Denis Bilodeau", party: "R", role: "Orange City Councilmember and president of the Orange County Water District board.",
+        exp: "Civil engineer with a law degree; former chief of staff to an Orange County supervisor; president of the Orange Taxpayers Association.",
+        money: "Put in $100,000 of his own money. Other donors were not reported in the sources we found.",
+        priorities: "Signed the Howard Jarvis pledge to protect Prop 13 and a no-new-taxes pledge. \"California families and businesses are taxed enough already.\" Transparency, exposing waste, closing property tax loopholes that benefit special interests.",
+        endorsements: "California Republican Party, Howard Jarvis Taxpayers Association, Reform California, Orange County Republican Party.",
+        know: "In 2010 Voice of OC reported he claimed about $3,500 in water district stipends for meetings he did not attend or that did not occur, and OC Weekly found more in 2013; he blamed expense report errors and the district backed that explanation. Nothing more recent on record." }
+    ],
+    primary: "Bilodeau 45.1%, Umberg 20.7%, with two other Democrats splitting 33%.",
+    poll: "No poll found." },
+  { id: "boe1", office: "Board of Equalization, District 1", short: "Tax Board D1",
+    does: "Same board as the previous screen. District 1 covers 34 inland counties including most of San Bernardino County (about 848,000 of its 1.24 million registered voters). If your sample ballot shows District 1, this is your race.",
+    cands: [
+      { name: "Nelson Esparza", party: "D", role: "Fresno city councilmember since 2018, term-limited in January 2027.",
+        exp: "Launched a state Senate run in 2024, then dropped out when Assemblymember Esmeralda Soria entered with Senator Caballero's backing. Announced for this seat in January 2026.",
+        money: "$186,000 raised through the primary, about a tenth of Grove's total. Fall figures were not available.",
+        priorities: "Says the board makes sure everyone pays their fair share, and ties that to funding for schools, health care, public safety, and roads at a time of \"unstable funding from the federal government.\"",
+        endorsements: "Representatives Jim Costa and Adam Gray, Assemblymember Esmeralda Soria.",
+        know: "This is his third attempt at a higher office in two years, after a 2022 BOE filing he abandoned and the 2024 Senate run." },
+      { name: "Shannon Grove", party: "R", role: "State senator from Bakersfield, term-limited in 2026; former Senate Republican leader.",
+        exp: "Announced in August 2025 for the seat held by Ted Gaines, the board's only Republican, who is term-limited.",
+        money: "Nearly $1.8 million raised from large donors through the primary, including over $120,000 from agriculture and $76,000 from oil and gas. Fall figures were not available.",
+        priorities: "Her campaign frames it as a record of \"fighting for taxpayers and holding government accountable\"; Gaines says the board needs members who understand how high taxes and regulation hit families and employers. Specific board priorities were not reported.",
+        endorsements: "Ted Gaines, Representative Doug LaMalfa, Tulare County Sheriff Mike Boudreaux and three Tulare County supervisors.",
+        know: "Watchdogs quoted by CalMatters say sitting legislators raising seven figures for a board with little power is itself the story." }
+    ],
+    primary: "Grove 34.5%, Esparza 34.0%.",
+    poll: "No poll found." }
+);
+
+// Mayoral races: id, county, city, cands (same shape), primary, poll, news; plus OTHER_MAYORS: county -> list of "City: candidates"
+const MAYORS = [];
+const OTHER_MAYORS = {};
+
+MAYORS.push(
+  { id: "mayor-la", county: "Los Angeles", city: "City of Los Angeles", short: "LA Mayor", note: "Runoff between the top two from the June 2 primary. Nonpartisan office; both are Democrats.",
+    cands: [
+      { name: "Karen Bass", party: "N", partyLabel: "Incumbent mayor; Democrat", role: "Mayor since 2022; former Congresswoman and Assembly Speaker.",
+        exp: "Running for a second term on her homelessness program, Inside Safe, and preparations for the 2028 Olympics.",
+        money: "More than $3.7 million raised as of early August, including matching funds. Outside spending for her runs about 36 to 1 over Raman: Airbnb gave $750,000 to a pro-Bass committee; the laborers' union, SEIU, the building trades, Kaiser's CEO, and Frank McCourt's company also gave. About half her donors gave $1,000 or more.",
+        priorities: "\"The main reason homelessness went down is because our efforts with Inside Safe.\" Wants city control of the homelessness system: \"No more joint working with the county.\" Says removing Chief McDonnell before the Olympics would throw the LAPD into disarray. Opposes renewing the Flock license plate reader contract, calling the company \"completely uncooperative.\" Says the city now pre-deploys fire resources on red flag days.",
+        endorsements: "LA County Federation of Labor and most unions, the county Democratic Party, the Chamber of Commerce, the council's progressive bloc.",
+        know: "Was in Ghana on a federal delegation when the Palisades Fire broke out in January 2025: \"I am so profoundly sorry that I was not in my city, when my city needed me.\" 56% of voters in the September IGS poll rated her fire response poor; her favorability was 28% to 63% unfavorable. Homelessness rose 3.4% in the 2026 count after two years of declines. Raman says Inside Safe is unaccountable and Bass has refused audits." },
+      { name: "Nithya Raman", party: "N", partyLabel: "Councilmember; Democrat", role: "City Councilmember for District 4 since 2020; urban planner.",
+        exp: "Chairs the council's housing and homelessness committee. First elected with Democratic Socialists of America support.",
+        money: "More than $1.1 million raised as of early August, with about $612,000 in matching funds; 18% of donors gave $1,000 or more. Against her: the LAPD officers' union has spent $1.2 million on attack ads, with $525,000 from landlord Douglas Emmett.",
+        priorities: "On Inside Safe: \"we have poured hundreds of millions of dollars into an incredibly expensive program\"; says her district cut street homelessness 49%. Would replace Chief McDonnell, saying he lost trust over the federal immigration raids. \"Very skeptical\" of license plate readers without proof data stays away from ICE. Called the Palisades and Lineage fire responses a \"failure\" of leadership. \"Our tax money is being wasted.\"",
+        endorsements: "DSA-LA, UNITE HERE Local 11, the carpenters' union; Controller Kenneth Mejia appears in her ads.",
+        know: "Her campaign pulled a video calling the LAPD, the chief, and Bass \"fascist liars\"; at the debate she said \"We made an error.\" Bass says council colleagues \"have a very difficult time working with you\" and that every Inside Safe dollar \"was approved by you\" through Raman's committee. The county labor federation called her a \"political opportunist.\"" }
+    ],
+    primary: "Bass 34%, Raman 29%, Spencer Pratt 26% (eliminated), with over 850,000 ballots cast.",
+    poll: "Berkeley IGS for the LA Times, September 15 to 20: Raman 39%, Bass 28%, 33% undecided, including 63% of Pratt's voters. The Bass campaign called it an outlier.",
+    news: "The two debated on NBC4 on October 13. Bass launched a tour of all 15 council districts starting in Raman's; Raman released a TV ad featuring Controller Mejia." }
+);
+OTHER_MAYORS["Los Angeles"] = [
+  "<b>Inglewood:</b> James Butts (seeking a fifth term, about 15 years in office) vs. Gloria Gray, Raina Carrillo, Fre'Drisha Dixon, Arturo Martinez, Joseph Soto. Challengers back term limits and a forensic audit and criticize the WOW Media billboard deal; stadium and billboard money is heavy in this race. A runoff is possible.",
+  "<b>Compton, El Monte, Lawndale, Monrovia:</b> mayor on the ballot; see your sample ballot for candidates.",
+  "<b>Long Beach</b> re-elected Rex Richardson in June with 57%."
+];
+OTHER_MAYORS["Orange"] = [
+  "<b>Anaheim:</b> Ashleigh Aitken (incumbent) vs. Alfredo Rodriguez and Imran Sharief.",
+  "<b>Irvine:</b> Larry Agran (incumbent) vs. Maksim Egorov, a software engineer. Two-year term.",
+  "<b>Santa Ana:</b> Valerie Amezcua (incumbent) vs. Dwayne Shipp and Dan Shimell.",
+  "<b>Costa Mesa, Garden Grove, Orange, San Clemente, Tustin, Westminster:</b> mayor on the ballot; see your sample ballot for candidates."
+];
+OTHER_MAYORS["San Diego"] = [
+  "<b>Chula Vista:</b> John McCann (incumbent, Republican) vs. Francisco Tamayo (Democrat).",
+  "<b>Escondido:</b> Dane White (incumbent) vs. Elias Velazquez.",
+  "<b>Carlsbad:</b> Keith Blackburn (incumbent, on the council since 2008) vs. Eric Nixon and a candidate filed as \"Skar.\"",
+  "<b>San Marcos</b> (open): Sharon Jenkins vs. Mike Sannella. <b>Vista</b> (open): Joe Green vs. Kenneth Zuniga. Both current mayors are running for county supervisor.",
+  "<b>Encinitas:</b> Bruce Ehlers (incumbent) vs. Rimga Viskanta.",
+  "The City of San Diego has no mayoral race this year."
+];
+OTHER_MAYORS["Riverside"] = [
+  "<b>Moreno Valley</b> (two-year term): Ulises Cabrera (incumbent) vs. Jaime Hurtado, Rylee Peak, Christopher Baca, Patsy Brown, Vanessa Moore.",
+  "<b>Blythe</b> and several smaller cities elect mayors; see your sample ballot. The City of Riverside has no mayoral race this year."
+];
+OTHER_MAYORS["San Bernardino"] = [
+  "<b>Fontana:</b> Acquanetta Warren (incumbent since 2010) vs. six challengers including Mylinda Carrillo, Jocelyn Sida, and Salvador Casillas.",
+  "<b>Ontario:</b> Paul Leon (mayor since 2005) vs. Councilwoman Daisy Macias and Kevin Kizee. Councilman Alan Wapner filed, then withdrew after the FBI searched his home.",
+  "<b>Rancho Cucamonga</b> (open): Mayor Pro Tem Lynne Kennedy vs. Oliver King, Marjorie Hamada, Michael Perez, Jaskirat Sondh.",
+  "<b>Apple Valley:</b> Scott Nassif (incumbent) vs. three challengers. <b>Adelanto:</b> Gabriel Reyes (incumbent) vs. Councilwoman Stevevonna Evans and Ronald Beard. <b>Colton:</b> Frank Navarro (incumbent) vs. Councilman John Echevarria. <b>Needles:</b> Janet Jernigan (incumbent) vs. former Mayor Jeff Williams. Montclair and Grand Terrace mayors are unopposed.",
+  "<b>San Bernardino</b> re-elected Helen Tran in June with about 55%."
+];
+
+function mayorSectionHtml() {
+  const list = MAYORS.filter(m => m.county === state.localCounty);
+  const others = OTHER_MAYORS[state.localCounty] || [];
+  if (!state.localCounty || (!list.length && !others.length)) return '';
+  return `
+    <div class="prop-block">
+      <div class="prop-label">Mayoral races in ${state.localCounty} County</div>
+      ${list.map(r => `
+        <div style="margin-top:10px;">
+          <p class="prop-official"><b>${r.city}</b>.${r.note ? ' ' + r.note : ''}</p>
+          ${r.cands.map(raceCardHtml).join('')}
+          ${r.primary ? `<div class="prop-block"><div class="prop-label">June 2 primary</div><div class="prop-text">${r.primary}</div></div>` : ''}
+          ${r.poll ? `<div class="prop-block"><div class="prop-label">Polling</div><div class="prop-text">${r.poll}</div></div>` : ''}
+          ${r.news ? `<div class="prop-block"><div class="prop-label">Since October 1</div><div class="prop-text">${r.news}</div></div>` : ''}
+          ${pickRowHtml('house', r)}
+        </div>`).join('')}
+      ${others.length ? `<div class="prop-block"><div class="prop-label">Other cities electing a mayor this November</div><ul class="prop-list">${others.map(o => `<li>${o}</li>`).join('')}</ul><div class="prop-text" style="margin-top:6px;">Candidate statements for these are in your county sample ballot and on VOTE411 below.</div></div>` : ''}
+    </div>`;
+}
+// House races touching Riverside and San Bernardino counties: id, district, area, cands as above, rating, primary, news
+const HOUSE = [];
+
+
+HOUSE.push(
+  { id: "ca23", counties: ["San Bernardino","Riverside","Los Angeles"], district: "District 23", area: "High Desert and mountains: Victorville, Hesperia, Apple Valley, Adelanto, Barstow, Yucaipa, Loma Linda, Big Bear, Lake Arrowhead, Yucca Valley, Joshua Tree, Needles, south Redlands, plus Blythe and Calimesa", rating: "Solid Republican by Cook and Inside Elections",
+    cands: [
+      { name: "Jay Obernolte", party: "R", role: "Congressman since 2021; video game company founder.",
+        exp: "Former Assemblymember and Big Bear Lake council member. Sits on Energy and Commerce, Science, and Budget.",
+        money: "$1.81 million raised through September 30; $1.43 million on hand; $725,000 in committee debt (FEC).",
+        priorities: "Economic growth, public safety, water infrastructure, and technology policy, per his campaign. Did not answer a Redlands community questionnaire.",
+        endorsements: "2026 endorsements not reported in the sources we found. Trump-backed in prior cycles.",
+        know: "Voted yes on the 2025 reconciliation bill (H.R. 1). No documented controversy found. Hodge's campaign points to his wealth, reported at $97 million, and private jet." },
+      { name: "Tessa Lynn Hodge", party: "D", role: "Licensed clinical social worker and businesswoman, born and raised in the district.",
+        exp: "Hospital medical social worker, school mental health provider, San Bernardino County crisis response and policy.",
+        money: "$123,000 raised through September 30; $17,000 on hand (FEC).",
+        priorities: "Expand medical education programs to fix rural doctor shortages. Address \"the root causes of inequality, injustice, addiction, poor mental health and poverty.\" Protect and expand Medicaid; oppose ICE raids that separate families.",
+        endorsements: "None listed.",
+        know: "First run for office; no controversy on record." }
+    ],
+    primary: "Obernolte 57.1%, Hodge 21.3%." },
+  { id: "ca25", counties: ["Riverside","San Bernardino","Imperial"], district: "District 25", area: "Coachella Valley and the Pass: Indio, Palm Desert, Cathedral City, La Quinta, Coachella, Desert Hot Springs, Rancho Mirage, Banning, Beaumont, San Jacinto, Twentynine Palms, plus all of Imperial County", rating: "Solid Democratic by Inside Elections",
+    cands: [
+      { name: "Raul Ruiz", party: "D", role: "Congressman since 2013; emergency physician.",
+        exp: "Harvard-trained doctor from Coachella; first elected by unseating Mary Bono.",
+        money: "$2.39 million raised through September 30; $2.43 million on hand (FEC).",
+        priorities: "Opposes the 2025 reconciliation law, which he says \"cuts nearly a trillion dollars from Medicaid.\" Blames tariffs for prices. Wants a path to citizenship with a secure border, and called Coachella Valley ICE raids \"cruel, indiscriminate\" deportations of non-criminals. Authored a bill setting humane standards in ICE and Border Patrol custody. Pressed HHS Secretary Kennedy on fake citations in a federal health report.",
+        endorsements: "California Democratic Party, California Federation of Labor Unions, Inland Empire Labor Council, Planned Parenthood, Equality California, Teamsters, Riverside County Democratic Party.",
+        know: "Voted no on the 2025 reconciliation bill (H.R. 1). No controversy on record." },
+      { name: "Joe Males", party: "R", role: "Hemet City Councilmember and Mayor Pro Tem; Marine Corps veteran.",
+        exp: "Has owned JM Consulting since 1996. Council term runs through 2028.",
+        money: "$936,000 raised through June 30 and $922,000 spent, leaving $15,000 on hand with $25,000 in debt (FEC). Fall figures were not posted.",
+        priorities: "Cut gas taxes and roll back regulations to lower costs; stronger border enforcement and legal immigration only (per NBC Palm Springs). On the Hemet council: homelessness and bringing in businesses.",
+        endorsements: "California Republican Party, Riverside County Republican Party, California Republican Assembly, California Rifle and Pistol Association.",
+        know: "Raised nearly $1 million for the primary and spent almost all of it. Did not answer the iVoterGuide questionnaire; his campaign site could not be reached." }
+    ],
+    primary: "Ruiz 60.0%, Males 18.9%, with two other Republicans splitting 21%.",
+    news: "Cook notes Trump gained in Imperial County in 2024 but says repeating that coalition in a midterm \"will be incredibly difficult\" for Males." },
+  { id: "ca28", counties: ["San Bernardino","Los Angeles"], district: "District 28", area: "Mostly the San Gabriel Valley (Pasadena, Arcadia, Alhambra), with about 42% of Rancho Cucamonga, 51% of Upland, Wrightwood, and San Antonio Heights", rating: "Solid Democratic by Cook",
+    cands: [
+      { name: "Judy Chu", party: "D", role: "Congresswoman since 2009.",
+        exp: "Former Monterey Park mayor, Assemblymember, and Board of Equalization member. Clinical psychology Ph.D.",
+        money: "$941,000 raised through June 30 and $3.67 million on hand (FEC). Prior-cycle PAC money led by health professionals, public sector unions, and building trades.",
+        priorities: "Her office's 2026 work centers on Eaton Fire recovery; detailed campaign positions were not reported in the sources we found.",
+        endorsements: "Not reported in the sources we found.",
+        know: "Voted no on the 2025 reconciliation bill (H.R. 1). No controversy on record. The district is still recovering from the January 2025 Eaton Fire." },
+      { name: "April Verlato", party: "R", role: "Attorney, small business owner, former Arcadia mayor.",
+        exp: "Lost to Chu in 2024, 35% to 65%.",
+        money: "$250 raised and $205 on hand through June 30 (FEC).",
+        priorities: "Balanced budget amendment, no tax increases, restore the SALT and mortgage interest deductions, stronger border enforcement, treat homelessness through mental health and addiction care, a veterans medical center for the San Gabriel Valley.",
+        endorsements: "Law enforcement unions and former LA County DA Steve Cooley, per her 2024 site.",
+        know: "Essentially unfunded." }
+    ],
+    primary: "Chu 62.2%, Verlato 32.1%." },
+  { id: "ca31", counties: ["San Bernardino","Los Angeles"], district: "District 31", area: "Mostly the eastern San Gabriel Valley (West Covina, Covina, Glendora, Azusa, half of Pomona), with 84% of Chino and 95% of Montclair", rating: "Solid Democratic by Cook",
+    cands: [
+      { name: "Gil Cisneros", party: "D", role: "Congressman since 2025, and 2019 to 2021 in a prior district.",
+        exp: "Under Secretary of Defense for Personnel and Readiness 2021 to 2023; Navy supply officer for a decade.",
+        money: "$830,000 raised through September 30 and $230,000 on hand, with $5.45 million in committee debt, mostly his own loans (FEC).",
+        priorities: "\"Standing up for working families, veterans, and troops.\" Opposes cuts to SNAP, Medicare, and Medicaid. Bill to let DACA recipients join the military. Founded the Military Mental Health Caucus. Sits on Armed Services.",
+        endorsements: "California Democratic Party, Governor Newsom, Attorney General Bonta, Dolores Huerta, League of Conservation Voters, VoteVets, Planned Parenthood, Giffords.",
+        know: "Voted no on the 2025 reconciliation bill, calling it \"big, ugly, harmful, and wasteful.\" His committee carries $5.45 million in debt, mostly his own loans. No controversy on record." },
+      { name: "Eric Ching", party: "R", role: "IT professional; former Walnut mayor.",
+        exp: "Lost a neighboring House seat to Linda Sanchez in 2022 and 2024, around 40% each time.",
+        money: "$97,000 raised through mid-October; $10,000 on hand (FEC).",
+        priorities: "Term limits (signed the U.S. Term Limits pledge), border enforcement against weapons, drugs, and trafficking, tougher crime laws, school choice, less regulation.",
+        endorsements: "None listed.",
+        know: "Third House run in four years." }
+    ],
+    primary: "Cisneros 61.1%, Ching 23.8%." },
+  { id: "ca33", counties: ["San Bernardino","Riverside"], district: "District 33", area: "San Bernardino, Rialto, Highland, Colton, Grand Terrace, 85% of Redlands, 53% of Rancho Cucamonga, 48% of Fontana, plus Highgrove", rating: "Solid Democratic by Cook",
+    cands: [
+      { name: "Pete Aguilar", party: "D", role: "Congressman since 2015; chair of the House Democratic Caucus, the number three House Democrat.",
+        exp: "Appropriations Committee member; former Redlands mayor.",
+        money: "2026 totals were not posted on the FEC's pages we could reach; he ended 2024 with $2.65 million on hand. Prior-cycle PAC money ($2.5 million) led by health professionals, insurance, utilities, and defense, with AIPAC the single largest.",
+        priorities: "\"The high cost of living is the biggest issue facing our community right now.\" If Democrats retake the House, lower health care and food costs, help small businesses. Infrastructure, public safety, veterans.",
+        endorsements: "Human Rights Campaign.",
+        know: "Voted no on the 2025 reconciliation bill (H.R. 1). No controversy on record." },
+      { name: "Stephanie Vargas", party: "R", role: "Chief deputy city clerk for the City of Colton; former charter school board member.",
+        exp: "Lifelong district resident who grew up in San Bernardino.",
+        money: "$721 raised through September 30 (FEC).",
+        priorities: "\"The greatest issue facing District 33 is the high cost of living,\" tied to energy: EPA waivers from California gas rules, permitting reform, grid modernization. Flat tax, eliminate the Department of Education, no sanctuary cities, merit-based immigration, abortion should never be allowed (iVoterGuide survey).",
+        endorsements: "California Republican Party, San Bernardino County Republican Party, Reform California, Redlands Tea Party Patriots.",
+        know: "Essentially unfunded." }
+    ],
+    primary: "Aguilar 53.5%, Vargas 17.5%, in a six-way field." },
+  { id: "ca35", counties: ["San Bernardino","Riverside","Los Angeles"], district: "District 35", area: "Ontario, Chino Hills, Bloomington, 52% of Fontana, 49% of Upland, the Chino Preserve, plus Eastvale, Norco, and 48% of Corona, and Claremont and half of Pomona", rating: "Solid Democratic by Cook and Inside Elections",
+    cands: [
+      { name: "Norma Torres", party: "D", role: "Congresswoman since 2015.",
+        exp: "Former Pomona mayor and state legislator; 17 years as an LAPD 911 dispatcher.",
+        money: "$769,000 raised through June 30; $339,000 on hand (FEC). Fall figures were not posted.",
+        priorities: "Brought $10.7 million in 2026 community projects to the Inland Empire as an appropriator, plus $25 million for the 71 freeway gap in Pomona. Calls broad ICE actions \"abusive, illegal, and unconstitutional\" and wants the Adelanto for-profit detention center closed. Bills to raise the minimum wage, expand WIC access, and train advanced manufacturing workers.",
+        endorsements: "California Democratic Party, Labor Federation, SEIU, Inland Empire Labor Council, Planned Parenthood, Everytown, Giffords, Latino Victory.",
+        know: "Voted no on the 2025 reconciliation bill. Cook notes the district \"swung hard to the right\" in 2024, and Cargile carried the Riverside County part in the primary. No controversy on record." },
+      { name: "Mike Cargile", party: "R", role: "Army veteran of Desert Storm and entertainment industry writer and producer.",
+        exp: "Co-founded San Bernardino County Patriots. Lost to Torres in 2020, 2022, and 2024 (41.6% last time).",
+        money: "$9,800 raised through mid-October; $448 on hand (FEC).",
+        priorities: "Border security, child protection, economic policy. On the iVoterGuide questionnaire: abortion \"never,\" eliminate the Department of Education, merit-based immigration, no sanctuary cities, photo ID to vote, no restrictions on gun ownership, keep Medicare and Medicaid but no other public health programs. His 2024 \"Cargile Plan\": finish the wall, then an expedited citizenship window for long-term residents.",
+        endorsements: "California Republican Party, San Bernardino County Republican Party, California Republican Assembly, California Rifle and Pistol Association.",
+        know: "In 2020 Los Angeles Magazine reported his social media carried QAnon references and posts described as derogatory toward Black people, immigrants, Muslims, and LGBTQ people, and the state Republican Party pulled its endorsement that year; it has endorsed him again in 2026. He did not respond to the magazine at the time." }
+    ],
+    primary: "Torres 59.5%, Cargile 40.4%. In the Riverside County part of the district Cargile led, 52% to 48%." },
+  { id: "ca39", counties: ["Riverside"], district: "District 39", area: "Riverside, Moreno Valley, Jurupa Valley, Perris, Mead Valley, Home Gardens, March Air Reserve Base, half of Nuevo", rating: "Solid Democratic by Cook",
+    cands: [
+      { name: "Mark Takano", party: "D", role: "Congressman since 2013; former Rialto teacher.",
+        exp: "Born and raised in Riverside; Harvard graduate; former Riverside Community College District trustee.",
+        money: "$733,000 raised and $78,000 on hand as of mid-May (FEC). Fall figures were not posted. Prior-cycle PAC money about a third from labor.",
+        priorities: "Top Democrat on Veterans' Affairs: fought a Republican package he says \"cuts existing veterans' benefits to fund new ones\" and a VA plan to cut thousands of unfilled health jobs. Reintroduced the 32-hour workweek bill with Bernie Sanders. Spoke at an \"ICE Out of Riverside\" rally and brought an ICE-detained citizen veteran to the State of the Union. Chairs the Congressional Equality Caucus. $15 million in Riverside County projects this year.",
+        endorsements: "California Democratic Party, Human Rights Campaign, National Nurses United, Labor Federation, Building Trades, Sierra Club, Equality California.",
+        know: "Voted no on the 2025 reconciliation bill. Only $78,000 on hand in May against an unfunded opponent. No controversy on record." },
+      { name: "Steve Manos", party: "R", role: "Former Lake Elsinore mayor and business owner.",
+        exp: "Ballot designation \"Mayor/Business Owner.\"",
+        money: "$11,000 raised through September 30; $3,500 on hand (FEC).",
+        priorities: "Housing affordability through market-rate supply, freeway repairs including the 215, limiting government overreach, parental rights.",
+        endorsements: "None listed.",
+        know: "Essentially unfunded." }
+    ],
+    primary: "Takano 61.0%, Manos 39.0%." },
+  { id: "ca40", counties: ["Riverside","Orange"], district: "District 40", area: "Murrieta, Menifee, Lake Elsinore, Wildomar, Canyon Lake, Temescal Valley, 52% of Corona, Woodcrest, Lake Mathews, plus south Orange County (Mission Viejo, Rancho Santa Margarita)", rating: "Safe Republican by CalMatters; two Republican incumbents face each other",
+    cands: [
+      { name: "Ken Calvert", party: "R", role: "Congressman since 1993, the longest-serving California Republican; chairs the defense appropriations subcommittee.",
+        exp: "Corona native, former restaurant and real estate owner. Moved into this district after Prop 50 redrew his old one.",
+        money: "$6.84 million raised through September 30; $1.63 million on hand (FEC). Notable donors include RTX and BAE Systems affiliates. A super PAC, Americans 4 Security, spent about $3 million attacking Kim.",
+        priorities: "Signed the no-tax-increase pledge. Work with Trump to \"lower taxes, reduce housing costs, secure the borders.\" Cites money for the Santa Ana River flood project and E-Verify. Called himself \"the only real, true Trump conservative\" in the primary; his website now omits Trump.",
+        endorsements: "Trump (per Calvert), Steve Hilton, Riverside County Republican Party, California Republican Assembly, Reform California, Log Cabin Republicans.",
+        know: "Voted yes on the 2025 reconciliation bill (H.R. 1). Kim's ads revived 1990s headlines about Calvert being found in a car with a prostitute. He voted against certifying Arizona and Pennsylvania electors on January 6, 2021." },
+      { name: "Young Kim", party: "R", role: "Congresswoman since 2021; Financial Services Committee.",
+        exp: "Former Assemblymember, longtime aide to Representative Ed Royce, financial analyst and business owner.",
+        money: "$9.98 million raised through September 30; $1.96 million on hand (FEC). Top donor industries: securities and investment, real estate, health professionals, technology.",
+        priorities: "Gas, grocery, and utility costs. Supports a path to citizenship for DACA recipients. Cites more than 50 bills signed into law. Called herself a \"Trump Republican\" in the primary; her site now omits him.",
+        endorsements: "Orange County Register, Howard Jarvis Taxpayers Association, Americans for Prosperity Action, Senate Minority Leader Brian Jones, Orange County deputy sheriffs.",
+        know: "Voted yes on the 2025 reconciliation bill (H.R. 1). Calvert's ads call her a RINO and cite her saying she would \"whip [Trump's] butt.\" About $3 million in outside attack spending has targeted her." }
+    ],
+    primary: "Calvert 34.9%, Kim 20.6%, with five Democrats splitting 43%. Riverside County voters backed Calvert overwhelmingly.",
+    news: "NBC LA reports both candidates scaled back Trump in their general election messaging." },
+  { id: "ca48", counties: ["Riverside","San Diego"], district: "District 48", area: "Temecula, Hemet, East Hemet, Palm Springs, Indian Wells, French Valley, Winchester, Anza, Idyllwild, plus north San Diego County (Escondido, San Marcos, Vista)", rating: "Lean Democratic by Cook and Sabato; open seat, Darrell Issa retiring",
+    cands: [
+      { name: "Jim Desmond", party: "R", role: "San Diego County Supervisor; former San Marcos mayor and airline pilot.",
+        exp: "Switched into this district from the neighboring one on the last filing day.",
+        money: "$2.17 million raised and $1.23 million on hand through June 30 (FEC). Fall figures were not posted. Backed by the national Republican committee's targeted program.",
+        priorities: "\"Rein in wasteful spending, secure our border, and lower costs for families.\" \"The only way out of deficit is growing the economy.\" \"It shouldn't take years to become a citizen.\" Ban congressional stock trading, first-time homebuyer help. Said ICE \"has overreached\" but voted against ending county ICE contracts; opposed Trump's remark about letting Iran \"take out San Diego.\"",
+        endorsements: "Darrell Issa, Donald Trump (before the primary; not on the campaign's own list), San Diego County Republican Party, Reform California.",
+        know: "Critics call him the county's \"most extreme\" supervisor. Lives outside the district. Declined KQED's interview request." },
+      { name: "Marni von Wilpert", party: "D", role: "San Diego City Councilmember; former deputy city attorney and federal labor attorney.",
+        exp: "Civil rights lawyer for people with HIV in the South; Peace Corps in Botswana.",
+        money: "$4.52 million raised through September 30; $973,000 on hand (FEC). In the national Democratic committee's targeted program; a supporting super PAC is running ads in the LA market.",
+        priorities: "\"I will stand up for our community against Donald Trump. And I'll do it every day.\" On ICE raids: \"It's not law enforcement,\" while backing \"a strong, secure border\" and a path to citizenship. Says the seat decides \"who gets healthcare in this country.\" Would tax the wealthy and end the Middle East war to cut the deficit.",
+        endorsements: "EMILYs List, CTA, SEIU California, Human Rights Campaign, Equality California, Democratic Majority for Israel, New Democrat Coalition.",
+        know: "Criticized for calling herself a \"prosecutor\" when her work was mainly civil. Lives outside the district in San Diego. Disclosed surgery for early-stage breast cancer in June; her campaign says the prognosis is excellent." }
+    ],
+    primary: "Desmond 38.9%, von Wilpert 20.8%, in a 12-way field.",
+    poll: "SurveyUSA, October 1 to 7: von Wilpert 47%, Desmond 38%, 15% undecided. A July poll by von Wilpert's campaign had it 48 to 46.",
+    news: "KQED reports ICE enforcement in Escondido and Vista has become the central issue, with both campaigns buying San Diego TV." }
+);
+
+
+HOUSE.push(
+  { id: "ca27", counties: ["Los Angeles"], district: "District 27", area: "Santa Clarita, Lancaster, Palmdale", rating: "Solid Democratic by Cook and Inside Elections, moved from Lean after Prop 50 added Democratic areas",
+    cands: [
+      { name: "George Whitesides", party: "D", role: "Congressman since 2025; former Virgin Galactic CEO and NASA chief of staff.",
+        exp: "Armed Services and Science committees. Co-founded the wildfire group Megafire Action. Beat Mike Garcia in 2024 by about 2 points.",
+        money: "$4.44 million raised through September 30; $2.27 million on hand; $1.31 million in committee debt (FEC). About 70% from individuals, $736,000 from PACs.",
+        priorities: "Says Trump \"ran on lowering costs for American families\" but \"his administration's actions have only made the problem worse.\" \"Voted against every attempt to cut\" Medicaid and food assistance. Backs border security and more enforcement resources and will \"hold ICE agents accountable when they break the law.\" Wildfire legislation, a stock trading ban for officials, affordable housing.",
+        endorsements: "Listed as a top race by JACPAC. Others not reported.",
+        know: "Voted no on the 2025 reconciliation bill (H.R. 1). Finished 544 votes behind Gibbs in the primary, though Democrats combined for 59%. Lives in Agua Dulce, which Prop 50 moved into the 30th District; House members need not live in their district." },
+      { name: "Jason Gibbs", party: "R", role: "Santa Clarita City Councilmember since 2020; mechanical engineer with aerospace rocket experience.",
+        exp: "Mayor in 2023. His current council term came by appointment in 2024, not election.",
+        money: "$402,000 raised through September 30; $168,000 on hand (FEC), about a tenth of the incumbent.",
+        priorities: "Calls lowering costs the Trump administration's \"strongest accomplishment,\" citing no tax on Social Security and tips. Supports \"securing the border and enforcing immigration laws, especially when it comes to violent criminals,\" plus legal immigration reform. Opposed the county's half-cent sales tax and state housing density mandates. \"Families here are being crushed by rising costs, crime and a political class that's completely out of touch.\"",
+        endorsements: "Former Representative Mike Garcia.",
+        know: "Topped the primary by 544 votes in a field where Democrats took 59% combined. No controversy on record." }
+    ],
+    primary: "Gibbs 41.0%, Whitesides 40.6%, with two other Democrats at 18%." },
+  { id: "ca45", counties: ["Orange","Los Angeles"], district: "District 45", area: "Garden Grove, Westminster, Buena Park, Cypress, Fountain Valley, parts of Fullerton, Santa Ana, and Placentia, plus Cerritos, Artesia, Hawaiian Gardens, and half of Norwalk", rating: "Likely Democratic by Cook, Sabato, and Inside Elections; the one Orange County seat rated below Solid",
+    cands: [
+      { name: "Derek Tran", party: "D", role: "Congressman since 2025; consumer rights attorney, Army veteran, small business owner.",
+        exp: "Son of Vietnamese refugees. Beat Michelle Steel in 2024 by 653 votes.",
+        money: "$5.85 million raised through September 30; $3.25 million on hand (FEC). $4.1 million from individuals, $1.28 million from PACs.",
+        priorities: "Wants a minimum wage that is a \"living wage\"; voted against extending the 2017 tax cuts as \"tax breaks to the ultra-wealthy.\" \"Healthcare should be a right, not a privilege\"; voted twice to extend ACA subsidies. Wants \"a comprehensive solution\" that secures the border and protects legal pathways; voted against ICE funding, calling it \"a rogue agency,\" but voted for the Laken Riley Act. Voted to require congressional approval for military action in Iran.",
+        endorsements: "CAPA21, Democrats Work for America.",
+        know: "Voted no on the 2025 reconciliation bill (H.R. 1). Pledged in 2023 not to take \"a dime of corporate PAC money,\" then accepted at least $46,500 from 30 corporate PACs (Boeing, Amazon, Walmart, Google, Lockheed Martin among them) starting in 2025; his office did not respond to the Free Beacon. His Laken Riley vote drew fire from Democratic groups." },
+      { name: "Chuong Vo", party: "R", role: "Retired Torrance police officer (28 years); former Cerritos mayor and councilmember.",
+        exp: "Born in Vietnam; his family fled by boat. Cerritos planning commissioner, then council 2020 to 2025.",
+        money: "$844,000 raised through September 30; $296,000 on hand (FEC).",
+        priorities: "Supports extending the Trump tax cuts and auditing \"waste and fraud across all agencies.\" \"We are not a country if we don't enforce our immigration laws\"; calls ICE agents \"outstanding.\" Supports the 2025 bill that cut Medicaid and says he would protect Social Security and Medicare. Wants proof of citizenship to vote and stronger penalties for repeat offenders. Says sustained military operations should need congressional approval.",
+        endorsements: "State Senator Tony Strickland and other Republican figures.",
+        know: "In 2023 he voted with a 3 to 2 council majority to push Cerritos's election back a year, extending the terms of the members who voted for it. Declined the mayoralty in 2021, saying he was \"too inexperienced.\"" }
+    ],
+    primary: "Tran 53.8%; five Republicans combined for about 46%, Vo first among them at 15.3%." },
+  { id: "ca26", counties: ["Los Angeles"], district: "District 26", area: "Mostly Ventura County (Oxnard, Thousand Oaks, Camarillo), plus Agoura Hills, Calabasas, Westlake Village, Hidden Hills, Castaic, Val Verde, Quartz Hill, and part of Los Angeles", rating: "Solid Democratic by Cook; open seat, Julia Brownley retiring",
+    cands: [
+      { name: "Jacqui Irwin", party: "D", role: "State Assemblymember from Thousand Oaks.",
+        exp: "Former Thousand Oaks mayor.",
+        money: "$822,000 raised through June 30; $295,000 on hand (FEC). Fall figures were not posted.",
+        priorities: "Not reported in the sources we found.",
+        endorsements: "Not reported in the sources we found.",
+        know: "Open seat; no incumbent record to vote on." },
+      { name: "Sam Gallucci", party: "R", role: "Business executive and pastor.",
+        exp: "First run for Congress.",
+        money: "$377,000 raised through June 30, including $177,000 in his own loans; $34,000 on hand (FEC).",
+        priorities: "Not reported in the sources we found.",
+        endorsements: "Not reported in the sources we found.",
+        know: "Largely self-funded." }
+    ],
+    primary: "Irwin 41.3%, Gallucci 20.9%, in a crowded field." },
+  { id: "ca29", counties: ["Los Angeles"], district: "District 29", area: "East San Fernando Valley: San Fernando, Pacoima, Van Nuys, Sun Valley", rating: "Solid Democratic by Cook; two Democrats",
+    cands: [
+      { name: "Luz Rivas", party: "D", role: "Congresswoman since 2025; former Assemblymember.",
+        exp: "Engineer by training; founded a STEM nonprofit for girls.",
+        money: "$859,000 raised through September 30; $360,000 on hand (FEC), more than half from PACs.",
+        priorities: "Voted against the Republican bill to fund ICE, calling it unprecedented.",
+        endorsements: "Not reported in the sources we found.",
+        know: "Voted no on the 2025 reconciliation bill (H.R. 1)." },
+      { name: "Angélica María Dueñas", party: "D", role: "Community organizer; repeat progressive challenger in this district.",
+        exp: "Has run for this seat since 2020.",
+        money: "$37,000 raised through June 30; $3,300 on hand (FEC).",
+        priorities: "Not reported in the sources we found.",
+        endorsements: "Not reported in the sources we found.",
+        know: "Essentially unfunded." }
+    ],
+    primary: "Rivas 51.0%, Dueñas 24.9%, a Republican 24.0%." },
+  { id: "ca30", counties: ["Los Angeles"], district: "District 30", area: "Glendale, Burbank, West Hollywood, Los Feliz, Silver Lake, plus Acton and Agua Dulce added by Prop 50", rating: "Solid Democratic by Cook",
+    cands: [
+      { name: "Laura Friedman", party: "D", role: "Congresswoman since 2025; former Assemblymember and film producer.",
+        exp: "Former Glendale mayor.",
+        money: "$828,000 raised through June 30; $469,000 on hand (FEC).",
+        priorities: "\"I will not support giving Immigration and Customs Enforcement another cent until there has been wholesale reform.\" Opposes the 100% film tariff and backs a national film tax credit.",
+        endorsements: "Not reported in the sources we found.",
+        know: "Voted no on the 2025 reconciliation bill (H.R. 1)." },
+      { name: "Scott Meyers", party: "R", role: "Burbank attorney and small business owner.",
+        exp: "First run for Congress.",
+        money: "$58,000 raised through June 30, $40,000 of it his own loans; $2,600 on hand (FEC).",
+        priorities: "Not reported in the sources we found.",
+        endorsements: "Not reported in the sources we found.",
+        know: "Essentially unfunded." }
+    ],
+    primary: "Friedman 52.7%, Meyers 16.6%." },
+  { id: "ca32", counties: ["Los Angeles"], district: "District 32", area: "West San Fernando Valley, Sherman Oaks, Encino, Calabasas foothills, Malibu", rating: "Solid Democratic by Cook",
+    cands: [
+      { name: "Brad Sherman", party: "D", role: "Congressman since 1997; CPA and former state tax board member.",
+        exp: "Senior member of Financial Services and Foreign Affairs.",
+        money: "$2.51 million raised through June 30; $2.67 million on hand (FEC).",
+        priorities: "Not reported in the sources we found.",
+        endorsements: "Not reported in the sources we found.",
+        know: "Voted no on the 2025 reconciliation bill (H.R. 1)." },
+      { name: "Larry Thompson", party: "R", role: "Attorney and film producer.",
+        exp: "Finished second in the primary with 32.7%.",
+        money: "$53,000 raised through September 30; $955 on hand (FEC).",
+        priorities: "Not reported in the sources we found.",
+        endorsements: "Not reported in the sources we found.",
+        know: "Essentially unfunded." }
+    ],
+    primary: "Sherman 36.8%, Thompson 32.7%, with other Democrats splitting 22%." },
+  { id: "ca34", counties: ["Los Angeles"], district: "District 34", area: "Central and East Los Angeles: Downtown, Boyle Heights, Koreatown, Eagle Rock, Highland Park", rating: "Solid Democratic by Cook; two Democrats",
+    cands: [
+      { name: "Jimmy Gomez", party: "D", role: "Congressman since 2017.",
+        exp: "Former Assemblymember; founded the Congressional Dads Caucus.",
+        money: "$1.31 million raised through September 30; $705,000 on hand (FEC), $561,000 from PACs.",
+        priorities: "Not reported in the sources we found.",
+        endorsements: "Representative Alexandria Ocasio-Cortez.",
+        know: "Voted no on the 2025 reconciliation bill (H.R. 1)." },
+      { name: "Angela Gonzales-Torres", party: "D", role: "College counselor from East Los Angeles.",
+        exp: "Progressive challenger backed by Justice Democrats.",
+        money: "$450,000 raised through September 30; $147,000 on hand (FEC), almost all from individuals.",
+        priorities: "Medicare for All and a Green New Deal. \"Our tax dollars should be building housing, healthcare, and opportunity here at home.\"",
+        endorsements: "Justice Democrats.",
+        know: "First run for office." }
+    ],
+    primary: "Gomez 46.0%, Gonzales-Torres 30.7%." },
+  { id: "ca36", counties: ["Los Angeles"], district: "District 36", area: "Westside and South Bay: Santa Monica, Venice, Manhattan Beach, Torrance, Palos Verdes", rating: "Solid Democratic by Cook",
+    cands: [
+      { name: "Ted Lieu", party: "D", role: "Congressman since 2015; vice chair of the House Democratic Caucus.",
+        exp: "Air Force veteran; Judiciary and Foreign Affairs committees.",
+        money: "$2.15 million raised through September 30; $1.21 million on hand (FEC).",
+        priorities: "Defending civil rights, a more compassionate immigration policy, regulating AI.",
+        endorsements: "Not reported in the sources we found.",
+        know: "Voted no on the 2025 reconciliation bill (H.R. 1)." },
+      { name: "Houston Brignano", party: "R", role: "Technology executive.",
+        exp: "First run for Congress.",
+        money: "$11,600 raised through September 30; $912 on hand (FEC).",
+        priorities: "An immigration system that prioritizes American-born citizens in the job market; AI job training.",
+        endorsements: "Not reported in the sources we found.",
+        know: "Essentially unfunded." }
+    ],
+    primary: "Lieu 60.9%, Brignano 15.3%." },
+  { id: "ca37", counties: ["Los Angeles"], district: "District 37", area: "South and Central Los Angeles: Leimert Park, Crenshaw, Culver City, Mid-City", rating: "Solid Democratic by Cook; two Democrats",
+    cands: [
+      { name: "Sydney Kamlager-Dove", party: "D", role: "Congresswoman since 2023; former state senator.",
+        exp: "Foreign Affairs and Natural Resources committees.",
+        money: "$1.15 million raised through June 30; $185,000 on hand (FEC).",
+        priorities: "Not reported in the sources we found.",
+        endorsements: "Not reported in the sources we found.",
+        know: "Voted no on the 2025 reconciliation bill (H.R. 1)." },
+      { name: "Samantha Mota", party: "D", role: "Community advocate.",
+        exp: "First run for Congress.",
+        money: "$12,600 raised through mid-October, mostly her own; $328 on hand (FEC).",
+        priorities: "Not reported in the sources we found.",
+        endorsements: "Not reported in the sources we found.",
+        know: "Essentially unfunded." }
+    ],
+    primary: "Kamlager-Dove 55.2%, Mota 11.7%." },
+  { id: "ca38", counties: ["Los Angeles","Orange"], district: "District 38", area: "El Monte, Baldwin Park, Pico Rivera, Commerce, Bell, Cudahy, Hacienda Heights, Diamond Bar, plus Yorba Linda and east Anaheim in Orange County", rating: "Solid Democratic by Cook; open seat redrawn by Prop 50, Linda Sánchez moved to the 41st",
+    cands: [
+      { name: "Hilda Solis", party: "D", role: "Los Angeles County Supervisor, termed out; former U.S. Labor Secretary under Obama.",
+        exp: "Represented this area in Congress from 2001 to 2009.",
+        money: "$1.05 million raised through June 30; $155,000 on hand (FEC).",
+        priorities: "A government that \"works for the people, not the powerful.\"",
+        endorsements: "Not reported in the sources we found.",
+        know: "Open seat; no incumbent record to vote on." },
+      { name: "Pedro Casas", party: "R", role: "Psychologist.",
+        exp: "Ran for a neighboring seat in 2024.",
+        money: "No 2025-26 financial activity reported to the FEC.",
+        priorities: "Not reported in the sources we found.",
+        endorsements: "Not reported in the sources we found.",
+        know: "No campaign money on file." }
+    ],
+    primary: "Solis 47.6%, Casas 35.8%." },
+  { id: "ca41", counties: ["Los Angeles","Orange"], district: "District 41", area: "Southeast LA County: Downey, Whittier, Bellflower, Bell Gardens, La Mirada, Santa Fe Springs, most of Lakewood, half of Norwalk, plus La Habra, Los Alamitos, Rossmoor, most of Brea", rating: "Solid Democratic by Cook; Prop 50 turned Ken Calvert's old seat into a Democratic one",
+    cands: [
+      { name: "Linda Sánchez", party: "D", role: "Congresswoman since 2003, moving over from the old 38th.",
+        exp: "Former labor attorney and Orange County labor council director. Represents about half the new district already.",
+        money: "$1.89 million raised through September 30; $462,000 on hand (FEC), three-quarters from PACs.",
+        priorities: "\"Republicans in Congress have done nothing to address rising costs\"; \"fighting to lower prices and stand up for the hardworking people who keep our communities running.\"",
+        endorsements: "Hakeem Jeffries, Pete Aguilar.",
+        know: "Voted no on the 2025 reconciliation bill (H.R. 1). Primary rival Hector De La Torre alleged personal use of campaign funds and unreported stock trades on his campaign site; that is an allegation, not a finding." },
+      { name: "Mitch Clemmons", party: "R", role: "Plumbing contractor since 2002.",
+        exp: "Lost a 2022 state Senate race 61 to 39.",
+        money: "$6,200 raised through mid-October; $3,100 on hand (FEC).",
+        priorities: "His campaign cites \"everyday concerns that matter most to residents\" and \"responsible leadership and clear communication.\"",
+        endorsements: "Not reported in the sources we found.",
+        know: "Essentially unfunded, but finished within 2 points of Sánchez in the primary with Democrats split three ways." }
+    ],
+    primary: "Sánchez 37.5%, Clemmons 35.8%, with two other Democrats at 27%." },
+  { id: "ca42", counties: ["Los Angeles","Orange"], district: "District 42", area: "Most of Long Beach, Signal Hill, Avalon, plus Huntington Beach, Costa Mesa, most of Newport Beach and Seal Beach", rating: "Solid Democratic by Cook",
+    cands: [
+      { name: "Robert Garcia", party: "D", role: "Congressman since 2023; former Long Beach mayor.",
+        exp: "Top Democrat on the Oversight Committee.",
+        money: "$2.62 million raised through June 30; $1.38 million on hand (FEC).",
+        priorities: "Not reported in the sources we found.",
+        endorsements: "Not reported in the sources we found.",
+        know: "Voted no on the 2025 reconciliation bill (H.R. 1)." },
+      { name: "Brian Burley", party: "R", role: "Huntington Beach school board trustee.",
+        exp: "Ran for Congress before.",
+        money: "$250,000 raised through September 30, $186,000 of it his own loans; $5,300 on hand (FEC).",
+        priorities: "Not reported in the sources we found.",
+        endorsements: "Not reported in the sources we found.",
+        know: "Mostly self-funded." }
+    ],
+    primary: "Garcia 56.5%, Burley 20.6%." },
+  { id: "ca43", counties: ["Los Angeles"], district: "District 43", area: "Inglewood, Hawthorne, Gardena, Compton, Lawndale, Westmont, Willowbrook, part of Torrance and South LA", rating: "Solid Democratic by Cook",
+    cands: [
+      { name: "Maxine Waters", party: "D", role: "Congresswoman since 1991; top Democrat on Financial Services.",
+        exp: "Former committee chair; one of the longest-serving members of the House.",
+        money: "$1.04 million raised through September 30; $332,000 on hand; $142,000 in debt (FEC).",
+        priorities: "Dismisses concerns about her age, per NBC LA.",
+        endorsements: "Not reported in the sources we found.",
+        know: "Voted no on the 2025 reconciliation bill (H.R. 1)." },
+      { name: "Cristian Morales", party: "R", role: "Manufacturing executive.",
+        exp: "Ran in the 2021 recall with under 1%.",
+        money: "$14,000 raised through September 30, mostly loans; $331 on hand (FEC).",
+        priorities: "Says Newsom's policies made California \"increasingly difficult and expensive for businesses.\"",
+        endorsements: "Not reported in the sources we found.",
+        know: "Essentially unfunded." }
+    ],
+    primary: "Waters 63.8%, Morales 16.9%." },
+  { id: "ca44", counties: ["Los Angeles"], district: "District 44", area: "San Pedro, Wilmington, Carson, Long Beach's west side, Lynwood, South Gate", rating: "Solid Democratic by Cook",
+    cands: [
+      { name: "Nanette Barragán", party: "D", role: "Congresswoman since 2017; chair of the Congressional Hispanic Caucus.",
+        exp: "Former Hermosa Beach councilmember.",
+        money: "$1.01 million raised through September 30; $1.11 million on hand (FEC), mostly from PACs.",
+        priorities: "Not reported in the sources we found.",
+        endorsements: "Not reported in the sources we found.",
+        know: "Voted no on the 2025 reconciliation bill (H.R. 1)." },
+      { name: "Genevieve Angel", party: "R", role: "Family nurse practitioner.",
+        exp: "First run for Congress.",
+        money: "$14,000 raised through June 30; $8,700 on hand (FEC).",
+        priorities: "Not reported in the sources we found.",
+        endorsements: "Not reported in the sources we found.",
+        know: "Essentially unfunded." }
+    ],
+    primary: "Barragán 77.0%, Angel 23.0%." }
+);
+
+
+HOUSE.push(
+  { id: "ca46", counties: ["Orange"], district: "District 46", area: "Santa Ana, Anaheim, Orange, and nearby", rating: "Solid Democratic by Cook",
+    cands: [
+      { name: "Lou Correa", party: "D", role: "Congressman since 2017; former state senator and Assemblymember.",
+        exp: "Longtime Santa Ana-based legislator; Homeland Security and Judiciary committees.",
+        money: "Fall FEC totals could not be pulled; not verified.",
+        priorities: "Not reported in the sources we found.",
+        endorsements: "Not reported in the sources we found.",
+        know: "Voted no on the 2025 reconciliation bill (H.R. 1)." },
+      { name: "David Pan", party: "R", role: "UC Irvine German professor since 2006; former McKinsey consultant.",
+        exp: "Lost to Correa in 2024, 63 to 37.",
+        money: "About $104,000 raised, nearly all spent (Ballotpedia).",
+        priorities: "Public safety (\"rising crime is endangering our families\"), shrinking government to fight inflation, school choice, border security, per his 2024 site. No 2026 statements on file.",
+        endorsements: "California Republican Party, Orange County Republican Party, California Republican Assembly, Reform California.",
+        know: "Rematch of 2024." }
+    ],
+    primary: "Correa 51.9%, Pan 32.9%." },
+  { id: "ca47", counties: ["Orange"], district: "District 47", area: "Irvine, Laguna Beach, Newport coast, Costa Mesa edge, Lake Forest, Mission Viejo coast", rating: "Solid Democratic by Cook's October list, though Cook's race page still says Likely; on the Democrats' Frontline list",
+    cands: [
+      { name: "Dave Min", party: "D", role: "Congressman since 2025; former state senator and UC Irvine law professor.",
+        exp: "Former SEC enforcement attorney and economic adviser to Senator Schumer. Succeeded Katie Porter.",
+        money: "About $2.1 million raised this cycle (Ballotpedia). Fall cash on hand could not be pulled; not verified.",
+        priorities: "Abortion and contraception access, gun violence prevention, climate action (his 2023 survey). 2026 statements were not found in our sources.",
+        endorsements: "Not reported in the sources we found.",
+        know: "Voted no on the 2025 reconciliation bill (H.R. 1). Pleaded no contest to a misdemeanor DUI in 2023 after running a red light: \"My decision to drive last night was irresponsible. I accept full responsibility.\" Le Roux attacks his constituent service; the DCCC says his office has recovered more than $5 million for constituents." },
+      { name: "Jenny Rae Le Roux", party: "R", role: "Entrepreneur and investor; director of CAL DOGE, Steve Hilton's private-sector fraud project.",
+        exp: "Cousin of Virginia Governor Abigail Spanberger, a Democrat. Entered the race late.",
+        money: "$553,000 raised through September 30; $155,000 on hand (FEC).",
+        priorities: "\"Californians are tired of one-party rule.\" Says Democrats \"have been in charge for 16 years, and they're up to no good.\" Focus on \"finding the fraud that's happening through Sacramento,\" plus HUD and veterans issues. No statements found on health care, immigration, or Trump.",
+        endorsements: "None formally listed; says she will work with Steve Hilton on fraud.",
+        know: "A rival Republican campaign called her a last-minute \"MAGA extremist\" entry and said \"a vote for Le Roux is a vote for Dave Min.\"" }
+    ],
+    primary: "Min 45.4%, Le Roux 25.0%, with three other Republicans at 18%." },
+  { id: "ca49", counties: ["San Diego","Orange"], district: "District 49", area: "North County coast: Oceanside, Carlsbad, Encinitas, Vista, plus San Clemente, Dana Point, and San Juan Capistrano in Orange County", rating: "Solid Democratic by Cook's October list; Prop 50 moved it four points left",
+    cands: [
+      { name: "Mike Levin", party: "D", role: "Congressman since 2019; energy and environmental lawyer.",
+        exp: "Former executive director of the Orange County Democratic Party. Stanford and Duke Law.",
+        money: "Fall FEC totals could not be pulled; not verified. Mid-year PAC money included his own victory fund and climate groups.",
+        priorities: "Restore Congress's \"power of the purse.\" Calls the Republican cuts to health care and food aid \"devastating\" and pledges to reverse them. Says he has secured about $1.1 billion for the district. Renewables are \"the cleanest and most affordable\" option. Would demand a War Powers vote on Iran; calls the administration's treatment of Congress \"truly disgraceful.\"",
+        endorsements: "Not reported in the sources we found.",
+        know: "Voted no on the 2025 reconciliation bill (H.R. 1). No controversy on record." },
+      { name: "Armen Kurdian", party: "R", role: "Retired Navy captain.",
+        exp: "First run for Congress; no further biography on file.",
+        money: "$156,000 raised through September 30; $25,000 on hand (FEC). About a third via WinRed, $10,000 self-funded.",
+        priorities: "Cost of living is his top priority; would cut state regulations he says drive up prices. \"I'm in favor of all forms of energy,\" including nuclear. On Iran: \"I don't believe it's in our national interest anymore\" to keep fighting.",
+        endorsements: "None listed.",
+        know: "Outraised by a wide margin; $25,000 on hand a month out." }
+    ],
+    primary: "Levin 55.9%, Kurdian 26.1%, Star Parker (R) 18.0%." },
+  { id: "ca50", counties: ["San Diego"], district: "District 50", area: "Coastal and inland San Diego: La Jolla, Del Mar, Poway, Rancho Bernardo, Escondido's edge", rating: "Solid Democratic by Cook",
+    cands: [
+      { name: "Scott Peters", party: "D", role: "Congressman since 2013; former San Diego City Council president and port chair.",
+        exp: "Environmental attorney by background.",
+        money: "Fall FEC totals could not be pulled; not verified.",
+        priorities: "Lower the cost of living, \"defend and protect our democracy,\" bring the deficit to 3% of GDP a year. \"In the face of this administration's corruption and cruelty\" he will keep fighting.",
+        endorsements: "Not reported in the sources we found.",
+        know: "Voted no on the 2025 reconciliation bill (H.R. 1)." },
+      { name: "Steve Cohen", party: "R", role: "Television news consultant; KUSI news director for 20 years.",
+        exp: "Let go in 2023 after Nexstar bought the station. Did not respond to KPBS.",
+        money: "Not verified.",
+        priorities: "Balanced budget, raise defense spending to $1.5 trillion, protect Social Security.",
+        endorsements: "Not reported in the sources we found.",
+        know: "Took 40% in the primary, a strong showing for the district." }
+    ],
+    primary: "Peters 48.1%, Cohen 39.8%." },
+  { id: "ca51", counties: ["San Diego"], district: "District 51", area: "Central and east San Diego, El Cajon, La Mesa, Santee", rating: "Solid Democratic by Cook",
+    cands: [
+      { name: "Sara Jacobs", party: "D", role: "Congresswoman since 2021; former State Department policy official.",
+        exp: "Armed Services and Foreign Affairs committees.",
+        money: "Spent $1.45 million this year and transferred $373,000 to the national party; $270,000 on hand as of late September (KPBS).",
+        priorities: "Universal child care, expanded military housing, end the Iran war to lower gas prices, remove tariffs, \"humane immigration policies.\"",
+        endorsements: "Not reported in the sources we found.",
+        know: "Voted no on the 2025 reconciliation bill (H.R. 1)." },
+      { name: "Ricardo Cabrera", party: "R", role: "Owner of a cybersecurity firm.",
+        exp: "Master's in cybersecurity from Grand Canyon University.",
+        money: "No campaign money on file with the FEC as of late September; his site routes donations to Reform California and the county GOP.",
+        priorities: "Cut federal spending including the IRS and Department of Education, term limits, ethics standards.",
+        endorsements: "Not reported in the sources we found.",
+        know: "No campaign account." }
+    ],
+    primary: "Jacobs 57.7%, Cabrera 37.0%." },
+  { id: "ca52", counties: ["San Diego"], district: "District 52", area: "South Bay: Chula Vista, National City, Imperial Beach, San Ysidro, Otay, the Tijuana River Valley", rating: "Solid Democratic by Cook",
+    cands: [
+      { name: "Juan Vargas", party: "D", role: "Congressman since 2013; former state senator, Assemblymember, and San Diego councilmember.",
+        exp: "Represents the border and the Tijuana River sewage crisis.",
+        money: "Over $568,000 raised through June 30, over $431,000 of it from committees; AIPAC the largest single donor at over $72,000 (KPBS via OpenSecrets). Fall figures not verified.",
+        priorities: "Tijuana River pollution: says he helped secure over $500 million and wants a state of emergency. Immigration enforcement, affordability.",
+        endorsements: "Not reported in the sources we found.",
+        know: "Voted no on the 2025 reconciliation bill (H.R. 1)." },
+      { name: "Jeff Belle", party: "R", role: "CEO of a San Diego private equity firm; former Contra Costa County school board member.",
+        exp: "First run for Congress.",
+        money: "Over $25,000 raised through June 30, including $7,000 in loans (KPBS).",
+        priorities: "\"Faith, Freedom, Finances.\" Supports Trump's sewage strategy; would seek a Trump visit and field hearings in Imperial Beach.",
+        endorsements: "Not reported in the sources we found.",
+        know: "Lightly funded." }
+    ],
+    primary: "Vargas 56.5%, Belle 33.2%." }
+);
+
+function raceCardHtml(c) {
+  const row = (label, body) => body ? `<div class="race-row"><div class="prop-label">${label}</div><div class="prop-text">${body}</div></div>` : '';
+  const party = c.party === 'D' ? 'Democrat' : c.party === 'R' ? 'Republican' : (c.partyLabel || 'Nonpartisan office');
+  return `
+    <div class="race-card ${c.party}">
+      <div class="race-name">${c.name}</div>
+      <div class="race-party">${party}</div>
+      <div class="prop-text">${c.role}</div>
+      ${row('Background', c.exp)}
+      ${row('Money', c.money)}
+      ${row('What they say they will do', c.priorities)}
+      ${row('Endorsements', c.endorsements)}
+      ${row('One thing to know', c.know)}
+    </div>`;
+}
+function pickRowHtml(kind, r) {
+  const v = (kind === 'race' ? state.raceVotes : state.raceVotes)[r.id];
+  const fn = kind === 'race' ? 'raceVote' : 'houseVote';
+  return `
+    <div class="prop-block">
+      <div class="prop-label">Where do you land?</div>
+      <div class="pick-row">
+        ${r.cands.map((c, i) => `<button type="button" class="vote-btn ${v === i ? 'sel-und' : ''}" onclick="${fn}('${r.id}', ${i}, this)">${c.name}</button>`).join('')}
+        <button type="button" class="vote-btn ${v === 'und' ? 'sel-und' : ''}" onclick="${fn}('${r.id}', 'und', this)">Undecided</button>
+      </div>
+    </div>`;
+}
+function beginRaces() { state.raceIdx = 0; state.raceReview = null; go("races"); }
+function renderRace() {
+  const i = state.raceIdx; const r = RACES[i];
+  if (!r) { go("home"); return; }
+  const pct = Math.round(((i + 1) / RACES.length) * 100);
+  const reviewing = state.raceReview !== null;
+  app.innerHTML = `
+    <div class="fade-in">
+      <div class="progress-row">
+        <span class="progress-text">Office ${i + 1} of ${RACES.length}</span>
+        <div class="progress-bar"><div class="progress-fill" style="width: ${pct}%"></div></div>
+      </div>
+      <span class="prop-num">${r.office}</span>
+      <h2 class="q-title">${r.cands.map(c => lastName(c.name)).join(' or ')}?</h2>
+      <p class="prop-official">${r.does}</p>
+      ${r.cands.map(raceCardHtml).join('')}
+      ${r.primary ? `<div class="prop-block"><div class="prop-label">June 2 primary</div><div class="prop-text">${r.primary}</div></div>` : ''}
+      ${r.poll ? `<div class="prop-block"><div class="prop-label">Polling</div><div class="prop-text">${r.poll}</div></div>` : ''}
+      ${r.news ? `<div class="prop-block"><div class="prop-label">Since October 1</div><div class="prop-text">${r.news}</div></div>` : ''}
+      ${pickRowHtml('race', r)}
+      <div class="nav">
+        <button class="back-btn" onclick="raceBack()">← ${reviewing ? 'Back to my cheat sheet' : 'Back'}</button>
+        <span class="nav-hint">${reviewing ? 'Tap to change your pick' : 'Tap a pick to continue'}</span>
+      </div>
+      ${reviewing ? '' : `<div class="briefing-link-row"><button class="briefing-link" onclick="go('sheet')">Skip to my cheat sheet →</button></div>`}
+    </div>`;
+}
+function raceVote(id, v, btn) {
+  if (voteLock) return; voteLock = true;
+  state.raceVotes[id] = v;
+  if (btn && btn.parentNode) { Array.from(btn.parentNode.querySelectorAll('.vote-btn')).forEach(b => b.classList.remove('sel-und')); btn.classList.add('sel-und'); }
+  setTimeout(() => {
+    voteLock = false;
+    if (state.raceReview !== null) { state.raceReview = null; go("sheet"); return; }
+    if (state.raceIdx < RACES.length - 1) { state.raceIdx++; go("races"); } else go("sheet");
+  }, 180);
+}
+function raceBack() {
+  if (state.raceReview !== null) { state.raceReview = null; go("sheet"); return; }
+  if (state.raceIdx > 0) { state.raceIdx--; render(); toTop(); } else go("home");
+}
+function reviewRace(idx) { state.raceIdx = idx; state.raceReview = idx; go("races"); }
+function houseVote(id, v, btn) {
+  state.raceVotes[id] = v;
+  if (btn && btn.parentNode) { Array.from(btn.parentNode.querySelectorAll('.vote-btn')).forEach(b => b.classList.remove('sel-und')); btn.classList.add('sel-und'); }
+}
+function reviewHouse(id) {
+  const h = HOUSE.find(x => x.id === id);
+  if (h && h.counties && !h.counties.includes(state.localCounty)) state.localCounty = h.counties[0];
+  state.houseDistrict = id;
+  go('local');
+}
+function houseChanged() { const sel = document.getElementById('houseSel'); state.houseDistrict = sel.value; renderLocal(); }
+function houseSectionHtml() {
+  const list = HOUSE.filter(h => !h.counties || h.counties.includes(state.localCounty)).sort((a, b) => parseInt(a.district.replace(/\D/g, '')) - parseInt(b.district.replace(/\D/g, '')));
+  if (!state.localCounty || !list.length) return '';
+  const r = list.find(h => h.id === state.houseDistrict);
+  return `
+    <div class="prop-block">
+      <div class="prop-label">Your member of Congress (${state.localCounty} County districts)</div>
+      <div class="prop-text" style="margin-bottom:10px;">Districts changed in 2025 under Prop 50, so check yours by address at <a class="b-a" href="https://findyourrep.legislature.ca.gov/" target="_blank" rel="noopener">findyourrep.legislature.ca.gov</a> (it lists your U.S. Representative too), then pick it here.</div>
+      <select id="houseSel" class="county-select" onchange="houseChanged()">
+        <option value="">Choose your district</option>
+        ${list.map(h => `<option value="${h.id}" ${state.houseDistrict === h.id ? 'selected' : ''}>${h.district}: ${h.area}</option>`).join('')}
+      </select>
+      ${r ? `
+        <div style="margin-top:14px;">
+          <p class="prop-official">${r.district}. ${r.area}.${r.rating ? ' Rated ' + r.rating + '.' : ''}</p>
+          ${r.cands.map(raceCardHtml).join('')}
+          ${r.primary ? `<div class="prop-block"><div class="prop-label">June 2 primary</div><div class="prop-text">${r.primary}</div></div>` : ''}
+          ${r.poll ? `<div class="prop-block"><div class="prop-label">Polling</div><div class="prop-text">${r.poll}</div></div>` : ''}
+          ${r.news ? `<div class="prop-block"><div class="prop-label">Since October 1</div><div class="prop-text">${r.news}</div></div>` : ''}
+          ${pickRowHtml('house', r)}
+          <div class="briefing-cta no-print" style="margin-top:12px;"><button class="briefing-cta-btn" onclick="go('sheet')">Add this to my cheat sheet</button></div>
+        </div>` : ''}
+    </div>`;
 }
 
 // ==================== LOCAL BALLOT ====================
@@ -2868,11 +3736,497 @@ LOCAL["Riverside"] = {
   ]
 };
 
+
+LOCAL["San Diego"] = {
+  intro: "There are 20 local measures on San Diego County ballots, and no City of San Diego measure this time. These ten carry the most money. Which of these are on your ballot depends on your city and school district. For campaign money, each measure links to the county's campaign finance portal.",
+  measures: [
+  { id: "sd-A", letter: "A", juris: "Countywide, County of San Diego", name: "County charter reform, with a third term for supervisors",
+    official: "\"A Transparent, Accountable, Modern County Government.\" Charter amendment placed by the Board of Supervisors, 3 to 2.",
+    what: "Creates an independent ethics commission with subpoena power, an independent budget analyst, and an independent program auditor; requires board confirmation of senior county leaders; and <b>raises supervisor term limits from two terms to three</b> (12 years).",
+    yes: "Adopts all of the charter changes, including the longer term limit.",
+    no: "Keeps the current charter and the two-term limit.",
+    cost: "Proponents say it is cost neutral; the ordinance requires the changes be made in a revenue-neutral way. No independent estimate found.",
+    forWho: "Board Chair Terra Lawson-Remer (author), Supervisors Paloma Aguirre and Monica Montgomery Steppe, the county Democratic Party, former city manager Jack McGrory, SanDiego350.",
+    against: "Supervisors Jim Desmond (\"power grab\") and Joel Anderson, Sheriff Kelly Martinez, DA Summer Stephan, Assessor Jordan Marks, and Carl DeMaio's Reform California, which is running a campaign against it.",
+    money: "Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://www.southtechhosting.com/SanDiegoCounty/CampaignDocsWebRetrieval/\" target=\"_blank\" rel=\"noopener\">San Diego County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>Five changes in one vote.</b> A SurveyUSA poll found about 70% support for each oversight piece but 76% wanting to keep the two-term limit; the whole measure polled 40% yes, 35% no.",
+      "<b>The longer limit applies to sitting supervisors.</b> Lawson-Remer and Anderson would no longer be termed out in 2028.",
+      "<b>How independent?</b> The ethics commission and budget analyst answer to the board and county counsel, which one political scientist told KPBS leaves their independence unclear.",
+      "<b>Term limits for the sheriff and DA were stripped out</b> by amendment before it went on the ballot."
+    ],
+    threshold: "Simple majority." },
+  { id: "sd-B", letter: "B", juris: "Countywide, citizen initiative", name: "New half-cent sales tax for health, child care, sewage cleanup, and public safety",
+    official: "\"Measure to Fund San Diego County Health and Safety Services\" (the San Diego County Health and Safety Act). Qualified by petition with more than 121,000 signatures.",
+    what: "A <b>0.5%</b> countywide sales tax, raising the base rate from 7.75% to 8.25%, with <b>no end date</b>. Up to 60% goes to health care, food aid, and child care; up to 22.5% to the Tijuana River sewage crisis; 17.5% to fire and law enforcement; up to 1.5% to administration.",
+    yes: "Imposes the tax and the spending formula.",
+    no: "No new tax.",
+    cost: "$400 million to $450 million a year per the county auditor. Supporters say under $200 a year for a family of four; opponents have not disputed that.",
+    forWho: "SEIU Local 221 (lead sponsor), First 5 San Diego, Children First San Diego, CAL FIRE Local 2881, the hospital association, the pediatricians' chapter, Surfrider, the county Democratic Party. Polling: 49% yes, 35% no (SurveyUSA).",
+    against: "San Diego County Taxpayers Association and its president Mark Kersey. Supervisor Desmond says the federal government and Mexico should pay for the sewage fix.",
+    money: "Supporters raised more than $2 million through September, mostly spent on ads; opponents a little under $150,000 (Axios). Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://www.southtechhosting.com/SanDiegoCounty/CampaignDocsWebRetrieval/\" target=\"_blank\" rel=\"noopener\">San Diego County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>Majority, not two-thirds.</b> Because citizens put it on the ballot, it needs only 50% plus one even though it is a special tax; a board-placed version would have needed two-thirds.",
+      "<b>Special tax, so the categories are binding,</b> with an 11-member oversight committee, annual audits, and misuse referred to the DA. Amendments require another vote. Banned uses: elected officials' pay, management bonuses, lobbying, county office buildings.",
+      "<b>Union pay reopeners.</b> SEIU 221 and Teamsters 986 contracts let them reopen pay talks if voters approve a measure that adds general fund revenue in 2026. Kersey also notes the oversight committee includes funding recipients and checks compliance, not results.",
+      "<b>The county can borrow against future revenue</b> for big projects like a wastewater plant, and supervisors can redirect Tijuana money to other clean-water work under conditions."
+    ],
+    threshold: "Simple majority (citizen initiative)." },
+  { id: "sd-S", letter: "S", juris: "City of Oceanside", name: "New half-cent city sales tax for 10 years",
+    official: "\"Local Services and Infrastructure Sales Tax Measure.\" Council placed it 5 to 0.",
+    what: "A <b>0.5%</b> sales tax from April 1, 2027 for <b>10 years</b>, raising Oceanside's rate from 8.25% to 8.75%.",
+    yes: "Imposes the tax.",
+    no: "Rate stays at 8.25%.",
+    cost: "About $20 million a year, $200 million over 10 years. The city cites a $60 million pier bridge repair, a $35 million fire station, $60 million in beach sand, and a police headquarters over $100 million.",
+    forWho: "Mayor Esther Sanchez, Councilmember Rick Robinson, the San Diego County Taxpayers Association, Save Oceanside Sand, the police officers' and lifeguards' associations.",
+    against: "Council candidates Emily Gonzales, Ricky James, and Oscarin Ortega; SanDiego350. Critics online call it double taxation.",
+    money: "The Yes committee, \"Yes on Sand, Yes on S,\" is sponsored by the Oceanside Firefighters Association. Amounts not reported. Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://www.southtechhosting.com/SanDiegoCounty/CampaignDocsWebRetrieval/\" target=\"_blank\" rel=\"noopener\">San Diego County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>General tax.</b> The pier, sand, and roads framing is not binding; the money goes to the general fund. The city promises a separate subaccount, a spending plan, audits, and an oversight committee.",
+      "<b>It stacks on Measure X,</b> the separate half-cent tax voters extended in 2024 through 2036.",
+      "<b>It has a sunset,</b> unlike most of the sales taxes on county ballots this year."
+    ],
+    threshold: "Simple majority." },
+  { id: "sd-Y", letter: "Y", juris: "City of Santee", name: "New 1% city sales tax for 10 years",
+    official: "\"Temporary One Percent General Transactions and Use Tax for 10 Years.\"",
+    what: "A <b>1%</b> sales tax for <b>10 years</b>, from 7.75% to 8.75%. Santee has never had a local sales tax since incorporating in 1980.",
+    yes: "Imposes the tax.",
+    no: "No city sales tax.",
+    cost: "About $14 million a year. The city cites more than $300 million in unfunded infrastructure.",
+    forWho: "The San Diego County Taxpayers Association. The Democratic Party took no position.",
+    against: "Vice Mayor Ronn Hall, the lone council no vote, who says the city polled a half-cent and then doubled it; Reform California.",
+    money: "Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://www.southtechhosting.com/SanDiegoCounty/CampaignDocsWebRetrieval/\" target=\"_blank\" rel=\"noopener\">San Diego County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>General tax.</b> The roads and public safety list is intent, not law. Annual audits and a citizens' oversight committee are in the measure.",
+      "<b>If Measure B also passes, Santee's rate hits 9.25%,</b> as Hall points out.",
+      "<b>Groceries, prescriptions, and diapers are exempt.</b>"
+    ],
+    threshold: "Simple majority." },
+  { id: "sd-R", letter: "R", juris: "City of Oceanside", name: "Prevailing wage charter amendment",
+    official: "\"Charter: Prevailing Wage and Fair Competition Measure.\"",
+    what: "Rewrites the city charter so public works contracting follows state prevailing wage law and allows project labor agreements, to keep the city eligible for state infrastructure money. Council directed it 4 to 1.",
+    yes: "Updates the charter to match state law.",
+    no: "Keeps the current charter language.",
+    cost: "Likely to raise city project costs by an unstated amount, per California Choices.",
+    forWho: "Mayor Sanchez and Deputy Mayor Joyce, the county Democratic Party, SanDiego350.",
+    against: "The filed argument says the city already complies and the change is unnecessary. Councilmember Weiss voted no.",
+    money: "Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://www.southtechhosting.com/SanDiegoCounty/CampaignDocsWebRetrieval/\" target=\"_blank\" rel=\"noopener\">San Diego County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>Not a tax.</b> The practical effect is to allow union project labor agreements on city projects."
+    ],
+    threshold: "Simple majority." },
+  { id: "sd-M", letter: "M", juris: "San Diego Unified School District", name: "$3.5 billion school bond",
+    official: "\"San Diego Unified School District Repair, Student Safety, No Tax Rate Increase Measure.\"",
+    what: "Up to <b>$3.5 billion</b> in bonds for repairs, security, classroom renovation, drinking water, mold and asbestos removal, and hundreds of millions for educator housing.",
+    yes: "Authorizes the bonds.",
+    no: "The district cannot issue them.",
+    cost: "$32 per $100,000 of assessed value a year. Total repayment: about $8.1 billion. The district calls it no rate increase because it replaces expiring bond payments; Voice of San Diego calls it a de facto tax extension.",
+    forWho: "Board President Richard Barrera (also running for state superintendent), the teachers' union, the Democratic Party, SanDiego350. No organized opposition reported.",
+    against: "None organized.",
+    money: "The campaign is Sandiegans for Quality Schools. Amounts not reported. Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://www.southtechhosting.com/SanDiegoCounty/CampaignDocsWebRetrieval/\" target=\"_blank\" rel=\"noopener\">San Diego County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>Fifth bond since 2008.</b> Cumulative authorizations would top $15 billion, and $1.56 billion from prior bonds was still unspent as of May.",
+      "<b>A 2024-25 grand jury found</b> commingled bond funds, duplicative priorities, and ballot summaries with too little information, and recommended disclosing unspent authorization and school-by-school project lists.",
+      "<b>Enrollment is down more than 17,500 since 2014,</b> and officials have floated campus consolidation as a use of the money.",
+      "<b>Capital only,</b> with an oversight committee and audits."
+    ],
+    threshold: "55% of votes cast." },
+  { id: "sd-G", letter: "G", juris: "Grossmont-Cuyamaca Community College District (East County)", name: "$624 million college bond",
+    official: "\"Fire Safety, Job Training, College Affordability, No Tax Rate Increase Measure.\" Board vote 5 to 0.",
+    what: "Up to <b>$624 million</b> in bonds for job training classrooms, asbestos and mold removal, wildfire protection, water systems, and building replacement at Grossmont and Cuyamaca colleges. Extends the 2002 Prop R tax that would otherwise end in 2031.",
+    yes: "Authorizes the bonds.",
+    no: "The district cannot issue them.",
+    cost: "Average $24.67 per $100,000 of assessed value through 2058-59. Total repayment: about $1.25 billion. The district says the combined rate stays at today's $37.52.",
+    forWho: "The chancellor and board president, the Democratic Party. No opposition reported.",
+    against: "None reported.",
+    money: "Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://www.southtechhosting.com/SanDiegoCounty/CampaignDocsWebRetrieval/\" target=\"_blank\" rel=\"noopener\">San Diego County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>A similar 2016 measure narrowly failed.</b>",
+      "<b>Capital only,</b> with an oversight committee within 60 days and annual audits."
+    ],
+    threshold: "55% of votes cast." },
+  { id: "sd-N", letter: "N", juris: "Vista Unified School District", name: "$543 million school bond",
+    official: "\"School Improvement Bond of 2026.\" Board vote 5 to 0.",
+    what: "Up to <b>$543 million</b> in bonds to remove hazardous materials, replace roofs, plumbing, and electrical, bring 60-year-old buildings to code, replace more than 400 portables, and build STEM and career facilities.",
+    yes: "Authorizes the bonds.",
+    no: "The district cannot issue them.",
+    cost: "Average $58 per $100,000 of assessed value through 2063. Total repayment: more than $1 billion. KPBS says it largely extends existing rates.",
+    forWho: "The Democratic Party, SanDiego350. No opposition reported.",
+    against: "None reported.",
+    money: "Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://www.southtechhosting.com/SanDiegoCounty/CampaignDocsWebRetrieval/\" target=\"_blank\" rel=\"noopener\">San Diego County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>Up to $30 million in state matching funds</b> could follow.",
+      "<b>Capital only,</b> with an oversight committee and third-party audits. Prior bond: Measure LL in 2018."
+    ],
+    threshold: "55% of votes cast." },
+  { id: "sd-AA", letter: "AA", juris: "La Mesa-Spring Valley School District", name: "$131 million school bond",
+    official: "\"Classroom Repair and Upgrade Extension Measure.\"",
+    what: "Up to <b>$131 million</b> in bonds for roofing, plumbing, electrical, HVAC, and classroom modernization. The district cites 95 roof leaks last year.",
+    yes: "Authorizes the bonds.",
+    no: "The district cannot issue them.",
+    cost: "$21.70 per $100,000 of assessed value from 2028-29 through 2056-57. Total repayment: about $258 million.",
+    forWho: "The Democratic Party. No opposition reported.",
+    against: "None reported.",
+    money: "Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://www.southtechhosting.com/SanDiegoCounty/CampaignDocsWebRetrieval/\" target=\"_blank\" rel=\"noopener\">San Diego County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>It overlaps two earlier bonds</b> (2002 and 2020) for a combined rate of about $45 per $100,000 until 2028, then about $24."
+    ],
+    threshold: "55% of votes cast." },
+  { id: "sd-BB", letter: "BB", juris: "Santee School District", name: "$30 million school bond",
+    official: "School facilities bond, resolution adopted June 16.",
+    what: "Up to <b>$30 million</b> in bonds for repairs at the district's elementary schools.",
+    yes: "Authorizes the bonds.",
+    no: "The district cannot issue them.",
+    cost: "Average $12.62 per $100,000 of assessed value through 2049-50, peaking at $19.14. Total repayment: about $49.7 million.",
+    forWho: "None reported. The Democratic Party took no position.",
+    against: "None reported.",
+    money: "Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://www.southtechhosting.com/SanDiegoCounty/CampaignDocsWebRetrieval/\" target=\"_blank\" rel=\"noopener\">San Diego County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>Described as extending the current rate.</b> Santee city voters also have Measure Y, the 1% sales tax, on the same ballot."
+    ],
+    threshold: "55% of votes cast." }
+  ]
+};
+
+
+LOCAL["Los Angeles"] = {
+  intro: "There are 68 county and city measures on Los Angeles County ballots this year, and no LAUSD or community college bond. These twelve carry the most money or reach the most voters: the two countywide charter amendments, the City of Los Angeles measures, and the largest city and school measures elsewhere. Which of these are on your ballot depends on your city and school district. For campaign money, each measure links to the right campaign finance portal.",
+  measures: [
+  { id: "la-A", letter: "A", juris: "Countywide, County of Los Angeles", name: "Binding arbitration for public safety unions",
+    official: "\"Charter Amendment: Good Faith Negotiation and Impartial Binding Arbitration.\" Placed by the Board of Supervisors 4 to 0, Supervisor Mitchell abstaining.",
+    what: "When the county and a public safety union (deputies, firefighters, lifeguards, DA investigators, medical examiner staff, about 17,000 employees) cannot agree on a contract, the dispute goes to a three-member arbitration panel that picks one side's final offer on each issue. <b>The award is binding with no Board of Supervisors or voter approval.</b> Also bans strikes by the covered groups. No end date.",
+    yes: "Adds the binding arbitration process to the county charter.",
+    no: "Negotiations continue as now, where the county can impose its last offer at impasse.",
+    cost: "The auditor-controller says the effect on the county's $4.1 billion public safety payroll cannot be predicted, since final authority over pay moves to arbitrators. Each case could cost tens of thousands to millions in fees. Parity clauses in other contracts could spread awards further.",
+    forWho: "The deputies' union (ALADS), firefighters Local 1014, the lifeguards, the building trades, Supervisor Kathryn Barger, DA Nathan Hochman, Sheriff Robert Luna, the county Democratic Party. No argument against was filed.",
+    against: "Then-acting county CEO Joe Nicchitta warned awards could strain reserves, hurt the county's credit, and cut other programs, citing cities that repealed similar rules. Supervisor Holly Mitchell says arbitrators do not weigh countywide priorities. LA Forward recommends No.",
+    money: "Look up any committee for this measure on the <a class=\"b-a\" href=\"https://rrcc.lacounty.gov/Camp/\" target=\"_blank\" rel=\"noopener\">LA County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>Nobody elected gets a vote on the final award.</b> It becomes binding 30 days after issuance and stays confidential until then.",
+      "<b>Ability to pay is one factor among several,</b> not a cap on what arbitrators can award.",
+      "<b>No oversight committee.</b> Not a tax, but it decides how a large share of the county budget gets spent."
+    ],
+    threshold: "Simple majority." },
+  { id: "la-E", letter: "E", juris: "Countywide, County of Los Angeles", name: "Ethics commission with a guaranteed budget, and restore the 10% community investment set-aside",
+    official: "\"Ethics Commission and Community Investment Budget Allocation Charter Amendment.\" Co-authored by Supervisors Mitchell and Horvath; placed 4 to 0 with Barger abstaining.",
+    what: "Writes the county Ethics Commission into the charter with appointment rules, subpoena and enforcement powers, and a <b>budget floor of $14.3 million a year</b> rising with inflation. Also restores the 2020 Measure J rule that <b>10% of unrestricted local revenue</b> goes to community investment and alternatives to incarceration, which the county undid by accident when Measure G passed in 2024.",
+    yes: "Adopts both changes.",
+    no: "Charter stays as is.",
+    cost: "At least $14.3 million a year from 2027-28, with no funding source named; the county would need new revenue or cuts elsewhere. The 10% set-aside continues current spending.",
+    forWho: "League of Women Voters, California Common Cause, California Clean Money, Supervisor Lindsey Horvath, the county Democratic Party. No argument against was filed.",
+    against: "The LA Daily News editorial board, which calls the ethics changes \"plausibly fine\" but objects to reviving the Measure J mandate and bundling it with ethics reform.",
+    money: "Look up any committee for this measure on the <a class=\"b-a\" href=\"https://rrcc.lacounty.gov/Camp/\" target=\"_blank\" rel=\"noopener\">LA County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>Two unrelated things in one vote:</b> an ethics commission and a spending mandate.",
+      "<b>The budget floor is hard to lower.</b> The board can skip an annual increase only by a four-fifths vote finding exigent circumstances.",
+      "<b>Supporters say \"no new cost to taxpayers\";</b> the auditor-controller's fiscal statement does not confirm that."
+    ],
+    threshold: "Simple majority." },
+  { id: "la-FD", letter: "FD", juris: "City of Los Angeles, citizen initiative", name: "New half-cent sales tax for the Fire Department",
+    official: "\"Funding for the Los Angeles Fire Department Through a One-Half Percent Sales Tax.\" Qualified by petition with more than 200,000 signatures gathered by firefighters.",
+    what: "A <b>0.5%</b> city sales tax, raising LA's rate from 10.25% to <b>10.75%, the state maximum</b>, starting about April 2027. Money goes to a dedicated LAFD fund for staffing, equipment, stations, communications, and brush clearance. <b>No end date.</b>",
+    yes: "Imposes the tax for the Fire Department.",
+    no: "No new tax.",
+    cost: "About $345 million a year. Howard Jarvis estimates about $86 per person, $345 for a family of four.",
+    forWho: "United Firefighters of LA City Local 112, Fire Chief Jaime Moore, Mayor Karen Bass, Councilmember Traci Park, Rick Caruso, the county Democratic Party.",
+    against: "The LAPD officers' union (the Police Protective League), which says there is no spending plan and the money cannot go to police or homelessness, and plans to spend several million dollars against it. Howard Jarvis Taxpayers Association signed the ballot argument against.",
+    money: "The Yes campaign, Fund LA Fire, is run by the firefighters' union, which has spent more than $2 million and asked members to authorize $3 million more; other major donors include the California Community Foundation, Airbnb, and JM Eagle. City measure committees file with the LA City Ethics Commission; look them up on the <a class=\"b-a\" href=\"https://ethics.lacity.org/data/campaigns/\" target=\"_blank\" rel=\"noopener\">Ethics Commission campaign finance portal</a>.",
+    also: [
+      "<b>Majority, not two-thirds,</b> because citizens put it on the ballot. Statewide Prop 43 on this same ballot would raise that bar for future local measures; how the two interact if both pass is not settled.",
+      "<b>Maxes out the sales tax.</b> At 10.75% the city hits the state cap, leaving no room for any future local increase for anything else. It is the third sales tax increase LA voters have seen in two years.",
+      "<b>Oversight is advisory only:</b> a five-member committee that meets three times a year and can be disbanded after 10 years. The city must keep its own fire spending at the 10-year average share of the budget or the tax cannot be collected that year.",
+      "<b>Fire station projects must use the city's project labor agreement</b> and prevailing wage."
+    ],
+    threshold: "Simple majority (citizen initiative)." },
+  { id: "la-EE", letter: "EE", juris: "City of Los Angeles", name: "Ethics, elections, and fewer council meetings",
+    official: "\"City Ethics, Elections, and Governance.\" Charter amendment from the Charter Reform Commission formed after the 2022 leaked redistricting audio.",
+    what: "Shields the LAPD inspector general and LAFD independent assessor from commission interference, bars ethics commissioners from certain offices for five years, raises the top campaign finance penalty from $2,000 to $15,000 or triple the amount, <b>cuts required council meetings from three a week to one</b>, and raises the signatures needed for a referendum from 10% to 15% of the last mayoral vote.",
+    yes: "Adopts all the changes.",
+    no: "Charter stays as is.",
+    cost: "Unknown. The CAO says the commission changes may need new investigators and auditors; fewer council meetings would save translation and captioning costs.",
+    forWho: "Councilmembers Tim McOsker, Katy Yaroslavsky, Marqueece Harris-Dawson, Eunisses Hernandez, and a charter commissioner.",
+    against: "Councilwoman Monica Rodriguez, who says fewer meetings means less public scrutiny and fewer Valley sessions. The county Democratic Party recommends No. One critic quoted by LAist calls it a Trojan horse for fewer meetings.",
+    money: "City measure committees file with the LA City Ethics Commission; look them up on the <a class=\"b-a\" href=\"https://ethics.lacity.org/data/campaigns/\" target=\"_blank\" rel=\"noopener\">Ethics Commission campaign finance portal</a>.",
+    also: [
+      "<b>Harder to force a referendum.</b> Raising the signature bar by half makes it tougher for residents to challenge a council action at the ballot.",
+      "<b>Ethics reforms and meeting cuts ride together;</b> you cannot vote for one without the other."
+    ],
+    threshold: "Simple majority." },
+  { id: "la-LA", letter: "LA", juris: "City of Los Angeles", name: "Two-year budgets, Public Works overhaul, and looser contracting",
+    official: "\"City Infrastructure, Budget, Finance, and Contracting.\" Charter amendment.",
+    what: "Moves the city to a two-year budget and a capital infrastructure plan, lets the council change or eliminate the Board of Public Works and empower a Public Works director, <b>removes charter limits on mortgaging city property and running business enterprises</b>, and exempts some infrastructure and software contracts from competitive bidding.",
+    yes: "Adopts the changes.",
+    no: "Charter stays as is.",
+    cost: "One-time $4 million to $6 million for budget systems and consultants. The effect of the contracting, mortgage, and business changes \"cannot be quantified.\"",
+    forWho: "Controller Kenneth Mejia, former Controller Ron Galperin, Councilmembers Yaroslavsky and Blumenfield, Investing in Place, Streets For All, LA Forward.",
+    against: "Councilwoman Monica Rodriguez, who says it could dismantle the Board of Public Works and weaken contract oversight. The county Democratic Party recommends No.",
+    money: "City measure committees file with the LA City Ethics Commission; look them up on the <a class=\"b-a\" href=\"https://ethics.lacity.org/data/campaigns/\" target=\"_blank\" rel=\"noopener\">Ethics Commission campaign finance portal</a>.",
+    also: [
+      "<b>The Public Works director job it empowers has not functioned since 2005,</b> and LAist found officials giving conflicting answers about who runs the department.",
+      "<b>Lets the city go into for-profit ventures and mortgage its property,</b> within state law limits.",
+      "<b>Some contracts skip competitive bidding,</b> and minor bid errors can be waived."
+    ],
+    threshold: "Simple majority." },
+  { id: "la-PRK", letter: "PRK", juris: "City of Los Angeles", name: "Double the guaranteed parks budget over 10 years",
+    official: "\"City Department of Recreation and Parks Budget.\" Charter amendment.",
+    what: "Raises the charter minimum for Recreation and Parks from 0.0325% to <b>0.065% of the city's assessed property value</b>, phased in over ten years. In a declared fiscal emergency the council can trim the increase but not below today's floor.",
+    yes: "Adopts the higher minimum.",
+    no: "Parks funding stays at the current charter minimum.",
+    cost: "No new tax and no new revenue. Parks funding would rise from about $303 million today to a projected $995 million by 2036-37, taken from the general fund that also pays for police, public works, and homelessness. The city's fiscal analysts recommend against it.",
+    forWho: "Councilmembers Monica Rodriguez (who led it), Ysabel Jurado, and Imelda Padilla, Controller Mejia, the Boys and Girls Club of San Fernando Valley, Homeboy Industries' founder, the county Democratic Party. No argument against was filed.",
+    against: "The city's own budget analysts, who say it adds to the deficit with no revenue behind it.",
+    money: "City measure committees file with the LA City Ethics Commission; look them up on the <a class=\"b-a\" href=\"https://ethics.lacity.org/data/campaigns/\" target=\"_blank\" rel=\"noopener\">Ethics Commission campaign finance portal</a>.",
+    also: [
+      "<b>It is a mandate, not money.</b> Every dollar the floor adds to parks comes out of something else in the general fund.",
+      "<b>Prop K, the $25 million a year parks assessment, expires this fiscal year,</b> which is part of the push."
+    ],
+    threshold: "Simple majority." },
+  { id: "la-TE", letter: "TE", juris: "City of Los Angeles", name: "Mansion tax exemption for Palisades Fire homes",
+    official: "\"Property Transfer Tax Exemption for Victims of January 2025 Fire Disaster.\"",
+    what: "A one-time exemption from the Measure ULA transfer tax (4% on sales over about $5.4 million, 5.5% over about $10.9 million) for homes damaged or destroyed in the Palisades Fire, if sold by the owner of record on January 7, 2025, before January 2030.",
+    yes: "Grants the exemption.",
+    no: "ULA applies to those sales as usual.",
+    cost: "$35 million to $66 million less in ULA revenue through January 2030, out of about $548 million ULA raised last year. The general fund is not affected.",
+    forWho: "Traci Park, Mayor Bass, Harris-Dawson, Rodriguez, Senator Ben Allen, the building trades and carpenters, the Pacific Palisades Community Council, the county Democratic Party. No argument against was filed.",
+    against: "Councilmember Eunisses Hernandez cast the lone council vote against placing it, saying the exemption should not cover LLCs, investors, or portfolio owners.",
+    money: "City measure committees file with the LA City Ethics Commission; look them up on the <a class=\"b-a\" href=\"https://ethics.lacity.org/data/campaigns/\" target=\"_blank\" rel=\"noopener\">Ethics Commission campaign finance portal</a>.",
+    also: [
+      "<b>The exemption is not limited to owner-occupants.</b> Any owner of record on the fire date qualifies, including investors and LLCs.",
+      "<b>The money comes out of ULA's affordable housing and tenant programs.</b>"
+    ],
+    threshold: "Simple majority." },
+  { id: "la-MM", letter: "MM", juris: "Inglewood Unified School District", name: "$396 million school bond",
+    official: "School bonds for safety, repair, and upgrades. The largest school bond on county ballots.",
+    what: "Up to <b>$396 million</b> in bonds, with top priorities of emergency preparedness, removing asbestos, lead paint, and mold, and safe drinking water. Listed projects are not guaranteed.",
+    yes: "Authorizes the bonds and the property tax to repay them.",
+    no: "The district cannot issue them.",
+    cost: "About $60 per $100,000 of assessed value, about $600 a year on a home assessed at $1 million; about $26 million a year. Total repayment and term were not published.",
+    forWho: "The YMCA of Metro LA, the PTA council vice president, the board president, and the county administrator. No formal argument against.",
+    against: "The Inglewood Teachers Association president, who wants an accounting of past bond spending first, and board candidate Brandon Myers, citing the district's state receivership.",
+    money: "No committee found on either side as of mid-year. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://rrcc.lacounty.gov/Camp/\" target=\"_blank\" rel=\"noopener\">LA County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>The district has been under state and county control since 2012;</b> the elected board is advisory until local control returns, expected in 2027.",
+      "<b>Fourth bond since 1998:</b> $131 million, $90 million, and $240 million came before this one.",
+      "<b>Capital only,</b> with an oversight committee and annual audits."
+    ],
+    threshold: "55% of votes cast." },
+  { id: "la-UP", letter: "UP", juris: "Pasadena Area Community College District", name: "$485 million Pasadena City College bond",
+    official: "Bonds for classrooms and career training \"without increasing tax rates.\" The largest dollar amount on county ballots.",
+    what: "Up to <b>$485 million</b> in bonds for trades, nursing, health sciences, fire and EMS training facilities, roof, plumbing, electrical, and seismic repairs, and satellite campuses. Extends the $9 per $100,000 rate from the 2002 bond that is nearly paid off.",
+    yes: "Authorizes the bonds.",
+    no: "The district cannot issue them, and the 2002 rate expires.",
+    cost: "$9 per $100,000 of assessed value, about $27 million a year. Term and total repayment were not published.",
+    forWho: "The Pasadena City Council, the county Democratic Party. No opposition found.",
+    against: "None found.",
+    money: "Look up any committee for this measure on the <a class=\"b-a\" href=\"https://rrcc.lacounty.gov/Camp/\" target=\"_blank\" rel=\"noopener\">LA County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>\"No tax rate increase\" means the existing rate continues</b> instead of ending.",
+      "<b>Capital only,</b> restricted to PCC facilities, with an oversight committee and audits."
+    ],
+    threshold: "55% of votes cast." },
+  { id: "la-PFD", letter: "PFD", juris: "City of Pasadena", name: "Fire and paramedic parcel tax, 14 years",
+    official: "\"911 Firefighter/Paramedic Emergency Medical/Wildfire Preparedness/Response Measure.\"",
+    what: "A special parcel tax of <b>19 cents per square foot of improved property</b> for <b>14 years</b>, for ambulances, a third ladder truck, rebuilding two fire stations, a ninth station and training center, brush clearance, and recruitment.",
+    yes: "Imposes the tax.",
+    no: "No parcel tax.",
+    cost: "About $22.1 million a year; about $304 a year for a median 1,600 square foot home. Exemptions for seniors and disabled residents with a utility tax exemption and for very-low-income households.",
+    forWho: "The Pasadena City Council, Supervisor Kathryn Barger, firefighters Local 809, the West Pasadena Residents' Association, the county Democratic Party.",
+    against: "The Apartment Association of Greater LA, the Pasadena-Foothills Realtors, the building owners' association, the Pasadena Star-News editorial board, former Mayor William Paparian.",
+    money: "The Yes committee, Firefighters and Paramedics Protecting Pasadena, is funded mainly by firefighters Local 809. The No campaign (pfdno.com, with a TV ad) is fronted by the Realtors association. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://rrcc.lacounty.gov/Camp/\" target=\"_blank\" rel=\"noopener\">LA County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>Special tax, two-thirds required,</b> and the money is restricted to fire and EMS with audits and oversight.",
+      "<b>Square footage is a rough proxy:</b> critics note most calls are medical, not fire, and landlords of rent-controlled units may not be able to pass the cost through.",
+      "<b>It took $436,660 just to put it on the ballot.</b>"
+    ],
+    threshold: "Two-thirds of votes cast." },
+  { id: "la-AT", letter: "AT", juris: "City of Inglewood, citizen initiative", name: "Uncap the SoFi Stadium ticket tax",
+    official: "\"Ordinance to Amend the Admissions Tax for Large Venues.\"",
+    what: "Replaces the current 10% admissions tax on venues over 22,000 seats, which has an annual revenue cap, with <b>10% and no cap</b> for venues of 20,000 or more seats (SoFi Stadium) and <b>2.5%</b> for venues of 10,000 to 20,000 (Intuit Dome, Kia Forum). The Forum's development agreement would delay it there until 2041.",
+    yes: "Adopts the tiered tax and removes the cap.",
+    no: "Keeps the current tax and cap.",
+    cost: "The city estimates an extra $47 million to $50 million a year to the general fund; the tax has averaged about $20 million a year since 2021.",
+    forWho: "Inglewood Residents for Stadium Accountability, the committee funded by billboard company WOW Media; Bishop Johnny Young; the county Democratic Party. City staff say it would fix ticketing audit problems.",
+    against: "Ballot argument signers from a block club and two small businesses; opponents argue events could move to the Coliseum or Rose Bowl. The stadium's own committee took no position.",
+    money: "WOW Media's committee spent more than $1.3 million through June promoting this and fighting Measure BB (the billboard ban). The rival committee funded by Hollywood Park and the Kia Forum spent $2.1 million, mostly on BB. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://rrcc.lacounty.gov/Camp/\" target=\"_blank\" rel=\"noopener\">LA County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>This is one front in a billboard fight.</b> The same WOW Media committee is fighting Measure BB, which would ban most advertising on public right-of-way and cost the city $6 million to $8 million in billboard revenue; the stadium owners are on the other side.",
+      "<b>General tax,</b> unrestricted, no oversight committee. A judge recently voided the 2015 SoFi development agreement and the city has opened an audit of SoFi ticket taxes."
+    ],
+    threshold: "Simple majority." },
+  { id: "la-SG", letter: "SG", juris: "City of South Gate", name: "New 8% utility users tax",
+    official: "Utility users tax with a low-income senior exemption.",
+    what: "An <b>8% tax on utility bills</b>, about $39 a month for a typical household, with <b>no end date</b> and a fiscal review in year five.",
+    yes: "Imposes the tax.",
+    no: "No utility tax.",
+    cost: "About $10.4 million a year. The city faces a $9.4 million deficit and has already cut officers per shift and eliminated crossing guards.",
+    forWho: "The county Democratic Party. Named supporters were not reported.",
+    against: "Not reported.",
+    money: "Look up any committee for this measure on the <a class=\"b-a\" href=\"https://rrcc.lacounty.gov/Camp/\" target=\"_blank\" rel=\"noopener\">LA County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>General tax,</b> usable for any city purpose through the annual budget, with no oversight committee.",
+      "<b>Which utilities are covered was not spelled out</b> in the city's own mailer."
+    ],
+    threshold: "Simple majority." }
+  ]
+};
+
+
+LOCAL["Orange"] = {
+  intro: "There are 15 local measures on Orange County ballots, and no countywide measure. These ten carry the most money or reach the most voters. Which of these are on your ballot depends on your city and school district. For campaign money, each measure links to where committees file.",
+  measures: [
+  { id: "oc-N", letter: "N", juris: "City of Santa Ana", name: "Make the 1.5% city sales tax permanent",
+    official: "\"Santa Ana Streets, Public Safety, Essential City Services Measure.\" Council placed it 5 to 2.",
+    what: "Voters approved Measure X in 2018: a 1.5 cent sales tax that drops to 1 cent in 2029 and ends in 2039. This <b>removes both the reduction and the end date</b>, keeping 1.5 cents until voters repeal it.",
+    yes: "The 1.5% rate continues with no reduction and no sunset.",
+    no: "The rate drops to 1% in 2029 and ends in 2039 as scheduled.",
+    cost: "About $84 million a year. Staff project a $30 million deficit in 2028-29 if the rate drops, about $13 million if it stays.",
+    forWho: "Mayor Valerie Amezcua, Councilmembers Thai Phan and Benjamin Vazquez, the police officers' association, a Measure X oversight committee member. No argument against was filed.",
+    against: "Councilmembers David Penaloza, Jessie Lopez, and Phil Bacerra, who say city spending has been mismanaged.",
+    money: "City measure committees file with the city clerk, usually on a NetFile portal; start from the <a class=\"b-a\" href=\"https://ocvote.gov/campaign-finance\" target=\"_blank\" rel=\"noopener\">Orange County campaign finance page</a> and the city clerk's site.",
+    also: [
+      "<b>General tax.</b> The impartial analysis says the council \"may also direct funds toward its anticipated structural deficit.\" The existing oversight committee and annual audit continue.",
+      "<b>What Measure X has paid for so far,</b> per Voice of OC: homelessness programs, public safety, parks and streets, youth programs, council aides ($420,000), a Vietnamese community liaison, and an immigrant legal defense fund.",
+      "<b>Measure X passed in 2018 with about 58%</b> as a 20-year tax with a step-down built in. This removes the promise."
+    ],
+    threshold: "Simple majority." },
+  { id: "oc-I", letter: "I", juris: "City of Orange", name: "New 1% city sales tax for 13 years",
+    official: "\"City of Orange Public Safety/Essential Services Measure.\" Council placed it 5 to 1.",
+    what: "A <b>1%</b> sales tax for <b>13 years</b>. Voters narrowly rejected a half-cent, 10-year version (Measure Z) in 2024.",
+    yes: "Imposes the tax.",
+    no: "No new tax.",
+    cost: "About $37 million a year. The city projects a $27.6 million deficit and more than $122 million in cumulative deficits over six years. Opponents put the tax's lifetime cost at $507 million.",
+    forWho: "Mayor Dan Slater, City Treasurer Garrett Smith, the retired fire and police chiefs, the firefighters' association.",
+    against: "Former Mayors Pro Tem Fred Whitaker and Mike Alvarez, who call it a general fund bailout dressed as public safety and say the oversight committee has no authority. Councilman Denis Bilodeau voted no.",
+    money: "City measure committees file with the city clerk, usually on a NetFile portal; start from the <a class=\"b-a\" href=\"https://ocvote.gov/campaign-finance\" target=\"_blank\" rel=\"noopener\">Orange County campaign finance page</a> and the city clerk's site.",
+    also: [
+      "<b>General tax.</b> The money goes to the general fund for any lawful purpose despite the public safety title.",
+      "<b>An 11-member oversight committee</b> reviews spending and the audit and recommends plans, but cannot direct the money.",
+      "<b>Second try in two years,</b> at double the rate and a longer term."
+    ],
+    threshold: "Simple majority." },
+  { id: "oc-K", letter: "K", juris: "City of Orange", name: "Become a charter city, with term limits that start over",
+    official: "\"Proposed Charter for the City of Orange.\" Council placed it 4 to 3.",
+    what: "Makes Orange a charter city. Sets lifetime term limits of two mayoral terms and three council terms, <b>counted only from terms that begin after the charter takes effect</b>. Creates an open space reserve needing voter approval to change, and adds balanced budget, audit, and eminent domain limits.",
+    yes: "Adopts the charter.",
+    no: "Orange stays a general law city.",
+    cost: "None stated beyond the cost of the election.",
+    forWho: "Councilmembers Kathy Tavoularis and Jonathan Dumitru, a parks commissioner, a chaplain.",
+    against: "Retired Mayor Carolyn Cavecche, Councilmember Ana Gutierrez, a retired school trustee, and a former planning commissioner, who call it a power grab that resets term limits and was written without a citizens' commission. Councilmembers Barrios, Gutierrez, and Gyllenhammer voted no.",
+    money: "City measure committees file with the city clerk, usually on a NetFile portal; start from the <a class=\"b-a\" href=\"https://ocvote.gov/campaign-finance\" target=\"_blank\" rel=\"noopener\">Orange County campaign finance page</a> and the city clerk's site.",
+    also: [
+      "<b>The term limit clock resets.</b> Current council members' past terms do not count.",
+      "<b>Opponents say charter status makes local taxes easier to impose;</b> proponents say only voters can impose taxes. Both are campaign claims."
+    ],
+    threshold: "Simple majority." },
+  { id: "oc-J", letter: "J", juris: "City of Orange", name: "Raise the hotel tax from 10% to 14%",
+    official: "\"City of Orange Hotel Guest Tax Modification Measure.\" Council placed it 5 to 2.",
+    what: "Raises the hotel tax from <b>10% to 14%</b> for hotels with 11 or more rooms and applies it to the full price including online travel company fees. No end date. Last updated in 1993.",
+    yes: "Raises the rate.",
+    no: "Stays at 10%.",
+    cost: "About $3 million a year, paid by hotel guests.",
+    forWho: "Mayor Slater, the city treasurer, the retired fire and police chiefs, the firefighters. No argument against was filed.",
+    against: "The Orange County Business Council.",
+    money: "City measure committees file with the city clerk, usually on a NetFile portal; start from the <a class=\"b-a\" href=\"https://ocvote.gov/campaign-finance\" target=\"_blank\" rel=\"noopener\">Orange County campaign finance page</a> and the city clerk's site.",
+    also: [
+      "<b>General tax,</b> unrestricted, with no oversight committee."
+    ],
+    threshold: "Simple majority." },
+  { id: "oc-D", letter: "D", juris: "City of Irvine", name: "Ranked choice voting for council and mayor",
+    official: "\"Measure Directing the Use of Ranked Choice Voting for City Council Member and Mayoral Elections after January 1, 2028.\" Council placed it 4 to 3.",
+    what: "Directs ranked choice voting for Irvine elections starting 2028 <b>if</b> the county's equipment can handle it, it does not block consolidation with county elections, and the added cost stays at or under 0.23% of the general fund (about $718,000 today). Voters rank at least five candidates. If the conditions fail, plurality voting continues.",
+    yes: "Adopts ranked choice voting if the conditions are met.",
+    no: "Keeps the current system.",
+    cost: "No official estimate. Advocates say up to about $700,000; Vice Mayor James Mai says $1.5 million to $3 million or more. The last election cost about $340,000. The city projects a $47 million structural deficit by 2030.",
+    forWho: "Councilmember Kathleen Treseder, Representative Dave Min, Assemblymember Cottie Petrie-Norris, the Democratic Party of Orange County, FairVote, the League of Women Voters, several unions, through the Voter Choice Irvine campaign.",
+    against: "Vice Mayor James Mai, Mayor Larry Agran, Councilmember Mike Carroll.",
+    money: "The Yes campaign is Voter Choice Irvine; amounts were not reported. City measure committees file with the city clerk, usually on a NetFile portal; start from the <a class=\"b-a\" href=\"https://ocvote.gov/campaign-finance\" target=\"_blank\" rel=\"noopener\">Orange County campaign finance page</a> and the city clerk's site.",
+    also: [
+      "<b>The cost cap comes from an advocacy group's figure,</b> which Councilmember Carroll objected to. No Orange County city has used ranked choice, so the registrar has no cost estimate.",
+      "<b>Once used, it stays</b> unless voters choose another system.",
+      "<b>Context:</b> a judge ordered Huntington Beach to adopt ranked choice voting as a remedy in a voting rights case; the city is appealing."
+    ],
+    threshold: "Simple majority." },
+  { id: "oc-H", letter: "H", juris: "City of Newport Beach, citizen initiative", name: "Cap new housing at 2,900 units",
+    official: "\"City of Newport Beach General Plan Amendment\" (the Responsible Housing Initiative).",
+    what: "Amends the General Plan to allow <b>2,900 new units</b> (2,160 lower income, 740 moderate) in five areas, down from the 8,174 the council zoned for against a state requirement of 4,845. Future changes to the policy would need voter approval. Approves no specific project.",
+    yes: "Adopts the cap.",
+    no: "The council's current housing plan stands.",
+    cost: "No official estimate. The city attorney warns it could leave the city short of its state housing requirement and expose it to state enforcement and penalties.",
+    forWho: "Former Mayor Marshall \"Duffy\" Duffield, the Newport Beach Stewardship Association, Still Protecting Our Newport.",
+    against: "Mayor Pro Tem Noah Von Blom, Councilmembers Michelle Barto and Sara Weber, former Mayor and OC GOP Chair Will O'Neill, the Orange County Republican Party.",
+    money: "Developer Ken Picerne and the Picerne Group gave $1 million to the Yes campaign, essentially its sole funding, including $150,000 to qualify it. The Orange County Republican Party had spent $29,385 against it by mid-October. City measure committees file with the city clerk, usually on a NetFile portal; start from the <a class=\"b-a\" href=\"https://ocvote.gov/campaign-finance\" target=\"_blank\" rel=\"noopener\">Orange County campaign finance page</a> and the city clerk's site.",
+    also: [
+      "<b>One developer is paying for a measure that caps housing.</b> City Manager Seimone Jurjis said the initiatives \"may provide leverage in disputes involving substantial private economic interests.\"",
+      "<b>The city sued to keep it off the ballot and lost.</b> In August a judge ordered it forward and wrote the city's conduct \"could lead to a finding of obstructionism.\"",
+      "<b>Opponents say it concentrates lower-income housing in five areas with no funding;</b> proponents say it cuts approved housing by 65%."
+    ],
+    threshold: "Simple majority." },
+  { id: "oc-C", letter: "C", juris: "City of Costa Mesa", name: "Business license tax based on gross receipts",
+    official: "\"The Costa Mesa Fair Business License Reform, Small Business Protection Measure.\" Council placed it 5 to 2.",
+    what: "Replaces the 1985 business license tax, capped at <b>$200 a year</b>, with 50 cents per $1,000 of gross receipts above $500,000, <b>capped at $15,000</b> for businesses at $30 million or more. Businesses under $500,000 see no change. No end date, no inflation adjustment.",
+    yes: "Adopts the new tax schedule.",
+    no: "The 1985 tax and the $200 cap stay.",
+    cost: "About $5.6 million a year total, roughly $4.6 million more than today. Staff project a $2 million shortfall in 2027-28 growing to $5 million by 2029-30.",
+    forWho: "Mayor John Stephens, Councilman Manuel Chavez, the firefighters' association, a former interim fire chief. No argument against was filed.",
+    against: "Councilmembers Jeff Pettis and Mike Buley voted no. The Orange County Business Council opposes it.",
+    money: "City measure committees file with the city clerk, usually on a NetFile portal; start from the <a class=\"b-a\" href=\"https://ocvote.gov/campaign-finance\" target=\"_blank\" rel=\"noopener\">Orange County campaign finance page</a> and the city clerk's site.",
+    also: [
+      "<b>General fund revenue</b> with annual disclosure and audits, no oversight committee.",
+      "<b>The council can lower rates for specific business types</b> and later raise them back to the schedule without another vote.",
+      "<b>The official document never states the vote threshold.</b>"
+    ],
+    threshold: "Not stated in the official document; a general tax normally needs a simple majority." },
+  { id: "oc-M", letter: "M", juris: "City of San Clemente, citizen initiative", name: "New 1% sales tax for beaches and fire, 10 years",
+    official: "\"San Clemente Natural Hazards Sales Tax Citizens Initiative.\"",
+    what: "A <b>1%</b> special sales tax for <b>10 years</b> (voters could extend 10 more), from 7.75% to 8.75%. Half to a beach protection fund, at least 70% of that for sand replenishment and erosion control; half to a fire and wildfire fund. Voters rejected a half-cent version in 2024 that needed two-thirds.",
+    yes: "Imposes the tax and the two funds.",
+    no: "No new tax.",
+    cost: "About $15 million a year, $150 million over 10 years. The city already pays about $12 million a year to the county fire authority.",
+    forWho: "Proponent Cameron Cosgrove, Mayor Rick Loffler, former Mayor Tim Brown.",
+    against: "Former Mayors Bob Baker and Kathy Ward and Councilmember Zhen Wu: \"tax first, plan later.\"",
+    money: "City measure committees file with the city clerk, usually on a NetFile portal; start from the <a class=\"b-a\" href=\"https://ocvote.gov/campaign-finance\" target=\"_blank\" rel=\"noopener\">Orange County campaign finance page</a> and the city clerk's site.",
+    also: [
+      "<b>Majority, not two-thirds,</b> because citizens put it on the ballot, even though it is a special tax with restricted funds.",
+      "<b>No maintenance-of-effort rule for fire,</b> so opponents say the fire fund could replace existing fire spending rather than add to it.",
+      "<b>Up to $500,000 can go to reimbursing election costs.</b> Oversight falls to the city's existing investment advisory committee, with annual audits."
+    ],
+    threshold: "Simple majority (citizen initiative)." },
+  { id: "oc-B", letter: "B", juris: "Westminster School District", name: "$128 million school bond",
+    official: "\"Classroom Repair, School Safety/Security, Quality Education Improvement Measure.\"",
+    what: "Up to <b>$128 million</b> in bonds for roofs, plumbing, HVAC, electrical, security, STEM classrooms, and replacing portables across 17 campuses. The last bond was $76 million in 2016.",
+    yes: "Authorizes the bonds.",
+    no: "The district cannot issue them.",
+    cost: "$30 per $100,000 of assessed value, about $143 a year for a typical homeowner, through 2060-61. Total repayment: about $276 million.",
+    forWho: "Former Councilman Tony Lam, the teachers' association president, trustees, a principal. No argument against was filed.",
+    against: "None filed. Howard Jarvis took no position on this year's local bonds.",
+    money: "City measure committees file with the city clerk, usually on a NetFile portal; start from the <a class=\"b-a\" href=\"https://ocvote.gov/campaign-finance\" target=\"_blank\" rel=\"noopener\">Orange County campaign finance page</a> and the city clerk's site.",
+    also: [
+      "<b>You pay more than double the sticker price</b> over 35 years.",
+      "<b>Capital only,</b> with an oversight committee and audits. Proponents claim up to $90 million in state matching funds; the district cites $730 million in unmet facility needs."
+    ],
+    threshold: "55% of votes cast." },
+  { id: "oc-O", letter: "O", juris: "City of Westminster", name: "Raise the hotel tax from 8% to 12%",
+    official: "\"Westminster City Services Measure.\"",
+    what: "Raises the hotel tax from <b>8% to 12%</b> starting January 1, 2027. No end date.",
+    yes: "Raises the rate.",
+    no: "Stays at 8%.",
+    cost: "About $452,000 a year, paid by hotel guests.",
+    forWho: "No argument in favor was filed.",
+    against: "No argument against was filed. The Orange County Business Council opposes it.",
+    money: "City measure committees file with the city clerk, usually on a NetFile portal; start from the <a class=\"b-a\" href=\"https://ocvote.gov/campaign-finance\" target=\"_blank\" rel=\"noopener\">Orange County campaign finance page</a> and the city clerk's site.",
+    also: [
+      "<b>General tax</b> with an annual audit and no oversight committee. Nobody filed an argument on either side."
+    ],
+    threshold: "Simple majority." }
+  ]
+};
+
 function localMeasures(county) { return (LOCAL[county] && LOCAL[county].measures) || []; }
 function countyChanged() {
   const sel = document.getElementById('countySel');
   state.localCounty = sel.options[sel.selectedIndex].text;
   if (!sel.value) state.localCounty = "";
+  state.houseDistrict = "";
   renderLocal();
 }
 function localVote(id, v, btn) {
@@ -2944,6 +4298,8 @@ function renderLocal() {
           ${localMeasures(state.localCounty).map(localCardHtml).join('')}
           <div class="briefing-cta no-print" style="margin-top:12px;"><button class="briefing-cta-btn" onclick="go('sheet')">Add these to my cheat sheet</button></div>
         </div>` : ''}
+        ${houseSectionHtml()}
+        ${mayorSectionHtml()}
         <div class="prop-block">
           <div class="prop-label">Or look it up by address</div>
           ${card("VOTE411 (League of Women Voters)", "Enter your address and get every race and measure on your ballot, with candidate statements in their own words and the text of each local measure. Non-partisan. This is the site formerly known as Voter's Edge California.", "https://www.vote411.org/ballot", "vote411.org")}
@@ -2971,9 +4327,19 @@ function sheetText() {
     const r = computeScores();
     gov = `\nGovernor match: Becerra ${r.pct.becerra}%, Hilton ${r.pct.hilton}%\n`;
   }
-  const local = localMeasures(state.localCounty).filter(m => state.localVotes[m.id]).map(m => `Measure ${m.letter} (${m.juris}, ${m.name}): ${label[state.localVotes[m.id]]}`);
-  const localTxt = local.length ? `\n\n${state.localCounty} County:\n${local.join('\n')}` : '';
-  return `My California ballot cheat sheet (November 3, 2026)\n${gov}\n${lines.join('\n')}${localTxt}\n\nFrom https://candiland-ux.github.io/CaliGovInfo/`;
+  const rvv = state.raceVotes;
+  const pickName = r => rvv[r.id] === 'und' ? 'Undecided' : r.cands[rvv[r.id]].name;
+  const races = RACES.filter(r => rvv[r.id] !== undefined).map(r => `${r.office}: ${pickName(r)}`);
+  const house = HOUSE.filter(r => rvv[r.id] !== undefined).map(r => `${r.district}: ${pickName(r)}`);
+  const raceTxt = races.length ? `\n\nStatewide offices:\n${races.join('\n')}` : '';
+  const houseTxt = house.length ? `\n\nU.S. House:\n${house.join('\n')}` : '';
+  const mayors = MAYORS.filter(r => rvv[r.id] !== undefined).map(r => `${r.city} mayor: ${pickName(r)}`);
+  const mayorTxt = mayors.length ? `\n\nMayor:\n${mayors.join('\n')}` : '';
+  const localTxt = Object.keys(LOCAL).map(county => {
+    const picks = localMeasures(county).filter(m => state.localVotes[m.id]).map(m => `Measure ${m.letter} (${m.juris}, ${m.name}): ${label[state.localVotes[m.id]]}`);
+    return picks.length ? `\n\n${county} County:\n${picks.join('\n')}` : '';
+  }).join('');
+  return `My California ballot cheat sheet (November 3, 2026)\n${gov}\n${lines.join('\n')}${raceTxt}${houseTxt}${mayorTxt}${localTxt}\n\nFrom https://candiland-ux.github.io/CaliGovInfo/`;
 }
 async function shareSheet() {
   const text = sheetText();
@@ -3172,6 +4538,7 @@ function buildBriefing() {
     ${propCards}
 
     <h2 class="b-h1" id="others">Other Statewide Races</h2>
+    <p class="b-p">Each of these has its own screen in the site's statewide offices walkthrough (home page, "The other statewide offices"), with background, money, priorities, endorsements, and the one thing to know for both candidates.</p>
     <ul class="b-ul">
       <li><strong>Lieutenant Governor:</strong> Fiona Ma (D), State Treasurer, vs. Gloria Romero (R), former state Senate majority leader.</li>
       <li><strong>Attorney General:</strong> Rob Bonta (D), incumbent, vs. Michael Gates (R).</li>
@@ -3179,6 +4546,7 @@ function buildBriefing() {
       <li><strong>Treasurer:</strong> Eleni Kounalakis (D), Lieutenant Governor, vs. Jennifer Hawks (R).</li>
       <li><strong>Controller:</strong> Malia Cohen (D), incumbent, vs. Herb Morgan (R).</li>
       <li><strong>Insurance Commissioner:</strong> Ben Allen (D), State Senator, vs. Jane Kim (D). Two Democrats advanced under the top-two primary. Kim proposes a state-run disaster insurance program; Allen calls it a long shot. Allen is backed by the state Democratic Party and the Sierra Club, Kim by the teachers' and nurses' unions and Bernie Sanders.</li>
+      <li><strong>Board of Equalization:</strong> District 4 (Riverside, Orange, San Diego, Imperial, part of San Bernardino): Tom Umberg (D) vs. Denis Bilodeau (R). District 1 (most of San Bernardino County and 33 other inland counties): Nelson Esparza (D) vs. Shannon Grove (R).</li>
       <li><strong>Superintendent of Public Instruction:</strong> Richard Barrera vs. Sonja Shaw. This office is nonpartisan. The two debated at an EdSource event in early October: Shaw says reading and math scores are priority one; Barrera says the state lacks clear goals for students.</li>
     </ul>
 
@@ -3220,6 +4588,43 @@ function buildBriefing() {
     <h4 class="b-h3">Voter guides and news coverage</h4>
     <ul class="source-list">
       ${src("CalMatters 2026 Voter Guide: governor", "https://calmatters.org/california-voter-guide-2026/governor/")}
+      ${src("CalMatters 2026 Voter Guide: lieutenant governor", "https://laist.com/news/politics/voter-guides/2026-election-california-general-lieutenant-governor")}
+      ${src("CalMatters 2026 Voter Guide: attorney general", "https://laist.com/news/politics/voter-guides/2026-election-california-general-attorney-general")}
+      ${src("CalMatters 2026 Voter Guide: secretary of state", "https://laist.com/news/politics/voter-guides/2026-election-california-general-secretary-of-state")}
+      ${src("CalMatters 2026 Voter Guide: treasurer", "https://laist.com/news/politics/voter-guides/2026-election-california-general-state-treasurer")}
+      ${src("CalMatters 2026 Voter Guide: controller", "https://laist.com/news/politics/voter-guides/2026-election-california-general-state-controller")}
+      ${src("CalMatters 2026 Voter Guide: insurance commissioner", "https://laist.com/news/politics/voter-guides/2026-election-california-general-insurance-commissioner")}
+      ${src("CalMatters 2026 Voter Guide: superintendent", "https://laist.com/news/politics/voter-guides/2026-election-california-general-superintendent-of-public-instruction")}
+      ${src("CalMatters 2026 Voter Guide: Board of Equalization District 4", "https://laist.com/news/politics/voter-guides/2026-election-california-general-board-of-equalization-district-4")}
+      ${src("CalMatters: campaign money in the Board of Equalization races", "https://calmatters.org/digital-democracy/2026/06/board-of-equalization-campaign-finance/")}
+      ${src("CalMatters campaign finance tracker", "https://project-voter-guide-2026.interactives.calmatters.org/general/en/campaign-finance/race/lt")}
+      ${src("EdSource: the superintendent debate", "https://edsource.org/2026/california-superintendent-candidates-debate/767704")}
+      ${src("LA County Registrar: measures on the ballot", "https://content.lavote.gov/docs/rrcc/documents/final-measures-appearing-on-the-ballot-9-22-2026.pdf")}
+      ${src("LA City Clerk: voter information pamphlet", "https://cityclerk.lacity.org/election/ENG201_NOV-2026_Voter_Info_Pamphlet.pdf")}
+      ${src("LAist voter guides", "https://laist.com/news/politics/voter-guides")}
+      ${src("LA City Clerk: certified candidates, November 2026", "https://cityclerk.lacity.org/election/2026_General_Municipal_Election_List_of_Certified_Candidates.pdf")}
+      ${src("LAist: money in the Bass and Raman race", "https://laist.com/news/politics/bass-campaign-spending-finance-raman-mayor")}
+      ${src("LAist: three takeaways from the mayoral debate", "https://laist.com/news/politics/3-takeaways-from-bass-and-ramans-live-televised-mayoral-debate")}
+      ${src("Fox LA: Berkeley IGS poll on the mayor's race", "https://www.foxla.com/news/raman-leads-bass-la-mayor-poll")}
+      ${src("Voice of San Diego: North County mayoral filings", "https://voiceofsandiego.org/?p=764996")}
+      ${src("San Bernardino County Sentinel: November filings", "https://sbcsentinel.com/?p=37750")}
+      ${src("Orange County Registrar: measures on the ballot", "https://ocvote.gov/elections/2026-general-election-measures-on-the-ballot")}
+      ${src("Voice of OC: cities ask for tax increases, term limits, and more", "https://voiceofoc.org/2026/09/election-2026-oc-cities-ask-for-tax-increases-term-limits-and-more/")}
+      ${src("KPBS: guide to San Diego County school bonds", "https://www.kpbs.org/news/politics/2026/10/02/your-guide-to-all-san-diego-county-school-bond-measures")}
+      ${src("Voice of San Diego: the fine print in Measure B", "https://voiceofsandiego.org/2026/10/09/the-fine-print-in-the-countywide-sales-tax-hike-pitch/")}
+      ${src("San Diego County Measure B ordinance text", "https://www.sdvote.com/content/dam/rov/en/election/nov-3-2026-gubernatorial-general-election/san-diego-county-fund-health-and-safety-services.pdf")}
+      ${src("Riverside County Registrar: November 3 election", "https://voteinfo.net/november-3-2026-general-election")}
+      ${src("San Bernardino County Registrar: measures", "https://elections.sbcounty.gov/elections/2026/1103/measures/")}
+      ${src("The Signal: 27th District primary preview", "https://signalscv.com/2026/05/the-signals-california-primary-preview/")}
+      ${src("Guides.vote: 45th District candidates", "https://guides.vote/?p=5474")}
+      ${src("CalMatters 2026 Voter Guide: U.S. House", "https://calmatters.org/california-voter-guide-2026/us-house")}
+      ${src("FEC: candidate and committee filings", "https://www.fec.gov/data/")}
+      ${src("House Clerk: H.R. 1 final passage roll call, July 3, 2025", "https://clerk.house.gov/evs/2025/roll190")}
+      ${src("KQED: the 48th District race", "https://kqed.org/news/12102409/local-loyalties-and-trump-opposition-collide-in-san-diego-house-race")}
+      ${src("NBC LA: Calvert vs. Kim", "https://www.nbclosangeles.com/news/local/gop-vs-gop-who-will-win-california-congressional-district-40/3953869/")}
+      ${src("NBC Palm Springs: the 25th District candidates", "https://www.nbcpalmsprings.com/decision-2026/2026/05/15/candidates-lay-out-key-issues-in-californias-25th-congressional-district-race")}
+      ${src("Senate Office of Demographics: 2025 congressional district maps", "https://sdmg.senate.ca.gov/node/1130")}
+      ${src("Secretary of State: certified list of candidates", "https://elections.cdn.sos.ca.gov/statewide-elections/2026-general/cert-list-candidates.pdf")}
       ${src("CalMatters 2026 Voter Guide: propositions", "https://calmatters.org/california-voter-guide-2026/propositions/")}
       ${src("KQED Voter Guide: governor", "https://www.kqed.org/voterguide/california/governor")}
       ${src("CalMatters: how Props 40, 41, and 42 interact", "https://calmatters.org/health/2026/09/california-wealth-tax-prop-40-41-42/")}

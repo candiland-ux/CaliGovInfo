@@ -1493,6 +1493,9 @@
   .yn.y { background: #f1f8f2 !important; border-left: 3px solid #2b8a3e; }
   .yn.n { background: #fdf4f2 !important; border-left: 3px solid #c8321a; }
   .yn b { color: #111 !important; -webkit-text-fill-color: #111; }
+  .prop-list { margin: 4px 0 0 0; padding-left: 18px; }
+  .prop-list li { font-size: 15px; line-height: 1.5; color: #222 !important; -webkit-text-fill-color: #222; margin-bottom: 8px; }
+  .prop-list li b { font-weight: 600; color: #111 !important; -webkit-text-fill-color: #111; }
   .prop-warn {
     background: #fffaf0 !important; border: 1px solid #e3c98a; border-left: 4px solid #a67a27; border-radius: 4px;
     padding: 12px 14px; margin: 12px 0; font-size: 14px; line-height: 1.5; color: #3a2f14 !important; -webkit-text-fill-color: #3a2f14;
@@ -1556,7 +1559,7 @@
   </div>
 
 <script>
-const DATA_DATE = "October 1, 2026";
+const DATA_DATE = "October 21, 2026";
 
 const CANDIDATES = {
   becerra: { name: "Xavier Becerra", party: "D", oneLiner: "Former U.S. Health Secretary and California Attorney General; 12 terms in Congress" },
@@ -1723,6 +1726,14 @@ const CAVEATS = {
 // ==================== PROPOSITIONS ====================
 const PROPS = [
   { num: 1, name: "Housing and veterans bond", official: "Authorizes Bonds for Housing Affordability Programs. Legislative Statute.",
+    money: "Yes side: about $12.8 million as of October 6. The biggest checks are $1 million each from two carpenters' union committees (their members would build the homes), Airbnb, and Building a Better California, a committee funded by Google co-founder Sergey Brin and other tech billionaires. Also Meta ($602,000), Anthropic ($500,000), and affordable housing developers and nonprofits that would apply for the money. No side: no committee and no money reported.",
+    also: [
+      "<b>Only $1.25 billion of the $11.25 billion is for veterans, and that part costs taxpayers nothing</b> because veterans repay their own loans. The other $10 billion is general debt repaid from the state budget. Republican Senator Tony Strickland calls the title a \"bait-and-switch.\"",
+      "<b>Where the $10 billion goes:</b> $5.1 billion for apartment construction loans, $1.15 billion for supportive housing, $750 million to fix up existing affordable buildings, $600 million for self-help homebuilding, $500 million for homebuyer help, $450 million for farmworker housing, $350 million for UC and CSU student housing, $200 million for tribal housing, and smaller pots.",
+      "<b>The money goes to developers, nonprofits, and local governments</b> as low-interest loans and grants, run by the state housing department. The Legislature controls when about $1.7 billion of it gets released and can change the program rules later.",
+      "<b>Borrowing costs about 15% more than paying cash</b> after interest, per the state's budget analyst. One outside estimate puts total repayment near $17.4 billion.",
+      "<b>Supporters' answer:</b> the 2018 housing bond is spent and about 40,000 approved affordable units are stalled for lack of funding."
+    ],
     what: "Lets the state borrow <b>$11.25 billion</b>: $10 billion for housing programs and $1.25 billion for veterans' home loans. The largest piece, $7.2 billion, goes to affordable rental housing. The state's budget analyst estimates up to 40,000 rental units and homeownership help for about 40,000 households.",
     yes: "The state could borrow $11.25 billion to support veterans and affordable housing.",
     no: "The state could not borrow that money.",
@@ -1731,6 +1742,13 @@ const PROPS = [
     against: "No argument against was filed in the official guide. Reform California and some Republican lawmakers oppose it. They say it adds debt without fixing what makes building expensive. The California Republican Party is neutral.",
     poll: "55% yes, 43% no", gov: "Becerra: Yes. Hilton: no public position found." },
   { num: 2, name: "Bigger rainy day fund", official: "Increases State's Rainy Day Fund. Legislative Constitutional Amendment.",
+    money: "No committee and no money reported on either side.",
+    also: [
+      "<b>Reserve deposits would stop counting toward the state spending limit.</b> Today, when revenue runs over that limit two years in a row, the excess must go to schools and taxpayer rebates (the 2022 Golden State Stimulus came from this). Moving billions into reserves that no longer count makes rebates less likely. Opponents call this a loophole; the California Budget and Policy Center says it frees up a few billion dollars a year of room under the cap.",
+      "<b>Extra debt payments run 10 more years, through 2040, and can go to new things</b> including repaying federal loans. That could cover the roughly $20 billion the state owes the federal government for unemployment insurance, which businesses would otherwise repay through payroll taxes. The Budget Center objects that this shifts a business cost onto the state.",
+      "<b>A new capital gains rule:</b> starting in 2027, when capital gains run above 10% of state taxes, 150% of the excess must be set aside instead of 100%.",
+      "<b>The rules for taking money out do not change.</b> Governor Newsom pulled $4.9 billion and $7.1 billion from the reserve in the last two budgets while revenue was rising, using the existing budget-emergency trigger. Critic David Crane says a bigger reserve just invites more spending on optimistic forecasts."
+    ],
     what: "Raises the target size of the state's main budget reserve from <b>10% to 20%</b> of General Fund taxes. Requires bigger deposits in years with very high investment-related tax revenue, and keeps required extra debt payments going through 2040 instead of 2030. Reserve deposits would no longer count toward the state spending limit.",
     yes: "Rules for building reserves and paying down debt would change. Reserves would be higher, and extra debt payments would continue for longer.",
     no: "The current reserve and debt rules would stay the same.",
@@ -1739,6 +1757,13 @@ const PROPS = [
     against: "Reform California, the California Republican Party, and legislative Republicans. They say taking deposits out of the spending limit makes taxpayer rebates less likely.",
     poll: "60% yes, 39% no", gov: "Becerra: Yes. Hilton: no public position found." },
   { num: 3, name: "Make the high-income tax permanent", official: "Provides Permanent Funding for Schools and Health Care by Extending Existing Tax on High Incomes. Initiative Constitutional Amendment.",
+    money: "Yes side: about $46 million as of October 6, almost all from the California Teachers Association, which wrote the measure ($43.8 million), plus the National Education Association ($7.5 million) and other public-sector unions whose members are paid from this revenue. No side: $5,500, from the Family Business Association and one company.",
+    also: [
+      "<b>Most of the money does not add to school budgets.</b> The revenue goes into a school account that also counts toward the state's existing school funding guarantee, so it frees up regular budget money for other uses. The state's budget analyst estimates only about 40% nets out to schools; the rest goes to other state programs. The Budget Center says the health care formula \"has never directed funds to Medi-Cal\" and supports it only indirectly.",
+      "<b>No expiration date, and it is a constitutional amendment.</b> Changing the rates later would take another statewide vote. The rates start at about $371,000 for a single filer and $743,000 for a couple, now adjusted for inflation.",
+      "<b>Who pays:</b> the top 2% of filers, who already pay about half of all state income tax. The revenue swings from about $5 billion in a weak stock market year to $15 billion in a strong one, which critics say deepens the state's dependence on its most volatile revenue source and hits small businesses that file as individuals.",
+      "<b>Supporters' answer:</b> nobody's taxes go up; the rates already exist. Letting them expire would mean up to $15 billion a year in cuts and layoffs."
+    ],
     what: "Makes permanent the higher income tax rates on top earners that voters approved in 2012 and extended in 2016. Without this measure they expire in <b>2031</b>. The top 2% of taxpayers pay these rates; the official guide puts the starting point at individual income over $371,000. The state's budget analyst says roughly 40% of the money goes to schools and community colleges and the rest to other state programs.",
     yes: "The income tax increase on high earners in place since 2012 would become permanent.",
     no: "That tax increase would expire in 2031.",
@@ -1747,6 +1772,13 @@ const PROPS = [
     against: "California Taxpayers Association, Family Business Association of California, California Hispanic Chambers of Commerce, Reform California. They say it turns a temporary tax into a permanent one and could push high earners and jobs out of state.",
     poll: "58% yes, 40% no", gov: "Becerra: Yes. Hilton: no public position found." },
   { num: 4, name: "Allow public funding of campaigns", official: "Repeals Prohibition Against Public Funding of Election Campaigns. Legislative Statute.",
+    money: "Yes side: $235,000 as of October 6, all from Movement Voter PAC, a national progressive donor network. No side: no committee and no money reported.",
+    also: [
+      "<b>It creates no program and spends no money by itself.</b> It only lets the state, counties, and cities set up public financing later. Charter cities like Los Angeles and San Francisco already have programs under a 1992 court ruling. Los Angeles's program is budgeted at about $15 million for the current two-year cycle.",
+      "<b>The cost is decided later and is open-ended.</b> The state's budget analyst says costs \"could be significant\" for any government that creates a program. The ban on using money earmarked for education, transportation, or public safety does not cover general fund money, which the California Taxpayers Association calls the real concern.",
+      "<b>A rider:</b> it also triples the maximum fine for illegal campaign donations from foreign entities.",
+      "<b>Design risk:</b> the Hoover Institution notes that depending on how a program is written, its qualifying rules could favor incumbents or well-organized candidates, and that evidence public financing reduces big-donor influence is mixed. Candidates could take public money and private donations at the same time."
+    ],
     what: "Repeals California's 1988 ban on using public money for candidates' campaigns. State and local governments could then set up public financing programs. It does not create any program by itself. Candidates who take part would have to show broad support and accept spending limits, and money set aside for education, transportation, or public safety could not be used.",
     yes: "State and local governments could create public campaign financing programs, with limits on which funds are used and who can receive them.",
     no: "The state and most local governments would still be unable to create these programs.",
@@ -1755,6 +1787,13 @@ const PROPS = [
     against: "California Taxpayers Association, Reform California, California Republican Party. They say it lets politicians spend taxpayer money on campaigns, with no cap on the amount.",
     poll: "42% yes, 53% no", gov: "Neither candidate has a public position that we could find." },
   { num: 5, name: "Change how recalls work", official: "Changes Recall Election Process for Statewide Officers. Legislative Constitutional Amendment.",
+    money: "No committee and no money reported on either side.",
+    also: [
+      "<b>A recalled governor could be replaced by the lieutenant governor for the rest of the term</b> with no election, if the recall happens after the filing deadline for the next statewide election in the first two years of the term. Opponents point out the replacement would likely be from the same party.",
+      "<b>Other recalled statewide officers would be replaced by the governor's appointment,</b> the same way vacancies are filled now. Recalled legislators would be replaced by special election, which costs millions.",
+      "<b>The recalled official could run again</b> for the same seat in the next election, though they could not be appointed to it. Today a recalled official is barred from running.",
+      "<b>The author was himself recalled.</b> Senator Josh Newman wrote it after being recalled from his seat in 2018. The idea came from the Secretary of State's office after the failed 2021 Newsom recall, where 46 replacement candidates were on the ballot."
+    ],
     what: "Recall ballots would ask only one question: should this official be removed? The second question, who should replace them, goes away. If a governor is recalled, the lieutenant governor would act as governor until a special election or the end of the term. Other vacancies would be filled by special election or appointment.",
     yes: "Recall elections would no longer ask who should fill the vacancy. Vacancies would be filled by special election or appointment.",
     no: "Voters would keep choosing a replacement on the recall ballot.",
@@ -1763,6 +1802,14 @@ const PROPS = [
     against: "California Republican Party, Election Integrity Project California, Reform California. They say it takes away voters' right to pick the replacement.",
     poll: "35% yes, 59% no", gov: "Neither candidate has a public position that we could find." },
   { num: 37, name: "Loans for middle-income buyers of new homes", official: "Creates Loan Program for Middle-Income Buyers of Qualified New Homes. Initiative Statute.",
+    money: "Yes side: about $19.6 million as of October 6. About three-quarters comes from the California Association of Realtors and its national parent ($16 million). Also Building a Better California, the Sergey Brin and Eric Schmidt committee ($6 million), carpenters' unions ($1.7 million), and California Forever, the company proposing a new city in Solano County ($50,000). No side: no committee and no money reported.",
+    also: [
+      "<b>Every buyer must hire a licensed California real estate agent or broker.</b> That is written into the measure, and the realtors' association is its main funder.",
+      "<b>Builders who join the program get weaker construction-defect rules.</b> Defect claims would need each homeowner's signature naming each defect, builders could contact homeowners directly, and contingency attorney fees would be capped at 30%. The state's budget analyst says the changes \"aim to provide more flexibility to developers.\"",
+      "<b>Program homes are declared not to be public works,</b> so prevailing wage rules do not apply, even though the state is financing them.",
+      "<b>\"Middle income\" reaches twice the local median and there is no first-time-buyer rule.</b> A family of four could qualify earning up to about $375,800 in Santa Clara County. The Budget Center says benefits would likely skew toward the top of that range. The state gets no share of the home's appreciation.",
+      "<b>It is a second mortgage with monthly payments, not a grant,</b> at an interest rate set after the election. Because the loans must repay the bonds, the Budget Center says the rate could run above first-mortgage rates and offset much of the benefit. Hoover warns that subsidizing demand for limited new homes could raise prices and shift the benefit to sellers and builders."
+    ],
     what: "Creates a state second-mortgage program funded by up to <b>$25 billion</b> in revenue bonds. The loan covers up to 17% of the price of a newly built home; the buyer puts down at least 3%. Buyers must be California residents earning no more than twice the typical income in their area, and the home must cost under about $1.5 million.",
     yes: "The state would create the new homebuying program and could sell up to $25 billion in bonds, repaid from homeowners' loan payments.",
     no: "The state would not be required to create the program.",
@@ -1771,6 +1818,14 @@ const PROPS = [
     against: "No argument against was filed in the official guide. Reform California, the League of Women Voters, and Assemblymember Carl DeMaio oppose it. They say the state should not be a mortgage lender and that it adds debt for buyers without lowering what homes cost.",
     poll: "61% yes, 35% no", gov: "Becerra: Yes. Hilton: no public position found." },
   { num: 38, name: "Immunology research bond", official: "Authorizes Bonds for Immunology Medical Research. Initiative Statute.",
+    money: "Yes side: about $64 million as of October 6, almost all from one person: Dr. Gary Michelson, a billionaire spinal surgery inventor, directly and through his nonprofit ($61 million), plus $5 million from Meyer Luskin. Both co-founded the institute positioned to receive half the money. No side: under $10,000, mostly from Stanford professor Robert Kaplan and a few individuals.",
+    also: [
+      "<b>Half the money, about $4.2 billion, goes to one unnamed institute whose criteria fit exactly one place:</b> the California Institute for Immunology and Immunotherapy at UCLA. The measure requires a nonprofit founded before 2025 with 200,000 square feet, $250 million in philanthropy, two specific $50 million gifts, and ties to a UC medical center with over 3.5 million outpatient visits. UCLA confirmed only that institute qualifies. Michelson is its co-founder and board chair.",
+      "<b>If no institute qualifies, the Department of Public Health can adjust the criteria to pick one.</b> The institute already received $200 million from the state budget.",
+      "<b>The other half is awarded by a council whose members are the only eligible applicants.</b> Grants can go only to universities and nonprofits represented on the council, the council must confer with the institute on awards, and grantees must give the institute and UCLA a role in clinical trials.",
+      "<b>\"Pays for itself\" rests on 10% of future licensing revenue,</b> which the state's budget analyst calls uncertain and says may take decades to offset the $500 million to $600 million a year in debt payments. The 20% price discount for Californians could, per opponents, push companies to sell new products in other states first.",
+      "<b>Supporters' answer:</b> the criteria ensure the institute can start research immediately, for-profits cannot receive grants, and federal research funding is being cut. A separate $7.5 billion research bond is already set for the March 2028 ballot."
+    ],
     what: "Lets the state borrow <b>$8.4 billion</b> for research on immune-system treatments. About half goes to a single University of California-affiliated nonprofit institute and half to competitive grants. At least $4.2 billion is set aside for cancer, heart disease, and Alzheimer's research. The state would get 10% of revenue from discoveries.",
     yes: "The state could borrow $8.4 billion for immunology and immunotherapy research at California institutes and universities.",
     no: "The state could not borrow that money.",
@@ -1779,23 +1834,47 @@ const PROPS = [
     against: "Stanford professor Robert Kaplan, League of Women Voters of California, Howard Jarvis Taxpayers Association, Courage California, the Orange County Register. They say it commits decades of debt, steers half the money to one institution, and skips normal scientific review.",
     poll: "55% yes, 42% no", gov: "Neither candidate has a public position that we could find." },
   { num: 39, name: "Voter ID", official: "Prohibits Citizens from Voting Unless They Present Government-Issued Identification. Initiative Constitutional Amendment.",
+    money: "Yes side: about $36 million through mid-October. Two out-of-state billionaires supply most of it: Richard Uihlein of Wisconsin, co-founder of Uline and a major Republican donor ($17 million), and Joe Gebbia of Texas, Airbnb co-founder and now White House Chief Design Officer ($8 million). Also Carl DeMaio's Reform California, mostly small donors ($3.1 million), and tech investors including Nicole Shanahan, Douglas Leone, and the Winklevoss twins. No side: about $32 million, from the California Democratic Party (about $5.5 million), the teachers', SEIU, and nurses' unions, two tribal governments ($2.5 million), trial lawyers ($1 million), Reed Hastings and Patty Quillin ($2.5 million), the ACLU, and dialysis company DaVita ($600,000).",
+    also: [
+      "<b>The big change is to mail voting,</b> which is how about 13 million of 16 million Californians voted in 2024. Every mail voter would have to write the last four digits of a government ID on the envelope, and a ballot with a missing or wrong number would not count. Today the signature serves that purpose. The measure describes no process to fix a mistake, and opponents say voters who never designate an ID may not get a mail ballot at all.",
+      "<b>The Legislature fills in the blanks.</b> Which IDs count and what \"best efforts\" to verify citizenship means are left to future laws. Counties would have to report annually what share of voters have had citizenship verified, with state audits every two years.",
+      "<b>It is a constitutional amendment with no expiration</b> and applies to every election in California. Cost: tens of millions to low hundreds of millions of dollars a year. The free voter ID card is free to order, but opponents note travel, time off, and document fees are not.",
+      "<b>A judge upheld the ballot title</b> that begins \"Prohibits citizens from voting unless they present government-issued identification,\" and a separate ruling struck the campaign's pamphlet claims that it would save money and make voting easier.",
+      "<b>Supporters' answer:</b> mail voting stays, the ID is free, more than 100,000 ballots were rejected for signature mismatches under the current system, and states with voter ID have not seen turnout drop. DeMaio says he never solicited Uihlein's money."
+    ],
     what: "In-person voters would have to show government-issued ID. Mail voters would have to write the last four digits of a government ID number on the ballot envelope, and ballots without it would not count. Election officials would have to work to verify that registered voters are citizens. The state would provide a free voter ID card on request.",
     yes: "Voters would have to give extra identifying information to election officials each time they vote.",
     no: "A voter's identity would continue to be confirmed with a signature.",
     cost: "Tens of millions to low hundreds of millions of dollars a year.",
     forWho: "California Republican Party, Reform California, Howard Jarvis Taxpayers Association, Assemblymember Carl DeMaio (lead proponent). Major funder: Richard Uihlein. They say ID builds trust in elections and most states require it.",
     against: "ACLU California Action, Common Cause, League of Women Voters of California, California Democratic Party, Secretary of State Shirley Weber, California Labor Federation. They say fraud is extremely rare and the rules could block eligible voters.",
-    poll: "43% yes, 55% no", gov: "Becerra: No. Hilton: listed as a supporter by LAist; he has said voter ID would speed up vote counting." },
+    poll: "43% yes, 55% no", poll2: "An Independent Voter Project poll (September 23 to October 2, 2,906 likely voters) had it at 43% yes, 40% no, 17% undecided. That group sponsored the top-two primary and is an advocacy organization.", gov: "Becerra: No. Hilton: Yes, stated at the CNN debate. Becerra said at the debate that Prop 39 is backed by Donald Trump; the Yes on 39 campaign says Trump has taken no position." },
   { num: 40, name: "One-time tax on billionaires", official: "Imposes One-Time Tax on Certain Taxpayers. Initiative Constitutional Amendment and Statute.",
+    money: "Yes side: about $32 million, almost all from one union, SEIU-United Healthcare Workers West, which wrote the measure ($31.8 million). Small donors had given about $3,600 combined as of June. No side: about $100 million through October 6 and more than $200 million by mid-October per CalMatters, nearly all routed through one committee, Building a Better California, funded by tech and venture billionaires: Google co-founder Sergey Brin (over $120 million, nearly a third of all No money), John Doerr, Eric Schmidt, Patrick Collison, Chris Larsen, Michael Moritz, and Vinod Khosla. Opponents have spent or booked about $96 million in ads to supporters' $209,000. Doctor, clinic, and business groups gave smaller amounts.",
+    also: [
+      "<b>Residency is frozen at January 1, 2026.</b> Anyone who was a California resident that day owes the tax, even if they have moved since. Sergey Brin and Larry Page moved to Nevada before that date. One tax attorney told CalMatters the rule may be unconstitutionally retroactive; the drafters disagree.",
+      "<b>What is left out of net worth:</b> directly owned real estate, pensions and traditional retirement accounts, Roth accounts up to $10 million, and up to $5 million of art, cars, and personal items. Private companies are valued by a formula tied to their last fundraising round rather than IRS fair market value. The rate phases in from 0% at $1 billion to 5% at $1.1 billion. Every income tax filer in the state would have to declare whether their net worth tops $1 billion.",
+      "<b>The Legislature decides how the money is spent</b> within the 90% health and 10% education and food categories. Nothing requires it to replace federal Medi-Cal cuts specifically. The California Medical Association and Planned Parenthood warn the money could backfill state cuts and free up general fund dollars for other things. The revenue is exempt from the school funding guarantee, the state spending limit, and reserve rules. The Legislature can amend the measure by two-thirds vote.",
+      "<b>One-time money for ongoing programs.</b> The state's budget analyst says income tax losses could run under $1 billion a year if billionaires leave. A Hoover analysis estimates a net loss of about $25 billion over time; drafter David Gamage disputes it.",
+      "<b>The labor fight behind it.</b> SEIU-UHW's parent council went neutral. The teachers' union, firefighters, building trades, hospitals, clinics, doctors, and Governor Newsom all oppose it. The LA Times reported that union president Dave Regan offered to pull the measure in exchange for concessions including help winning contracts at medical facilities; Regan denies it. A clinic lawsuit over Prop 44 alleges the union offered to drop that measure if clinics dropped their opposition to this one; the union calls that \"categorically false.\""
+    ],
     what: "A one-time tax equal to <b>5% of net worth</b> on billionaires who lived in California on January 1, 2026 (roughly 200 people, per CalMatters). Due in 2027, or spread over five years at a higher cost. Real estate, pensions, and retirement accounts are generally excluded. 90% of the money must go to health care; the rest to education, food assistance, and running the tax.",
     yes: "The state would collect a one-time tax from billionaires equal to 5% of their wealth.",
     no: "The state would not collect that tax.",
     cost: "Tens of billions of dollars in one-time revenue over several years. Possibly less than $1 billion a year in lost income tax if billionaires leave.",
     forWho: "SEIU-United Healthcare Workers West (sponsor and nearly its only funder), Senator Bernie Sanders, California Democratic Party, Teamsters California, California Nurses Association. They say it prevents hospital closures and coverage losses after federal Medi-Cal cuts.",
     against: "Governor Newsom, California Teachers Association, California Medical Association, California Professional Firefighters, California Taxpayers Association, LA Times editorial board. Funded mainly by tech billionaires including Sergey Brin. They say it is a one-time fix that will drive wealthy taxpayers out and shrink long-term revenue.",
-    poll: "52% yes, 46% no", gov: "Becerra: No. Hilton: No.",
+    poll: "52% yes, 46% no", poll2: "An Independent Voter Project poll (September 23 to October 2, 2,906 likely voters) had it at 38% yes, 42% no after respondents heard the state analyst's description. That group is an advocacy organization.", gov: "Becerra: No. Hilton: No.",
     warn: "<b>Props 41 and 42 were written to block this one.</b> The state's budget analyst says that if Prop 41 or Prop 42 gets more yes votes than Prop 40, Prop 40 could be stopped from becoming law even if a majority votes yes on it." },
   { num: 41, name: "Audits and spending limit for new taxes", official: "Prohibits New State Taxes That Exclude Revenues from State Spending Limit. Requires Audits for New State Special Taxes. Initiative Constitutional Amendment.",
+    money: "Yes side: about $58.4 million, essentially 100% from Building a Better California, the Sergey Brin-led billionaire committee described under Prop 40. The committee's official name lists small businesses, accountants, and auditing experts; none appear among its donors. No side: no separate committee. SEIU-UHW's Yes on 40 committee doubles as the No on 41 and 42 campaign.",
+    also: [
+      "<b>It bans a type of tax, not just adds audits.</b> Any new state tax enacted on or after January 1, 2026 that is written to sit outside the state spending limit could not be collected. Prop 40 is written exactly that way, which is why the two collide. Under the spending limit, revenue over the cap two years in a row must be returned to taxpayers, schools, or local governments.",
+      "<b>The most-votes-wins clause.</b> Any measure on the same ballot with a tax outside the spending limit or different audit rules is declared \"in conflict,\" and the one with more yes votes wins. If Prop 40 beats it and is later struck down in court, Prop 41 springs back into effect.",
+      "<b>Audits come with a built-in cut target.</b> Before a citizen tax initiative even qualifies, the State Auditor must identify ways to cut each program it would fund by 10%, and that summary goes in the voter guide. Programs funded by any new special tax get re-audited every four years.",
+      "<b>Who pays for the audits:</b> the tax's own revenue if it passes, the general fund if it fails or never qualifies. Costs run in the low millions a year and grow over time.",
+      "<b>Supporters' answer:</b> the official argument is signed by the state CPA society, a former State Auditor, and the California Taxpayers Association, who say new taxes deserve independent review."
+    ],
     what: "Requires the State Auditor to review the programs a proposed tax initiative would fund before it goes on the ballot, and to audit new special taxes every four years. It also means the state might not be able to keep money from a new special tax outside the state spending limit. Prop 40 is written to sit outside that limit, which is where the two collide.",
     yes: "The State Auditor would review programs funded by proposed and new special taxes. The state might not be able to exclude new special tax spending from its spending limit.",
     no: "The State Auditor's duties and the spending limit rules would not change.",
@@ -1805,6 +1884,14 @@ const PROPS = [
     poll: "51% yes, 44% no", gov: "Neither candidate has a public position that we could find.",
     warn: "<b>This is a countermeasure to Prop 40.</b> If it gets more yes votes than Prop 40, the billionaire tax could be blocked even if Prop 40 also passes." },
   { num: 42, name: "Ban on new state taxes on personal property", official: "Prohibits New State Personal Property Taxes and Certain Retroactive State Taxes. Initiative Constitutional Amendment.",
+    money: "Yes side: about $128 million by mid-October, more than 99% from Building a Better California, the Sergey Brin-led billionaire committee described under Prop 40. The police officers' association gave $150,000. Firefighters, building trades, and AMVETS endorse it but do not appear as funders. No side: no separate committee. SEIU-UHW's Yes on 40 committee doubles as the No on 41 and 42 campaign.",
+    also: [
+      "<b>It reaches far beyond Prop 40, permanently.</b> It adds a constitutional ban on any new state tax on owning pensions, retirement accounts, mutual funds, business interests, and \"all personal property, whether tangible or intangible.\" That blocks future wealth taxes and taxes on unrealized gains by the Legislature or by voters, not just this one. No expiration and no amendment clause.",
+      "<b>Existing taxes are grandfathered</b> if first collected by December 31, 2025, so the vehicle license fee and county business equipment taxes stay. Real estate taxes are untouched.",
+      "<b>The retroactivity ban has one exception:</b> a tax can reach back up to 365 days if the Governor declares a disaster or fiscal emergency and the money is limited to that emergency.",
+      "<b>The most-votes-wins clause.</b> Any same-ballot measure that taxes personal savings or applies retroactively is declared in conflict, and if Prop 42 gets more yes votes it wins \"in its entirety.\" A retired election lawyer put it plainly: Prop 42 needs only one more vote than Prop 40 to block it.",
+      "<b>Supporters' answer:</b> the campaign says it protects retirement savings for the long term no matter what happens to Prop 40. SEIU-UHW says it is designed to trick voters."
+    ],
     what: "Bars any new state tax on owning personal property, which means everything people own other than real estate: investments, retirement accounts, business stakes, art. Also bars state taxes that apply retroactively to past activity. It would cancel conflicting taxes enacted after January 1, 2026.",
     yes: "The state could not create new taxes on owning financial assets or other personal property.",
     no: "The state would keep the option to create those taxes.",
@@ -1814,6 +1901,14 @@ const PROPS = [
     poll: "54% yes, 43% no", gov: "Neither candidate has a public position that we could find.",
     warn: "<b>This is a countermeasure to Prop 40.</b> If it gets more yes votes than Prop 40, the billionaire tax could be blocked even if Prop 40 also passes." },
   { num: 43, name: "Two-thirds vote for citizen-proposed local taxes", official: "Limits Voters' Ability to Raise Revenues for Local Government Services. Legislative Constitutional Amendment.",
+    money: "Yes side: about $14 million. Most is from the California Business Roundtable's PAC ($10 million), whose own donors include Peter Thiel, Eric Schmidt, and Chris Larsen. Also Los Angeles commercial real estate owners Kilroy Realty and Douglas Emmett ($1 million each) and the Howard Jarvis Taxpayers Association ($1 million). No side: about $7.2 million from SEIU ($2.5 million across locals), firefighters, teachers, carpenters, construction industry groups, and the League of California Cities.",
+    also: [
+      "<b>It reverses a 2017 state Supreme Court decision.</b> In the Upland case the court held that citizens using the initiative process are not bound by the two-thirds rule that applies to governments, and lower courts followed. Since then more than two dozen citizen-led local special taxes have passed with less than two-thirds support.",
+      "<b>It came out of a deal, and its own author opposes it.</b> The Legislature put it on the ballot in June in exchange for the Howard Jarvis Taxpayers Association withdrawing a broader initiative that would also have hit charter-city transfer taxes and wiped out existing taxes like Los Angeles's Measure ULA mansion tax. This version drops both. Assemblymember Buffy Wicks, who wrote the language, says she is \"adamantly opposed.\"",
+      "<b>Existing taxes are safe; future ones get harder.</b> It applies only to voter-proposed special taxes approved after January 1, 2027. Measure ULA, which passed with 57.8%, is unaffected. A pending Los Angeles half-cent sales tax for firefighters is the kind of measure that would need two-thirds going forward.",
+      "<b>A quieter second provision:</b> it also writes into the constitution a bar on any local property tax above Prop 13's 1% rate, including by initiative. Hoover notes this gets little attention.",
+      "<b>Who benefits, per each side:</b> opponents say corporate donors and developers; supporters say homeowners, renters, and small businesses. Neither claim is verified by any agency."
+    ],
     what: "Today, a local special tax put on the ballot by a citizen petition can pass with a simple majority. This would raise that to <b>two-thirds</b>, starting January 1, 2027, the same bar that already applies when a local government proposes a special tax. Taxes already approved stay in place. It came out of a June 2026 deal in which the Howard Jarvis Taxpayers Association withdrew a broader measure.",
     yes: "Certain local taxes would need two-thirds approval from voters.",
     no: "Those local taxes could still pass with a majority vote.",
@@ -1822,6 +1917,14 @@ const PROPS = [
     against: "California Professional Firefighters, California Federation of Teachers, Nurse Alliance of SEIU California, California Democratic Party, the Sacramento Bee. They say it lets one-third of voters block funding for fire, schools, and roads.",
     poll: "43% yes, 51% no", gov: "Neither candidate has a public position that we could find." },
   { num: 44, name: "Spending rule for community health clinics", official: "Requires Community Health Clinics Spend 90% Of Revenue on Program Services. Initiative Statute.",
+    money: "Yes side: about $17 million, all from SEIU-United Healthcare Workers West, the same union behind Prop 40. No side: about $17.5 million in the main committee and about $37.6 million counting allied groups, from the clinics being regulated: AltaMed ($6.1 million), the California Primary Care Association ($2.1 million), Family Health Centers of San Diego, WellSpace Health, North East Medical Services, San Ysidro Health, TrueCare, and others.",
+    also: [
+      "<b>The Attorney General defines what counts.</b> The measure ties the ratio to IRS Form 990 lines but lets the Attorney General issue binding guidance adjusting what goes in the numerator and denominator. Clinics say patient navigators, translators, food pantries, buildings, and IT may not count; the union and its official rebuttal say they would.",
+      "<b>It is a revenue test, not a spending test.</b> A clinic that sets aside a surplus for a new building can fall below 90% even if every dollar it spends goes to care. Clinics now average about 80%, so most would be out of compliance on day one.",
+      "<b>Where the penalty money goes.</b> The penalty equals the shortfall and is held five years, refunded if the clinic comes into compliance, otherwise kept by the state for clinic workforce training, recruitment, and retention programs. Late filing fines are $5,000 then $10,000 a month. One-year waivers are possible.",
+      "<b>Who is covered:</b> nonprofit community clinics only. Tribal clinics, hospitals, for-profit clinics, and medical groups are exempt. Enforcement costs in the low tens of millions a year are paid by fees on the clinics.",
+      "<b>The labor fight behind it.</b> The union tried the same policy as a bill in 2025 and it died in committee. In September the clinic association and five clinics sued the union and president Dave Regan in federal court, alleging a racketeering scheme: that the union offered to drop Prop 44 in exchange for an organizing agreement covering about 25,000 clinic workers, or for the clinics dropping their opposition to Prop 40. The union calls this \"categorically false.\" The Democratic, Republican, and Working Families parties all oppose the measure. The clinics' claim that penalties would hit $1.7 billion in year one comes from a study they commissioned."
+    ],
     what: "Requires private nonprofit safety-net clinics to spend at least <b>90%</b> of their yearly revenue on health care services. The Attorney General would decide which expenses count. Clinics that fall short would pay a penalty equal to the shortfall. LAist reports about 2,000 clinics are covered and that they now average roughly 80%.",
     yes: "These clinics would have to spend at least 90% of revenue on health care services each year.",
     no: "The new spending requirement would not take effect.",
@@ -1830,6 +1933,14 @@ const PROPS = [
     against: "California Medical Association, American Academy of Pediatrics California, California Primary Care Association, Planned Parenthood Affiliates of California, California Democratic Party. They say it would force service cuts or closures at clinics that are already heavily regulated.",
     poll: "34% yes, 61% no", gov: "Neither candidate has a public position that we could find." },
   { num: 45, name: "Faster environmental review for building projects", official: "Modifies Environmental Review for Certain Projects. Initiative Statute.",
+    money: "Yes side: about $40 million through October 6: homebuilders (the California Building Industry Association and its members, including Lennar, KB Home, D.R. Horton, and Tri Pointe, $10.4 million), the Chamber's business PAC ($3.9 million), the three big utilities PG&E ($4.7 million), Edison ($2 million), and Sempra ($1 million), the realtors ($1.5 million), warehouse developer Prologis, and $10 million from Building a Better California, the Sergey Brin-led billionaire committee. No side: about $32 million by mid-October: philanthropist Wendy Schmidt ($10 million; her husband Eric Schmidt is on the other side of Prop 40), construction trade unions (Laborers, Operating Engineers, Iron Workers, about $10 million), the Center for Biological Diversity, Earthjustice, and a committee called Clean and Healthy California ($7.1 million) whose donors are not itemized.",
+    also: [
+      "<b>The developer picks the track.</b> Qualifying projects include housing of all kinds, water systems (not the Delta tunnel), clean energy (not nuclear), health facilities, fire and police stations, broadband, schools, and transportation (not high-speed rail). Whether data centers qualify under the broadband definition is disputed: a UC Berkeley law professor says the language leaves it to the courts; the campaign says they do not.",
+      "<b>Courts lose the power to stop a whole project.</b> A court could only pause the noncompliant piece while the agency fixes it. Challengers could only argue violations of rules on the books when the application was filed, and courts must rule within 270 days.",
+      "<b>Developers get a new right to sue cities.</b> Applications are deemed complete after 30 days, environmental reports must finish within 365 business days, and if an agency misses a deadline the applicant can force a hearing and sue. The deadlines also apply to zoning changes and general plan amendments, so it reaches local land-use decisions. Public comment periods become fixed maximums, tribal consultation is limited to federally recognized tribes, and the applicant supplies the one alternative studied instead of the agency developing several.",
+      "<b>Labor standards are thin for housing.</b> Prevailing wage is required for most non-housing projects and for housing over 85 feet, but ordinary housing projects face only weak requirements. The building trades call it \"the most dangerous measure\" they have faced in years and note it has no fire-safety or contaminated-soil requirements.",
+      "<b>No price guarantee.</b> Nothing requires savings to be passed to renters, buyers, or ratepayers. State and local costs run in the high tens of millions a year, possibly over $100 million, partly offset by fees. Supporters' answer: no project is exempt from review, the right to comment and sue stays, and local approval authority is unchanged."
+    ],
     what: "Changes the California Environmental Quality Act (CEQA) to set faster review for projects it calls essential: housing, schools, transit, water and power infrastructure, clean energy, and health facilities. Sets a 365-business-day deadline for environmental reports and narrows what courts can review. A court could stop only the part of a project that breaks the rules, not the whole project.",
     yes: "Certain projects would get new review and court-challenge procedures with tighter time limits and a narrower scope for courts.",
     no: "Projects would keep using the current review and court-challenge procedures.",
@@ -1867,7 +1978,8 @@ function datesCardHtml() {
       <div class="date-row"><b>Oct 19</b><span>Last day to register to vote online or by mail.</span></div>
       <div class="date-row"><b>Oct 20 to Nov 3</b><span>Missed the deadline? Same-day registration is available in person at county elections offices and vote centers.</span></div>
       <div class="date-row"><b>Oct 24</b><span>Vote centers open in Voter's Choice Act counties.</span></div>
-      <div class="date-row"><b>Nov 3</b><span>Election Day. Polls are open 7 a.m. to 8 p.m. Mailed ballots must be postmarked by today and reach the county by November 10.</span></div>
+      <div class="date-row"><b>Nov 3</b><span>Election Day. Polls are open 7 a.m. to 8 p.m. Mailed ballots must be postmarked by today and reach the county by November 10. Drop boxes close at 8 p.m.</span></div>
+      <div class="date-row"><b>Nov 25</b><span>Deadline to fix a missing or mismatched signature on your mail ballot.</span></div>
     </div>`;
 }
 
@@ -1888,7 +2000,7 @@ function renderHome() {
         </div>
         <div class="home-card">
           <h2>The 14 propositions</h2>
-          <p>What each one does, what yes and no mean, who is for and against. Mark your picks and leave with a cheat sheet.</p>
+          <p>What each one does, who is for and against, who is paying for the campaigns, and what the fine print also does. Mark your picks and leave with a cheat sheet.</p>
           <button class="cta dark" onclick="beginProps()">Build my ballot</button>
         </div>
       </div>
@@ -1904,9 +2016,9 @@ function renderHome() {
       <div class="data-banner" style="border-left-color:#5a544a;"><strong>For your full ballot:</strong> Your ballot also has races for lieutenant governor, attorney general, Congress, the Legislature, and local offices and measures. The full briefing below lists the statewide matchups. For local races, check your <a href="https://voterstatus.sos.ca.gov/" target="_blank" rel="noopener">county voter information guide</a>.</div>
 
       <div class="resources">
-        <a class="resource-link" href="https://registertovote.ca.gov/" target="_blank" rel="noopener">
-          <span class="resource-label">Register to vote (deadline October 19)</span>
-          <span class="resource-host">registertovote.ca.gov →</span>
+        <a class="resource-link" href="https://caearlyvoting.sos.ca.gov/" target="_blank" rel="noopener">
+          <span class="resource-label">Missed the October 19 deadline? Register and vote in person through November 3</span>
+          <span class="resource-host">caearlyvoting.sos.ca.gov →</span>
         </a>
         <a class="resource-link" href="https://voterstatus.sos.ca.gov/" target="_blank" rel="noopener">
           <span class="resource-label">Check your registration</span>
@@ -1934,7 +2046,7 @@ function renderHome() {
 
 5. For every candidate, write a "one thing to know before you vote" caveat that names their biggest documented liabilities. Neutral language, specific facts, never inflated.
 
-6. If the ballot has statewide measures, build a second section that walks through each one: what it does, what a yes vote and a no vote mean (use the official voter guide wording), the cost, who is for it, who is against it, and current polling. Let the voter mark yes, no, or undecided and finish with a printable cheat sheet. Flag any measures that are written to cancel each other out.
+6. If the ballot has statewide measures, build a second section that walks through each one: what it does, what a yes vote and a no vote mean (use the official voter guide wording), the cost, who is for it, who is against it, who is paying for each side (top donors from the state campaign-finance database and the ethics commission's top-contributor lists, with amounts, and what each donor is in plain terms), what the measure also does beyond its headline (who specifically benefits, carve-outs, who controls the money, sunset or none, anything the state's budget analyst or major outlets flag), and current polling. Let the voter mark yes, no, or undecided and finish with a printable cheat sheet. Flag any measures that are written to cancel each other out.
 
 7. Build a full briefing: the state of the race, recent developments (debates, endorsements, polling shifts), a side-by-side of positions, money, and sources with links.
 
@@ -2255,8 +2367,10 @@ function propDetailHtml(p) {
       <div class="prop-block"><div class="prop-label">Cost</div><div class="prop-text">${p.cost}</div></div>
       <div class="prop-block"><div class="prop-label">Who is for it</div><div class="prop-text">${p.forWho}</div></div>
       <div class="prop-block"><div class="prop-label">Who is against it</div><div class="prop-text">${p.against}</div></div>
+      ${p.money ? `<div class="prop-block"><div class="prop-label">Who is paying</div><div class="prop-text">${p.money.replace('Yes side:', '<b>Yes side:</b>').replace(' No side:', '<br><br><b>No side:</b>').replace(/^No committee/, '<b>No committee</b>')}</div></div>` : ''}
+      ${p.also ? `<div class="prop-block"><div class="prop-label">What it also does</div><ul class="prop-list">${p.also.map(x => `<li>${x}</li>`).join('')}</ul></div>` : ''}
       <div class="prop-block"><div class="prop-label">The candidates for governor</div><div class="prop-text">${p.gov}</div></div>
-      <div class="prop-block"><div class="prop-label">Latest poll</div><div class="prop-text">${p.poll} among likely voters (PPIC, September 4 to 10, 2026).</div></div>`;
+      <div class="prop-block"><div class="prop-label">Latest poll</div><div class="prop-text">${p.poll} among likely voters (PPIC, September 4 to 10, 2026).${p.poll2 ? ' ' + p.poll2 : ''}</div></div>`;
 }
 
 function renderProp() {
@@ -2455,6 +2569,8 @@ function buildBriefing() {
     <table class="poll-table">
       <thead><tr><th>Poll</th><th>Dates</th><th>Becerra</th><th>Hilton</th></tr></thead>
       <tbody>
+        <tr><td>ActiVote (online app panel, 400 voters)</td><td>Sept 24 to Oct 16</td><td class="num">63</td><td class="num">37</td></tr>
+        <tr><td>Hilton campaign poll (Wolfson)</td><td>Oct 1 to 2</td><td class="num">46</td><td class="num">40</td></tr>
         <tr><td>Berkeley IGS</td><td>Sept 15 to 20</td><td class="num">58</td><td class="num">33</td></tr>
         <tr><td>PPIC</td><td>Sept 4 to 10</td><td class="num">60</td><td class="num">38</td></tr>
         <tr><td>Hilton campaign poll (Wolfson)</td><td>Aug 14 to 16</td><td class="num">49</td><td class="num">41</td></tr>
@@ -2462,6 +2578,7 @@ function buildBriefing() {
         <tr><td>PPIC</td><td>June 29 to July 6</td><td class="num">61</td><td class="num">36</td></tr>
       </tbody>
     </table>
+    <p class="b-p">No independent pollster has released a new survey of the race since September. The two October entries are a small online panel and a poll paid for by the Hilton campaign; the campaign's earlier Wolfson poll was also far closer than every independent poll. Hilton says the independent polls use voter models that miss current political energy.</p>
     <p class="b-p">In the September PPIC poll, 65% of likely voters said the candidates' positions on affordability are very important to their vote. In the September Berkeley IGS poll, voters' top concerns were cost of living (44%) and fighting Trump administration policies (37%).</p>
 
     <h4 class="b-h3">What has happened since the primary</h4>
@@ -2471,7 +2588,11 @@ function buildBriefing() {
       <li><strong>One debate.</strong> The candidates met on CNN on September 30 in Burbank, described by the AP as the only televised debate. They clashed over homelessness, immigration, and President Trump. Becerra tied Hilton to Trump throughout. Hilton pressed Becerra on his record with migrant children at HHS and cast him as part of the Sacramento establishment.</li>
       <li><strong>Hilton's affordability pitch.</strong> No state income tax on the first $150,000, $3 gas, a halved gas tax, and a 10% cut to the state workforce.</li>
       <li><strong>Becerra's affordability pitch.</strong> An emergency freeze on utility and insurance rates, a housing emergency declaration, and enforcement against price gouging.</li>
-      <li><strong>Becerra's money lead.</strong> At June 30 Becerra had $6.2 million on hand. Hilton had $2.1 million and $1.4 million in unpaid bills.</li>
+      <li><strong>Becerra skipped two October forums.</strong> He did not appear at a Los Angeles Times forum in early October, where Hilton took questions alone, and withdrew from a Univision debate citing a scheduling conflict. Both candidates did sit for separate 30-minute interviews on Univision 34 Los Angeles on October 20.</li>
+      <li><strong>Dispute over Becerra's family story.</strong> At the CNN debate Becerra said his parents came to California "with $12." Records reported by the LA Times show his father was born in Sacramento in 1928, moved to Tijuana as a child, and returned to California as a teenager; his mother is from Jalisco, Mexico. Hilton accused Becerra of lying for "identity points." Becerra's campaign says immigrant families commonly move back and forth and that Hilton is attacking immigrants.</li>
+      <li><strong>Hilton ad drew criticism from Republicans.</strong> CalMatters reports his campaign paid $125,000 for an ad series whose lead spot shows two young women in front of a Pride flag filling out a ballot for Hilton with the tagline "Just try it!" Republican candidates Sonja Shaw and Michael Gates both condemned it. Hilton said anything strong gets a strong reaction.</li>
+      <li><strong>Water.</strong> Hilton opposes the Delta tunnel and backs Sites Reservoir and raising Shasta Dam. Becerra declined CalMatters interviews on water and has no clear Delta tunnel position.</li>
+      <li><strong>Becerra's money lead.</strong> Through mid-October Becerra had raised $37.8 million to Hilton's $29.0 million, per the Secretary of State via KQED. Becerra raised $21.6 million after the primary, 82% of it from 712 donations of $10,000 or more. An outside committee backing him spent nearly $2 million on ads in October, funded mostly by two tribal governments. At June 30 Hilton reported $1.4 million in unpaid bills; October debt figures were not available.</li>
     </ul>
 
     <h2 class="b-h1" id="side">Becerra and Hilton, Side by Side</h2>
@@ -2480,6 +2601,9 @@ function buildBriefing() {
     <div class="issue-row"><div class="issue-head"><span class="issue-name">Wildfire and home insurance</span></div>
       <div class="stance D"><b>Becerra:</b> Statewide wildfire risk plan, direct aid to homeowners for fireproofing, and an emergency freeze on insurance rates.</div>
       <div class="stance R"><b>Hilton:</b> Says he would increase the availability of coverage in his first year and supports forest management. Published specifics are thin.</div></div>
+    <div class="issue-row"><div class="issue-head"><span class="issue-name">Water</span></div>
+      <div class="stance D"><b>Becerra:</b> Says he will "bring everyone to the table to modernize our water infrastructure." Declined CalMatters interviews on the subject and has no clear position on the Delta tunnel.</div>
+      <div class="stance R"><b>Hilton:</b> Opposes the Delta tunnel. Supports building Sites Reservoir and raising Shasta Dam. His plan with Edward Ring carries an estimate of up to $150 billion.</div></div>
     <div class="issue-row"><div class="issue-head"><span class="issue-name">AI and tech</span></div>
       <div class="stance D"><b>Becerra:</b> Independent audits of state AI systems, tracking of AI's effect on jobs, transparency when AI is used in hiring. Supports banning social media for children under 16.</div>
       <div class="stance R"><b>Hilton:</b> Has declined to back specific regulations or bans. Supports child protections and a pause on AI in schools. Says the state risks "both over- and under-regulating at the same time."</div></div>
@@ -2490,31 +2614,33 @@ function buildBriefing() {
       name: "Xavier Becerra (D)",
       role: "Former U.S. Health and Human Services Secretary (2021 to 2025); former California Attorney General (2017 to 2021); 12 terms in Congress",
       exp: "Federal cabinet secretary, statewide attorney general, and 24 years in the U.S. House, where he chaired the House Democratic Caucus. First Latino to hold the attorney general and HHS jobs.",
-      money: "$6.2 million on hand at June 30. Raised about $6 million more in large donations from July 1 to mid-August. Direct donors include the state prison officers' union ($39,200) and Chevron ($39,200 in 2025). An outside committee backing him has taken $2.75 million from a California real estate committee, $2.45 million from the Laborers, $2 million from the Pechanga Band of Indians, $1.4 million from the California Medical Association, and $1 million from Airbnb.",
+      money: "$37.8 million raised through mid-October (Secretary of State via KQED). Raised $21.6 million after the primary, 82% from donations of $10,000 or more; top donors at the $39,200 limit include Uber, Lyft, the California Association of Realtors, and Reid Hoffman. Direct donors include the state prison officers' union ($39,200) and Chevron ($39,200 in 2025). An outside committee backing him has taken $2.75 million from a California real estate committee, $2.45 million from the Laborers, $2 million from the Pechanga Band of Indians, $1.4 million from the California Medical Association, and $1 million from Airbnb.",
       pros: "The deepest government resume on the ballot. Sued the first Trump administration more than 100 times as attorney general and defended DACA and the Affordable Care Act in court. As Health Secretary, oversaw the first Medicare drug price negotiations. Has the backing of nearly every major Democratic official and union.",
-      cons: "His former chief of staff, Sean McCluskie, pleaded guilty in a scheme that took about $225,000 from a dormant Becerra campaign account; Becerra was not charged and prosecutors view him as a victim. His HHS agency lost contact with about 85,000 migrant children, and a safety hotline missed more than 65,000 calls and reports. Corporate money: a pro-Becerra committee took $950,000 from Meta, $500,000 from McDonald's, and $500,000 from Chevron in May 2026. CalMatters reports he has released no major education proposals.",
+      cons: "Skipped an LA Times forum and withdrew from a Univision debate in October. His debate claim that his parents came to California \"with $12\" was questioned after records showed his father was born in Sacramento. His former chief of staff, Sean McCluskie, pleaded guilty in a scheme that took about $225,000 from a dormant Becerra campaign account; Becerra was not charged and prosecutors view him as a victim. His HHS agency lost contact with about 85,000 migrant children, and a safety hotline missed more than 65,000 calls and reports. Corporate money: a pro-Becerra committee took $950,000 from Meta, $500,000 from McDonald's, and $500,000 from Chevron in May 2026. CalMatters reports he has released no major education proposals.",
       platform: "Emergency freeze on insurance and utility rates. Housing state of emergency and funding for 40,000 approved affordable units. Protect Medi-Cal and expand coverage. Defend the sanctuary law. Fully fund Prop 36. Rework and finish high-speed rail. Open to revising climate goals if they make energy unaffordable.",
       endorsements: "Governor Gavin Newsom, Kamala Harris, Senators Alex Padilla and Adam Schiff, Tom Steyer, Katie Porter, Antonio Villaraigosa, California Democratic Party, California Teachers Association, SEIU California, California Medical Association, Planned Parenthood, Equality California, California Professional Firefighters, United Farm Workers.",
       props: "Yes on 1, 2, 3, and 37. No on 39 and 40. No stated position found on 4, 5, 38, 41, 42, 43, 44, or 45.",
-      polling: "58% (Berkeley IGS, September 15 to 20) and 60% (PPIC, September 4 to 10). Favorability in the IGS poll: 48% favorable, 40% unfavorable."
+      polling: "58% (Berkeley IGS, September 15 to 20) and 60% (PPIC, September 4 to 10). No new independent poll since September. Favorability in the IGS poll: 48% favorable, 40% unfavorable."
     })}
 
     ${buildCandidateCard({
       name: "Steve Hilton (R)",
       role: "Former Fox News host (2017 to 2023); former senior adviser to UK Prime Minister David Cameron (2010 to 2012)",
       exp: "Has never held elected office. Co-founded the political crowdfunding startup Crowdpac and the policy group Golden Together. Became a U.S. citizen in 2021.",
-      money: "$2.1 million on hand at June 30, with $1.4 million in unpaid bills. Raised about $1.2 million in large donations from July 1 to mid-August. His campaign reports more than 100,000 mostly small donors. Outside groups opposing him are funded by Bill Bloomfield ($1 million), a Democratic Governors Association affiliate ($750,000), and the California Nurses Association ($500,000).",
+      money: "$29.0 million raised through mid-October (Secretary of State via KQED). Had $1.4 million in unpaid bills at June 30; October debt figures were not available. His campaign reports more than 100,000 mostly small donors. Outside groups opposing him are funded by Bill Bloomfield ($1 million), a Democratic Governors Association affiliate ($750,000), and the California Nurses Association ($500,000).",
       pros: "The most specific tax and cost-cutting plan in the race. A detailed education agenda. An outsider who is not tied to the record of the party that has run the state for 15 years. Endorsed by the Howard Jarvis Taxpayers Association.",
-      cons: "No experience in elected office or running a government agency. Endorsed by President Trump, whose approval among likely California voters is 27% (PPIC). Promoted calls to investigate 2020 election fraud claims on his former TV show. Bianco has not endorsed him. CalMatters notes he has no concrete health care cost plan.",
+      cons: "No experience in elected office or running a government agency. His \"Just try it!\" ad was condemned by Republican candidates Sonja Shaw and Michael Gates. Endorsed by President Trump, whose approval among likely California voters is 27% (PPIC). Promoted calls to investigate 2020 election fraud claims on his former TV show. Bianco has not endorsed him. CalMatters notes he has no concrete health care cost plan.",
       platform: "No state income tax on the first $150,000, flat rate above. Halve the gas tax and target $3 gas. End climate mandates on utilities. Cut the state workforce 10% and cancel high-speed rail. Overturn the sanctuary law. Clear all encampments. End state-funded Medi-Cal for undocumented immigrants. Phonics, third-grade retention, and education savings accounts.",
       endorsements: "President Donald Trump (April 6, 2026), Vice President JD Vance, Howard Jarvis Taxpayers Association, Representatives Tom McClintock and Kevin Kiley, State Senator Tony Strickland, Nisei Farmers League. Former Democratic state Senate leader Gloria Romero, now a Republican, is running for lieutenant governor as his running mate; the two offices are elected separately.",
-      props: "No on 40. Listed by LAist as a supporter of Prop 39 (voter ID). No stated position found on the others.",
-      polling: "33% (Berkeley IGS, September 15 to 20) and 38% (PPIC, September 4 to 10). Favorability in the IGS poll: 35% favorable, 51% unfavorable."
+      props: "Yes on 39 (said so at the CNN debate). No on 40, which he calls an \"asset-seizure tax.\" No stated position found on the others.",
+      polling: "33% (Berkeley IGS, September 15 to 20) and 38% (PPIC, September 4 to 10). His campaign's own October poll had him at 40%. Favorability in the IGS poll: 35% favorable, 51% unfavorable."
     })}
 
     <h2 class="b-h1" id="props">The 14 Propositions</h2>
     <p class="b-p">The measures are numbered 1 to 5 and 37 to 45. Measures 1, 2, 4, 5, and 43 were placed on the ballot by the Legislature. The rest qualified by voter signatures. Poll numbers are from PPIC's survey of 1,103 likely voters, September 4 to 10, with a margin of error of 3.8 points.</p>
-    <div class="prop-warn"><b>Three measures are tied together.</b> Prop 40 is a one-time tax on billionaires. Props 41 and 42 were written to block it. The Legislative Analyst's Office says that if Prop 41 or 42 gets more yes votes than Prop 40, Prop 40 could be stopped from becoming law even if a majority votes yes on it. In the September PPIC poll all three were passing narrowly, and Prop 42 was ahead of Prop 40. More than $240 million has been raised across the three campaigns.</div>
+    <p class="b-p">New this update: each measure now shows who is paying for the yes and no campaigns and what the measure does beyond its headline, drawn from the Secretary of State's contribution reports, the Fair Political Practices Commission's top donor lists, the Legislative Analyst's Office, and news coverage. Donor totals are as of October 6 unless noted.</p>
+    <div class="prop-warn"><b>Follow the money across measures.</b> One committee, Building a Better California, funded mostly by Google co-founder Sergey Brin and other tech billionaires, is paying for No on 40 ($118.5 million), Yes on 41 ($58.4 million), Yes on 42 ($127.8 million), and part of Yes on 45 ($10 million), plus smaller gifts to Props 1 and 37. One union, SEIU-United Healthcare Workers West, is nearly the sole funder of Yes on 40 ($32 million) and Yes on 44 ($17 million). The community clinics are on the No side of 40 and 44 and the Yes side of 45.</div>
+    <div class="prop-warn"><b>Three measures are tied together.</b> Prop 40 is a one-time tax on billionaires. Props 41 and 42 were written to block it. The Legislative Analyst's Office says that if Prop 41 or 42 gets more yes votes than Prop 40, Prop 40 could be stopped from becoming law even if a majority votes yes on it. In the September PPIC poll all three were passing narrowly, and Prop 42 was ahead of Prop 40. More than $300 million has been raised across the three campaigns, per the AP, with Brin alone giving nearly a third.</div>
     ${propCards}
 
     <h2 class="b-h1" id="others">Other Statewide Races</h2>
@@ -2524,15 +2650,17 @@ function buildBriefing() {
       <li><strong>Secretary of State:</strong> Shirley Weber (D), incumbent, vs. Don Wagner (R), Orange County Supervisor.</li>
       <li><strong>Treasurer:</strong> Eleni Kounalakis (D), Lieutenant Governor, vs. Jennifer Hawks (R).</li>
       <li><strong>Controller:</strong> Malia Cohen (D), incumbent, vs. Herb Morgan (R).</li>
-      <li><strong>Insurance Commissioner:</strong> Ben Allen (D), State Senator, vs. Jane Kim (D). Two Democrats advanced under the top-two primary.</li>
-      <li><strong>Superintendent of Public Instruction:</strong> Richard Barrera vs. Sonja Shaw. This office is nonpartisan.</li>
+      <li><strong>Insurance Commissioner:</strong> Ben Allen (D), State Senator, vs. Jane Kim (D). Two Democrats advanced under the top-two primary. Kim proposes a state-run disaster insurance program; Allen calls it a long shot. Allen is backed by the state Democratic Party and the Sierra Club, Kim by the teachers' and nurses' unions and Bernie Sanders.</li>
+      <li><strong>Superintendent of Public Instruction:</strong> Richard Barrera vs. Sonja Shaw. This office is nonpartisan. The two debated at an EdSource event in early October: Shaw says reading and math scores are priority one; Barrera says the state lacks clear goals for students.</li>
     </ul>
 
     <h2 class="b-h1" id="howto">How and When to Vote</h2>
     ${datesCardHtml()}
     <ul class="b-ul">
+      <li>Every active registered voter has been mailed a ballot. The Secretary of State suggests mailing it back at least 7 days before Election Day. As of about October 21, roughly 1.5 million of 23.2 million mailed ballots had been returned (Political Data Inc.).</li>
       <li>If you mail your ballot on Election Day, ask a postal clerk to hand-postmark it.</li>
-      <li>Check your registration at <a class="b-a" href="https://voterstatus.sos.ca.gov/" target="_blank" rel="noopener">voterstatus.sos.ca.gov</a>.</li>
+      <li>On October 13 the U.S. Department of Justice demanded that the state verify citizenship for a list of voters it called likely noncitizens and set their ballots aside. Secretary of State Weber replied on October 15. Your ballot still counts under state law; track it at the link below.</li>
+      <li>Track your ballot at <a class="b-a" href="https://california.ballottrax.net/voter/" target="_blank" rel="noopener">california.ballottrax.net</a>. Check your registration at <a class="b-a" href="https://voterstatus.sos.ca.gov/" target="_blank" rel="noopener">voterstatus.sos.ca.gov</a>.</li>
       <li>Find early voting and drop-off locations at <a class="b-a" href="https://caearlyvoting.sos.ca.gov/" target="_blank" rel="noopener">caearlyvoting.sos.ca.gov</a>.</li>
       <li>Read the official arguments for and against each measure at <a class="b-a" href="https://voterguide.sos.ca.gov/" target="_blank" rel="noopener">voterguide.sos.ca.gov</a>.</li>
     </ul>
@@ -2545,6 +2673,8 @@ function buildBriefing() {
     <ul class="source-list">
       ${src("California Secretary of State: Official Voter Information Guide", "https://voterguide.sos.ca.gov/")}
       ${src("Secretary of State: qualified statewide ballot measures", "https://www.sos.ca.gov/elections/ballot-measures/qualified-ballot-measures")}
+      ${src("Political Data Inc.: early ballot returns", "https://politicaldata.com/early-vote-counts?districtId=9999&districtName=California+Statewide")}
+      ${src("Secretary of State: response to the U.S. Department of Justice", "https://www.sos.ca.gov/administration/news-releases-and-advisories/2026-news-releases-and-advisories/california-secretary-state-shirley-n-weber-phd-shares-response-us-department-justice-demands")}
       ${src("Secretary of State: key dates and deadlines", "https://www.sos.ca.gov/elections/upcoming-elections/general-election-november-3-2026/key-dates-deadlines")}
       ${src("Secretary of State: June 2 primary Statement of Vote", "https://elections.cdn.sos.ca.gov/sov/2026-primary/sov/complete-sov.pdf")}
       ${src("Legislative Analyst's Office: ballot measure analyses", "https://lao.ca.gov/BallotAnalysis/Propositions")}
@@ -2555,6 +2685,8 @@ function buildBriefing() {
     <ul class="source-list">
       ${src("PPIC Statewide Survey, September 2026", "https://www.ppic.org/publication/ppic-statewide-survey-californians-and-their-government-september-2026/")}
       ${src("Berkeley IGS Poll releases, 2026", "https://igs.berkeley.edu/research/berkeley-igs-poll/2026-berkeley-igs-poll-releases")}
+      ${src("ActiVote: California governor, October 2026", "https://www.activote.net/polls/2026/ca-governor/2026-10-16/")}
+      ${src("Independent Voter Project poll on Props 39 and 40", "https://ivn.us/new-ca-poll-voter-id-measure-leads-today-its-undecided-voters-point-the-other-way/")}
       ${src("Cook Political Report governor ratings", "https://www.cookpolitical.com/ratings/governor-race-ratings")}
     </ul>
     <h4 class="b-h3">Voter guides and news coverage</h4>
@@ -2563,6 +2695,11 @@ function buildBriefing() {
       ${src("CalMatters 2026 Voter Guide: propositions", "https://calmatters.org/california-voter-guide-2026/propositions/")}
       ${src("KQED Voter Guide: governor", "https://www.kqed.org/voterguide/california/governor")}
       ${src("CalMatters: how Props 40, 41, and 42 interact", "https://calmatters.org/health/2026/09/california-wealth-tax-prop-40-41-42/")}
+      ${src("CalMatters: Hilton's \"Just try it\" ad", "https://calmatters.org/politics/2026/10/california-governor-race-hilton-ad/")}
+      ${src("CalMatters: the candidates on water", "https://calmatters.org/politics/elections/2026/10/becerra-hilton-governor-candidates-california-water/")}
+      ${src("Inside Political Money: who is bankrolling Becerra", "https://insidepoliticalmoney.com/news/whos-bankrolling-californias-likely-next-governor/")}
+      ${src("Hoodline: records on Becerra's father", "https://hoodline.com/2026/10/becerra-s-father-was-born-in-sacramento-not-mexico-records-show-amid-hilton-attack/")}
+      ${src("Univision: the October 20 forum", "https://corporate.televisaunivision.com/press/2026/10/14/n-univision-34-los-angeles-presents-the-california-gubernatorial-forum-los-latinos-preguntan-los-candidatos-responden/")}
       ${src("CalMatters: the September 30 debate", "https://calmatters.org/politics/2026/09/california-general-election-gubernatorial-debate-cnn/")}
       ${src("AP: the candidates' only debate", "https://www.ksat.com/news/politics/2026/09/30/rivals-for-california-governor-clash-over-homelessness-trump-in-only-debate-as-ballots-go-to-voters/")}
       ${src("Capitol Weekly: campaign money", "https://capitolweekly.net/becerra-laps-hilton-in-the-money-race/")}
@@ -2570,6 +2707,21 @@ function buildBriefing() {
       ${src("EdSource: Hilton on education", "https://edsource.org/2026/steve-hilton-ca-education-issues/766593")}
       ${src("LAist Voter Guide: Prop 39", "https://laist.com/news/politics/voter-guides/2026-election-california-general-proposition-39")}
       ${src("SF Standard: corporate money in the primary", "https://sfstandard.com/2026/05/31/fossil-fuel-primary-chevron-pg-e-spending-millions-boost-becerra/")}
+      ${src("Secretary of State: 2026 ballot measure contribution totals", "https://www.sos.ca.gov/campaign-lobbying/helpful-resources/measure-contributions/2026-ballot-measure-contribution-totals")}
+      ${src("CalMatters: the billionaire tax explained", "https://calmatters.org/politics/2026/10/california-billionaire-tax-explainer/")}
+      ${src("CalMatters: the union, the billionaires, and Prop 44", "https://calmatters.org/health/2026/10/union-billionaire-prop-44-clinic/")}
+      ${src("CalMatters: is Prop 38 a giveaway to one research center?", "https://calmatters.org/politics/elections/2026/07/proposition-38-california")}
+      ${src("CalMatters: who is funding Prop 39", "https://calmatters.org/politics/2026/10/california-election-voter-id-proposition-39/")}
+      ${src("CalMatters: Prop 43 and the Howard Jarvis deal", "https://calmatters.org/politics/2026/10/california-prop-43-election-2026/")}
+      ${src("CalMatters: Prop 1 housing bond", "https://calmatters.org/housing/homelessness/2026/10/prop-1-housing-bond/")}
+      ${src("Fullerton Observer: who funds Building a Better California", "https://fullertonobserver.com/2026/09/01/follow-the-money-on-billionaire-tax/")}
+      ${src("AP: top Democrats join billionaires against Prop 40", "https://abcnews.com/Business/wireStory/top-democrats-join-wealthiest-fighting-california-tax-increase-137131213")}
+      ${src("California Budget and Policy Center: Prop 2", "https://calbudgetcenter.org/resources/should-voters-approve-proposition-2-how-californias-rainy-day-fund-would-be-updated/")}
+      ${src("California Budget and Policy Center: Prop 3", "https://calbudgetcenter.org/resources/should-voters-approve-prop-3-how-top-tax-rates-have-helped-californians/")}
+      ${src("California Budget and Policy Center: Prop 37", "https://calbudgetcenter.org/resources/will-proposition-37-make-homeownership-more-affordable-its-not-guaranteed/")}
+      ${src("Hoover Institution: California Decides proposition analyses", "https://www.hoover.org/research/prop-40-billionaire-tax-act")}
+      ${src("GrowSF: annotated legal text for Props 37, 41, and 42", "https://growsf.org/voter-guide/san-francisco-voter-guide-november-2026-election/measures/prop-42/legal-text/")}
+      ${src("Rutan and Tucker: what Prop 45 changes in CEQA", "https://www.rutan.com/ceqa-reform-qualifies-for-the-ballot-what-to-know-about-the-building-an-affordable-california-act/")}
       ${src("SF Examiner: money in the billionaire tax fight", "https://www.sfexaminer.com/news/politics/billionaire-tax-fight-has-become-200m-battle/article_31b8898d-bb5a-4ff5-97a0-5921537adea6.html")}
     </ul>
     <h4 class="b-h3">Campaigns</h4>

@@ -1493,6 +1493,7 @@
   .yn.y { background: #f1f8f2 !important; border-left: 3px solid #2b8a3e; }
   .yn.n { background: #fdf4f2 !important; border-left: 3px solid #c8321a; }
   .yn b { color: #111 !important; -webkit-text-fill-color: #111; }
+  html, body, .stage { overflow-anchor: none; }
   .county-select { width: 100%; font: inherit; font-size: 16px; padding: 12px 14px; border: 1.5px solid #c9c5bd; border-radius: 10px; background: #fff; color: #1a1814; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%236a6a67' stroke-width='2'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
   .prop-list { margin: 4px 0 0 0; padding-left: 18px; }
   .prop-list li { font-size: 15px; line-height: 1.5; color: #222 !important; -webkit-text-fill-color: #222; margin-bottom: 8px; }
@@ -1955,6 +1956,7 @@ const PROPS = [
 
 const state = { view: "home", step: 0, answers: {}, showMethod: false, propIdx: 0, propVotes: {}, propReview: null, localCounty: "", localVotes: {}, localOpen: {} };
 const app = document.getElementById('app');
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
 function lastName(fullName) {
   const parts = (fullName || '').trim().split(/\s+/);
@@ -1963,8 +1965,8 @@ function lastName(fullName) {
 function partyWord(p) { return p === 'R' ? 'Republican' : 'Democrat'; }
 function toTop() {
   // Instant scroll, applied after the new screen is drawn. Smooth scrolling gets cancelled by the redraw on some phones.
-  const up = () => { window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; };
-  up(); requestAnimationFrame(up); setTimeout(up, 50);
+  const up = () => { window.scrollTo(0, 0); if (document.scrollingElement) document.scrollingElement.scrollTop = 0; document.documentElement.scrollTop = 0; document.body.scrollTop = 0; app.scrollTop = 0; };
+  up(); requestAnimationFrame(up); setTimeout(up, 60); setTimeout(up, 250);
 }
 function go(view) { state.view = view; render(); toTop(); }
 

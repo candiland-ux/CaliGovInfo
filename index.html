@@ -1961,7 +1961,12 @@ function lastName(fullName) {
   return parts[parts.length - 1];
 }
 function partyWord(p) { return p === 'R' ? 'Republican' : 'Democrat'; }
-function go(view) { state.view = view; window.scrollTo({ top: 0, behavior: 'smooth' }); render(); }
+function toTop() {
+  // Instant scroll, applied after the new screen is drawn. Smooth scrolling gets cancelled by the redraw on some phones.
+  const up = () => { window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; };
+  up(); requestAnimationFrame(up); setTimeout(up, 50);
+}
+function go(view) { state.view = view; render(); toTop(); }
 
 // Governor flow order: top issues, then each issue question, then the dealbreaker question.
 const GOV_STEPS = [TOP_ISSUE_Q].concat(QUESTIONS).concat([REDFLAG_Q]);
@@ -2201,14 +2206,14 @@ function toggleTop(key) {
   else { if (arr.length >= TOP_ISSUE_Q.maxPicks) arr.pop(); arr.push(key); }
   render();
 }
-function govNext() { state.step++; window.scrollTo({ top: 0, behavior: 'smooth' }); render(); }
+function govNext() { state.step++; render(); toTop(); }
 function govAnswer(qid, key) {
   state.answers[qid] = key;
   render();
   setTimeout(() => { govNext(); }, 180);
 }
 function govBack() {
-  if (state.step > 0) { state.step--; window.scrollTo({ top: 0, behavior: 'smooth' }); render(); }
+  if (state.step > 0) { state.step--; render(); toTop(); }
   else go("home");
 }
 function restartGov() { state.answers = {}; state.step = 0; state.showMethod = false; go("gov"); }
@@ -2433,7 +2438,7 @@ function propVote(num, v, btn) {
 }
 function propBack() {
   if (state.propReview !== null) { state.propReview = null; go("sheet"); return; }
-  if (state.propIdx > 0) { state.propIdx--; window.scrollTo({ top: 0, behavior: 'smooth' }); render(); }
+  if (state.propIdx > 0) { state.propIdx--; render(); toTop(); }
   else go("home");
 }
 function reviewProp(idx) { state.propIdx = idx; state.propReview = idx; go("props"); }

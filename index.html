@@ -1989,6 +1989,14 @@ function render() {
   if (state.view === "races") return renderRace();
 }
 
+function disclaimerHtml() {
+  return `
+      <div class="disclaimer">
+        <b>Please read before you rely on this.</b> This site is an independent, volunteer-built study aid. It is not affiliated with any government agency, party, campaign, or candidate, and it does not tell you how to vote. It shows how your own answers line up with the public record and lays out both sides of every measure.<br><br>
+        Everything here is a snapshot as of ${DATA_DATE}, compiled from public sources: the Secretary of State, the Legislative Analyst's Office, county registrars, the FEC and state campaign finance filings, published polls, and news coverage. Campaign finance figures lag the filings and change weekly. Where a fact could not be confirmed, the page says so rather than guessing. Errors are possible; if you find one, check the source links in the briefing and the official voter guide.<br><br>
+        Your picks stay on your device. Nothing you enter is saved, sent, or tracked. Always confirm candidates, measures, dates, and your own ballot with your county elections office before you vote.
+      </div>`;
+}
 function datesCardHtml() {
   return `
     <div class="dates-card">
@@ -2062,41 +2070,39 @@ function renderHome() {
           <span class="resource-host">wheresmyballot.sos.ca.gov →</span>
         </a>
         <button class="resource-link" onclick="togglePrompt()">
-          <span class="resource-label">In a different state? Build your own matcher</span>
+          <span class="resource-label">Not in California? Build this same guide for your state, county, or city with one copy-and-paste AI prompt</span>
           <span class="resource-host" id="promptToggle">show the AI prompt ↓</span>
         </button>
         <div class="prompt-body" id="promptBody" style="display:none;">
-          <p class="prompt-intro">Copy and paste this into Claude (or any capable AI assistant). Edit the bracketed parts before sending. The AI will research candidates, build the question set, and generate a working tool. Always verify the results before sharing.</p>
-          <pre class="prompt-text" id="promptText">I want to build a non-partisan voter matcher for the [STATE NAME] [RACE TYPE, for example "Senate primary", "Governor's race", "Mayor's race"] in [YEAR]. Two working examples to study: https://candiland-ux.github.io/KY_Match/ (Kentucky Senate and House) and https://candiland-ux.github.io/CaliGovInfo/ (California Governor general election plus ballot propositions). Use the same structural approach. Here's what I need:
+          <p class="prompt-intro">Everything on this site was built with an AI assistant, and this prompt is the recipe. Paste it into Claude or any capable AI, fill in the bracketed parts, and it will research your races and measures, who is paying, and the fine print, then build a working guide that looks and works like this one. Always verify the results against official sources before sharing.</p>
+          <pre class="prompt-text" id="promptText">I want to build a non-partisan voter guide for [STATE] for the [ELECTION, for example "November 3, 2026 general election"], and I want it to look and work like this one: https://candiland-ux.github.io/CaliGovInfo/ (a Kentucky primary version is at https://candiland-ux.github.io/KY_Match/). Open the California site and study it before writing anything. Match its structure, its sections, its plain-English tone, and its mobile layout. Here is what it contains and what I need you to build.
 
-1. Research the candidates. For each major candidate (5% or more in polling, or significant media attention), pull together: background and current role, money raised (FEC filings or the state campaign-finance database), top platform positions on the issues that matter in this race, known controversies or lawsuits, endorsements for and against, and latest polling.
+THE SITE HAS FOUR PARTS, reached from four cards on the home page:
 
-2. Build 8 to 12 questions that separate the candidates from each other on the things that divide them. Start with a top-issue ranker (let the voter rank 3 in order, with the first counting more than the second). For a two-candidate general election, make the other questions position questions: describe each approach in plain words without naming the candidate, and include a "not sure" option. For a crowded primary, use questions on temperament, money model, and experience type instead. End with a "dealbreaker" question, balanced so each candidate has the same number of entries.
+1. A MATCHER for the top race on the ballot (governor, senator, or mayor). 8 to 12 questions, one per screen. Start with a top-issue ranker where the voter picks 3 issues in order and the first counts more than the second. For a two-candidate general election, the rest are position questions: describe each approach in plain words without naming the candidate, with a "not sure" option. For a crowded primary, use questions on temperament, money model, and experience. End with a balanced "dealbreaker" question. Score every candidate 0 to 5 on every answer from their public record; do not inflate; give a 0 when they do not fit. Show every candidate's alignment as a percentage of the maximum possible for the answers given, and explain the math. Each candidate gets a card: background, money, strengths, liabilities, platform, endorsements, polling, and a "one thing to know before you vote" caveat naming their biggest documented liability in neutral words.
 
-3. Score every candidate 0 to 5 on every answer option, based on how closely their public record and platform line up with that answer. Don't inflate. If a candidate doesn't fit, give them a 0.
+2. THE OTHER STATEWIDE OFFICES, one screen each (lieutenant governor, attorney general, secretary of state, treasurer, controller or auditor, superintendent, and any elected boards). For each candidate: current role, background in two sentences, money raised and cash on hand from the state campaign finance database with the top donors or industries, what they say they will do in their own words, endorsements, and one thing to know. Add the primary result, any polling, and news since the last update. Let the voter pick a candidate or undecided on each screen.
 
-4. Display alignment as a percentage of the highest score possible for the answers the voter gave. Show every candidate's percentage, not only the top one, and explain the math in plain terms.
+3. THE STATEWIDE BALLOT MEASURES, one per screen. For each: what it does, what a yes and a no vote mean in the official voter guide's wording, the cost from the state's budget analyst, who is for it and who is against it, WHO IS PAYING (top donors each side with amounts from the state campaign finance database and the ethics or disclosure agency's top-contributor lists, and what each donor is in plain terms, for example "the teachers' union that wrote the measure" or "a committee funded by one tech billionaire"), WHAT IT ALSO DOES (3 to 5 bullets on the fine print: who specifically benefits, carve-outs and exemptions, who controls the money, sunset date or none, whether it is a general or special tax, the vote threshold, and anything the budget analyst or major outlets flag), the candidates' positions on it, and the latest poll. Flag measures written to cancel each other out, and warn the voter on the cheat sheet if their picks conflict. Add a "follow the money across measures" box when one funder is behind several.
 
-5. For every candidate, write a "one thing to know before you vote" caveat that names their biggest documented liabilities. Neutral language, specific facts, never inflated.
+4. MY COUNTY. A dropdown of every county in the state that opens that county's official election page for this election (find and verify the URL for each county). For the largest counties, go deeper, by county: (a) the 8 to 12 biggest LOCAL MEASURES, with the same fields as the statewide measures, from the county registrar's impartial analyses, tax rate statements, and filed arguments, with a link to the county or city campaign finance portal for money; (b) every U.S. HOUSE district touching the county, in a dropdown listing each district by its cities, with candidate cards in the same format as the statewide offices, the rating from Cook, Sabato, or Inside Elections, the primary result, money from the FEC, and each incumbent's vote on the biggest recent bill; (c) MAYORAL races, with full cards for the largest city and a candidate list for the rest. Below that, links to a nonpartisan address lookup (VOTE411 in the U.S.) and a sample ballot lookup, and an explanation that ballots are set by precinct, not zip code.
 
-6. If the ballot has statewide measures, build a second section that walks through each one: what it does, what a yes vote and a no vote mean (use the official voter guide wording), the cost, who is for it, who is against it, who is paying for each side (top donors from the state campaign-finance database and the ethics commission's top-contributor lists, with amounts, and what each donor is in plain terms), what the measure also does beyond its headline (who specifically benefits, carve-outs, who controls the money, sunset or none, anything the state's budget analyst or major outlets flag), and current polling. Let the voter mark yes, no, or undecided and finish with a printable cheat sheet. Flag any measures that are written to cancel each other out.
+CHEAT SHEET: every pick the voter makes (measures, offices, House, mayor, local measures) lands on one cheat sheet with "review or change" links, a print button, a copy-as-text button, and a "send to myself" button that opens the phone's share menu with the picks as plain text. Nothing is saved or sent anywhere unless the voter chooses.
 
-7. Build a full briefing: the state of the race, recent developments (debates, endorsements, polling shifts), a side-by-side of positions, money, and sources with links.
+BRIEFING: a full written briefing behind a button: the state of the race, what has happened since the primary, a side-by-side of positions, candidate cards, all the measures, the other races, how and when to vote with every deadline, a glossary, and a sources list with links to every official and news source used.
 
-8. Style rules: no em dashes (they read as AI-generated), plain English not jargon, past tense for any role the candidate no longer holds, be specific about what the candidate personally did versus their team. If you cannot verify a fact, leave it out.
+RESEARCH RULES: Report only what you can source, and put the source in the briefing. Write "not verified" or "not reported in the sources we found" rather than guessing. Attribute characterizations ("opponents say," "per the state's budget analyst"). Same effort and tone for every candidate and every side. Use official sources first (secretary of state, the budget analyst, county registrars, the FEC, the state campaign finance database), then major outlets. Date everything with a "data as of" banner and tell the voter where to check for fresher numbers.
 
-9. Output as a single HTML file that works on mobile, one question at a time, then a result page with the match, the other candidates, the methodology, and a "read the full briefing" button. Add a banner that says when the data was last updated, with links to the official voter guide and the main polling source so voters can check fresher numbers.
+STYLE RULES: No em dashes anywhere. Plain English, not jargon. Spell out what every acronym means the first time. Past tense for any role a person no longer holds. Be specific about what a candidate personally did versus their staff or party. Gender-neutral wording for roles. Never recommend a vote; the tool shows how the voter's stated priorities map onto the choices, and it does not pick for them.
 
-10. Never recommend a vote. The tool exists to show how the voter's stated priorities map onto the field. It should make that comparison easy to read, not pick a winner for them.
+BUILD RULES: One self-contained HTML file with all data inline, no server, no tracking, no cookies. Works on a phone first: one screen at a time, big tap targets, progress bar, back button. When a voter taps a choice, mark it in place and advance after a short delay, then scroll to the top of the new screen (do not redraw the screen under the voter's finger, and do not rely on smooth scrolling, which gets cancelled on phones). Keep the voter's picks in memory only. Light and dark mode. Before you finish, test every screen at phone width, run the scoring math on a few sample answer sets, and check that no text overflows.
 
-Start by asking me which races I want to cover and what is most contested in my state, before writing any code.</pre>
+Start by asking me which races and which counties I want covered, and what is most contested in my state, before writing any code. Then research first and build second: gather every fact before you lay out a single screen.</pre>
           <button class="prompt-copy" onclick="copyPrompt()">Copy prompt</button>
         </div>
       </div>
 
-      <div class="disclaimer">
-        This tool doesn't tell you how to vote. It shows where your answers line up with each candidate's public positions and lays out both sides of every measure. All data is a snapshot from ${DATA_DATE}, drawn from the Secretary of State, the Legislative Analyst's Office, PPIC and Berkeley IGS polling, CalMatters, KQED, and each campaign's published plans. Always check current information before voting.
-      </div>
+      ${disclaimerHtml()}
 
       ${econCalloutHtml()}
 
@@ -2537,6 +2543,7 @@ function renderSheet() {
         <button class="restart-btn" style="margin-left:8px;" onclick="go('home')">Home</button>
       </div>
       <p class="footer">Summaries draw on the official state voter guide and the Legislative Analyst's Office. This is a study aid, not a recommendation.</p>
+      ${disclaimerHtml()}
     </div>
   `;
 }
@@ -4312,7 +4319,7 @@ function renderLocal() {
         </div>
         <div class="prop-block">
           <div class="prop-label">Want a matcher for a local race?</div>
-          <div class="prop-text">This site's AI prompt builds one for any race. Back on the home page, open "In a different state? Build your own matcher," copy the prompt, and swap in your city, county, or district race.</div>
+          <div class="prop-text">This site's AI prompt builds one for any race. Back on the home page, open "Not in California? Build this same guide," copy the prompt, and swap in your city, county, or district race.</div>
         </div>
       </div>
       <div class="restart-wrap no-print">
@@ -4320,6 +4327,7 @@ function renderLocal() {
         <button class="restart-btn" style="margin-left:8px;" onclick="go('home')">Home</button>
       </div>
       <p class="footer">Links go to outside non-partisan sites. This site does not collect your address.</p>
+      ${disclaimerHtml()}
     </div>
   `;
 }

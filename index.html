@@ -1493,6 +1493,7 @@
   .yn.y { background: #f1f8f2 !important; border-left: 3px solid #2b8a3e; }
   .yn.n { background: #fdf4f2 !important; border-left: 3px solid #c8321a; }
   .yn b { color: #111 !important; -webkit-text-fill-color: #111; }
+  .county-select { width: 100%; font: inherit; font-size: 16px; padding: 12px 14px; border: 1.5px solid #c9c5bd; border-radius: 10px; background: #fff; color: #1a1814; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%236a6a67' stroke-width='2'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
   .prop-list { margin: 4px 0 0 0; padding-left: 18px; }
   .prop-list li { font-size: 15px; line-height: 1.5; color: #222 !important; -webkit-text-fill-color: #222; margin-bottom: 8px; }
   .prop-list li b { font-weight: 600; color: #111 !important; -webkit-text-fill-color: #111; }
@@ -1507,7 +1508,9 @@
     font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
     color: #111 !important; -webkit-text-fill-color: #111;
   }
-  .vote-btn:hover { border-color: #111; }
+  @media (hover: hover) { .vote-btn:hover { border-color: #111; } }
+  .share-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+  .share-row .restart-btn { margin: 0; }
   .vote-btn.sel-yes { background: #2b8a3e !important; border-color: #2b8a3e; color: #fff !important; -webkit-text-fill-color: #fff; }
   .vote-btn.sel-no { background: #c8321a !important; border-color: #c8321a; color: #fff !important; -webkit-text-fill-color: #fff; }
   .vote-btn.sel-und { background: #5a544a !important; border-color: #5a544a; color: #fff !important; -webkit-text-fill-color: #fff; }
@@ -1559,7 +1562,7 @@
   </div>
 
 <script>
-const DATA_DATE = "October 21, 2026";
+const DATA_DATE = "October 20, 2026";
 
 const CANDIDATES = {
   becerra: { name: "Xavier Becerra", party: "D", oneLiner: "Former U.S. Health Secretary and California Attorney General; 12 terms in Congress" },
@@ -1950,7 +1953,7 @@ const PROPS = [
     poll: "49% yes, 46% no", gov: "Neither candidate has a public position on Prop 45 that we could find. Hilton separately says he wants to stop CEQA lawsuits from blocking construction." }
 ];
 
-const state = { view: "home", step: 0, answers: {}, showMethod: false, propIdx: 0, propVotes: {}, propReview: null };
+const state = { view: "home", step: 0, answers: {}, showMethod: false, propIdx: 0, propVotes: {}, propReview: null, localCounty: "", localVotes: {}, localOpen: {} };
 const app = document.getElementById('app');
 
 function lastName(fullName) {
@@ -1968,6 +1971,7 @@ function render() {
   if (state.view === "gov") return state.step >= GOV_STEPS.length ? renderGovResult() : renderGovQuestion();
   if (state.view === "props") return renderProp();
   if (state.view === "sheet") return renderSheet();
+  if (state.view === "local") return renderLocal();
 }
 
 function datesCardHtml() {
@@ -2000,7 +2004,7 @@ function renderHome() {
         </div>
         <div class="home-card">
           <h2>The 14 propositions</h2>
-          <p>What each one does, who is for and against, who is paying for the campaigns, and what the fine print also does. Mark your picks and leave with a cheat sheet.</p>
+          <p>What each one does, who is for and against, who is paying for the campaigns, and what the fine print also does. Mark your picks and leave with a cheat sheet. Riverside and San Bernardino County voters: the biggest local measures get the same treatment.</p>
           <button class="cta dark" onclick="beginProps()">Build my ballot</button>
         </div>
       </div>
@@ -2019,6 +2023,10 @@ function renderHome() {
         <a class="resource-link" href="https://caearlyvoting.sos.ca.gov/" target="_blank" rel="noopener">
           <span class="resource-label">Missed the October 19 deadline? Register and vote in person through November 3</span>
           <span class="resource-host">caearlyvoting.sos.ca.gov →</span>
+        </a>
+        <a class="resource-link" href="javascript:void(0)" onclick="go('local')">
+          <span class="resource-label">What else is on my ballot? Local measures, with Riverside and San Bernardino in depth</span>
+          <span class="resource-host">by address →</span>
         </a>
         <a class="resource-link" href="https://voterstatus.sos.ca.gov/" target="_blank" rel="noopener">
           <span class="resource-label">Check your registration</span>
@@ -2354,9 +2362,10 @@ function toggleMethod() { state.showMethod = !state.showMethod; render(); }
 // ==================== PROPOSITIONS ====================
 function beginProps() { state.propIdx = 0; state.propReview = null; go("props"); }
 
-function propDetailHtml(p) {
+function propDetailHtml(p, opts) {
+  opts = opts || {};
   return `
-      <div class="prop-block" style="border-top:none;padding-top:0;"><div class="prop-label">What it does</div><div class="prop-text">${p.what}</div></div>
+      ${opts.local ? '' : `<div class="prop-block" style="border-top:none;padding-top:0;"><div class="prop-label">What it does</div><div class="prop-text">${p.what}</div></div>`}
       ${p.warn ? `<div class="prop-warn">${p.warn}</div>` : ''}
       <div class="prop-block"><div class="prop-label">What your vote means</div>
         <div class="yn-grid">
@@ -2369,8 +2378,8 @@ function propDetailHtml(p) {
       <div class="prop-block"><div class="prop-label">Who is against it</div><div class="prop-text">${p.against}</div></div>
       ${p.money ? `<div class="prop-block"><div class="prop-label">Who is paying</div><div class="prop-text">${p.money.replace('Yes side:', '<b>Yes side:</b>').replace(' No side:', '<br><br><b>No side:</b>').replace(/^No committee/, '<b>No committee</b>')}</div></div>` : ''}
       ${p.also ? `<div class="prop-block"><div class="prop-label">What it also does</div><ul class="prop-list">${p.also.map(x => `<li>${x}</li>`).join('')}</ul></div>` : ''}
-      <div class="prop-block"><div class="prop-label">The candidates for governor</div><div class="prop-text">${p.gov}</div></div>
-      <div class="prop-block"><div class="prop-label">Latest poll</div><div class="prop-text">${p.poll} among likely voters (PPIC, September 4 to 10, 2026).${p.poll2 ? ' ' + p.poll2 : ''}</div></div>`;
+      ${opts.local ? '' : `<div class="prop-block"><div class="prop-label">The candidates for governor</div><div class="prop-text">${p.gov}</div></div>`}
+      ${opts.local ? '' : `<div class="prop-block"><div class="prop-label">Latest poll</div><div class="prop-text">${p.poll} among likely voters (PPIC, September 4 to 10, 2026).${p.poll2 ? ' ' + p.poll2 : ''}</div></div>`}`;
 }
 
 function renderProp() {
@@ -2392,9 +2401,9 @@ function renderProp() {
       <div class="prop-block">
         <div class="prop-label">Where do you land?</div>
         <div class="vote-row">
-          <button class="vote-btn ${v === 'yes' ? 'sel-yes' : ''}" onclick="propVote(${p.num}, 'yes')">Yes</button>
-          <button class="vote-btn ${v === 'no' ? 'sel-no' : ''}" onclick="propVote(${p.num}, 'no')">No</button>
-          <button class="vote-btn ${v === 'und' ? 'sel-und' : ''}" onclick="propVote(${p.num}, 'und')">Undecided</button>
+          <button type="button" class="vote-btn ${v === 'yes' ? 'sel-yes' : ''}" onclick="propVote(${p.num}, 'yes', this)">Yes</button>
+          <button type="button" class="vote-btn ${v === 'no' ? 'sel-no' : ''}" onclick="propVote(${p.num}, 'no', this)">No</button>
+          <button type="button" class="vote-btn ${v === 'und' ? 'sel-und' : ''}" onclick="propVote(${p.num}, 'und', this)">Undecided</button>
         </div>
       </div>
       <div class="nav">
@@ -2405,12 +2414,20 @@ function renderProp() {
     </div>
   `;
 }
-function propVote(num, v) {
+let voteLock = false;
+function propVote(num, v, btn) {
+  if (voteLock) return;
+  voteLock = true;
   state.propVotes[num] = v;
-  render();
+  // Mark the tapped button in place instead of rebuilding the page under the finger.
+  if (btn && btn.parentNode) {
+    Array.from(btn.parentNode.querySelectorAll('.vote-btn')).forEach(b => b.classList.remove('sel-yes', 'sel-no', 'sel-und'));
+    btn.classList.add('sel-' + v);
+  }
   setTimeout(() => {
+    voteLock = false;
     if (state.propReview !== null) { state.propReview = null; go("sheet"); return; }
-    if (state.propIdx < PROPS.length - 1) { state.propIdx++; window.scrollTo({ top: 0, behavior: 'smooth' }); render(); }
+    if (state.propIdx < PROPS.length - 1) { state.propIdx++; go("props"); }
     else go("sheet");
   }, 180);
 }
@@ -2438,6 +2455,14 @@ function renderSheet() {
     const which = [41, 42].filter(n => pv[n] === 'yes').map(n => 'Prop ' + n).join(' and ');
     warn = `<div class="prop-warn"><b>Heads up: these picks work against each other.</b> You marked yes on Prop 40 (the billionaire tax) and yes on ${which}. Props 41 and 42 were written to block Prop 40. If either one gets more yes votes than Prop 40, the billionaire tax could be stopped even if it passes. If you want the billionaire tax to take effect, a yes on 41 or 42 cuts against that.</div>`;
   }
+  const lv = state.localVotes;
+  const localRows = localMeasures(state.localCounty).filter(m => lv[m.id]).map(m => `
+      <div class="sheet-row">
+        <span class="sheet-num">Measure ${m.letter}</span>
+        <span class="sheet-name">${m.name} <small style="color:#6a6a67;">(${m.juris})</small><button class="no-print" onclick="state.localOpen['${m.id}']=true; go('local')">Review or change</button></span>
+        <span class="sheet-pick ${lv[m.id]}">${label[lv[m.id]]}</span>
+      </div>`).join('');
+  const localBlock = localRows ? `<div class="section"><div class="prop-label" style="margin:14px 0 6px;">${state.localCounty} County</div>${localRows}</div>` : '';
   const picked = PROPS.filter(p => pv[p.num]).length;
   app.innerHTML = `
     <div class="fade-in">
@@ -2448,9 +2473,18 @@ function renderSheet() {
       </div>
       ${warn}
       <div class="section">${rows}</div>
+      ${localBlock}
       <div class="briefing-cta no-print">
-        <button class="briefing-cta-btn" onclick="window.print()">Print my cheat sheet</button>
-        <p class="briefing-cta-hint">Your picks stay on this device. Nothing is saved or sent anywhere.</p>
+        <button class="briefing-cta-btn" onclick="shareSheet()">Send my cheat sheet to myself</button>
+        <div class="share-row">
+          <button class="restart-btn" onclick="copySheet(this)">Copy as text</button>
+          <button class="restart-btn" onclick="window.print()">Print</button>
+        </div>
+        <p class="briefing-cta-hint">Opens your phone's share menu so you can text or email it to yourself. Your picks stay on this device until you choose to send them.</p>
+      </div>
+      <div class="briefing-cta no-print" style="margin-top:8px;">
+        <button class="briefing-cta-btn" onclick="go('local')">Next: what else is on my ballot?</button>
+        <p class="briefing-cta-hint">Your county, city, school district, and local measures.</p>
       </div>
       <div class="restart-wrap no-print">
         <button class="restart-btn" onclick="beginGov()">Governor matcher</button>
@@ -2459,6 +2493,493 @@ function renderSheet() {
       <p class="footer">Summaries draw on the official state voter guide and the Legislative Analyst's Office. This is a study aid, not a recommendation.</p>
     </div>
   `;
+}
+
+// ==================== LOCAL BALLOT ====================
+const COUNTIES = [
+  ["Alameda", "https://acvote.alamedacountyca.gov/election-information/elections?id=260"],
+  ["Alpine", "https://alpinecountyca.gov/799/General-Election-11032026"],
+  ["Amador", "https://www.amadorcounty.gov/government/elections/current-and-upcoming-elections/2026-general-election"],
+  ["Butte", "https://www.buttevotes.ca.gov/340/November-3-2026-Statewide-General-Electi"],
+  ["Calaveras", "https://elections.calaverasgov.us/Next-Election/General-Election"],
+  ["Colusa", "https://www.countyofcolusaca.gov/197/Elections"],
+  ["Contra Costa", "https://www.contracostavote.gov/election/november-3-2026-general-election/"],
+  ["Del Norte", "https://www.co.del-norte.ca.us/departments/elections"],
+  ["El Dorado", "https://www.eldoradocounty.ca.gov/County-Government/Elections"],
+  ["Fresno", "https://www.fresnocountyca.gov/Departments/County-ClerkRegistrar-of-Voters/Elections/Election-Information/2026/November-3-2026-Consolidated-Statewide-General-Election"],
+  ["Glenn", "https://www.countyofglenn.net/government/departments/elections"],
+  ["Humboldt", "https://humboldtgov.org/3788/Statewide-General-Election-November-3-20"],
+  ["Imperial", "https://elections.imperialcounty.org/current-election-activities/"],
+  ["Inyo", "https://elections.inyocounty.us/voting/current-election/"],
+  ["Kern", "https://www.kernvote.com/"],
+  ["Kings", "https://www.countyofkingsca.gov/departments/administration/elections/current-election-information/candidate-statement-fee/nov2026general"],
+  ["Lake", "https://www.lakecountyca.gov/1964/November-3-2026-General-District-Electio"],
+  ["Lassen", "https://www.lassencounty.gov/194/Elections"],
+  ["Los Angeles", "https://www.lavote.gov/home/voting-elections/current-elections/find-my-election-information"],
+  ["Madera", "https://votemadera.com/candidate-campaign-information/general-election-november-3-2026/"],
+  ["Marin", "https://www.marincounty.gov/departments/elections/november-3-2026-general-election"],
+  ["Mariposa", "https://www.mariposacounty.gov/363/Current-Election-Information"],
+  ["Mendocino", "https://www.mendocinocounty.gov/government/assessor-county-clerk-recorder-elections/elections"],
+  ["Merced", "https://www.countyofmerced.com/4299/November-3-2026-General-Election"],
+  ["Modoc", "https://www.countyofmodoc.gov/555/Current-Upcoming-Elections"],
+  ["Mono", "https://monocounty.ca.gov/elections/page/voter-information-guides"],
+  ["Monterey", "https://www.countyofmonterey.gov/government/departments-a-h/elections/elections/11-03-2026-general-election"],
+  ["Napa", "https://www.napacounty.gov/2139/Current-Election"],
+  ["Nevada", "https://www.nevadacountyca.gov/4249/November-3-2026-General-Election"],
+  ["Orange", "https://ocvote.gov/elections/2026-general-election"],
+  ["Placer", "https://www.placercountyelections.gov/current-elections/"],
+  ["Plumas", "https://plumascounty.us/3428/Current-Activities"],
+  ["Riverside", "https://voteinfo.net/november-3-2026-general-election"],
+  ["Sacramento", "https://elections.saccounty.gov/us/en/election-information/info-upcoming-elections.html"],
+  ["San Benito", "https://www.sanbenitocounty-ca-cre.gov/elections/candidates-campaigns/november-3-2026-statewide-general-election"],
+  ["San Bernardino", "https://elections.sbcounty.gov/elections/2026/1103/"],
+  ["San Diego", "https://www.sdvote.com/content/rov/en/elections/election-information.html"],
+  ["San Francisco", "https://www.sf.gov/november-3-2026-consolidated-general-election"],
+  ["San Joaquin", "https://www.sjgov.org/department/rov/election-information/current_election"],
+  ["San Luis Obispo", "https://slocounty.ca.gov/departments/clerk-recorder/all-services/elections-and-voting/elections-conducted-by-county-of-san-luis-obispo/november-3,-2026,-general-election"],
+  ["San Mateo", "https://smcacre.gov/elections/november-3-2026-statewide-general-election"],
+  ["Santa Barbara", "https://www.countyofsb.org/4932/November-3-2026-General-Election"],
+  ["Santa Clara", "https://vote.santaclaracounty.gov/elections/november-3-2026-general-election"],
+  ["Santa Cruz", "https://votescount.santacruzcountyca.gov/Home/Elections/November3,2026CaliforniaGeneralElection.aspx"],
+  ["Shasta", "https://elections.shastacounty.gov/november-3-2026-general-election/"],
+  ["Sierra", "https://www.sierracounty.ca.gov/804/Upcoming-Elections"],
+  ["Siskiyou", "https://www.siskiyoucounty.gov/node/32998/"],
+  ["Solano", "https://www.solanocounty.gov/government/registrar-voters/current-election-information"],
+  ["Sonoma", "https://sonomacounty.gov/administrative-support-and-fiscal-services/registrar-of-voters/elections/november-3-2026-general-election"],
+  ["Stanislaus", "https://www.stanvote.gov/vig.shtm"],
+  ["Sutter", "https://www.sutter.gov/government/county-departments/clerk-recorder/elections"],
+  ["Tehama", "https://www.tehama.gov/government/departments/elections/"],
+  ["Trinity", "https://www.trinitycounty.org/217/Current-Election"],
+  ["Tulare", "https://tularecounty.ca.gov/elections/november-3-2026-general-election"],
+  ["Tuolumne", "https://tuolumnecounty.ca.gov/194/Election-Information"],
+  ["Ventura", "https://clerkrecorder.venturacounty.gov/elections/november-3-2026-general-election/"],
+  ["Yolo", "https://elections.yolocounty.gov/"],
+  ["Yuba", "https://www.yuba.gov/departments/elections/upcoming_election.php"]
+];
+
+// Local measures we have covered in depth, keyed by county. Same fields as PROPS plus letter, juris, threshold.
+const LOCAL = {};
+
+
+LOCAL["San Bernardino"] = {
+  intro: "There are 20 local measures on San Bernardino County ballots. These nine carry the most money. Which of these are on your ballot depends on your city and school district. For campaign money, each measure links to the county's campaign finance portal.",
+  measures: [
+  { id: "sb-I", letter: "I", juris: "Countywide, San Bernardino County Transportation Authority", name: "Keep the half-cent transportation sales tax, with no end date",
+    official: "Ballot question starts \"Without raising tax rates, shall an ordinance to fund repairing potholes; keeping local roads in good condition\" and cites about $250 million a year \"until ended by voters.\"",
+    what: "The existing half-cent countywide sales tax for roads and transit, first approved in 1989 and renewed in 2004 with over 80% of the vote, expires March 31, 2040. This continues it from April 1, 2040 with <b>no expiration date</b>. The rate does not change.",
+    yes: "The half-cent tax keeps going past March 31, 2040 until voters repeal it and all bonds and committed contracts are paid.",
+    no: "The tax ends March 31, 2040.",
+    cost: "About $250 million a year now; the spending plan projects $7.5 billion over the first 30 years in 2026 dollars.",
+    forWho: "Board of Supervisors (5 to 0) and the transportation authority board (24 to 0). Chino, Chino Hills, and Redlands councils adopted the spending plan. The filed argument cites business leaders, public safety advocates, and community organizations. No argument against was filed.",
+    against: "Reform California recommends No on all 20 county measures. California Choices lists the county Democratic Party as No.",
+    money: "Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://public.netfile.com/pub2/?aid=SBD\" target=\"_blank\" rel=\"noopener\">San Bernardino County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>The 1989 version lasted 20 years and the 2004 version 30 years. This one never ends</b> unless voters repeal it, and even then it runs until bonds and contracts are paid off.",
+      "<b>Money is limited to transportation</b> and split by formula: the Valley gets 25% local streets, 50% regional projects, 25% transit operations; the mountain and desert areas get 70% local, 20% regional, 10% operations. 3% comes off the top for interregional corridors and disaster evacuation routes.",
+      "<b>The spending plan cannot be changed for 10 years or until 2050,</b> then only every ten years. Administration is capped at 1%. A five-member taxpayer oversight committee and annual audits continue.",
+      "<b>The authority can issue bonds backed by both the current tax and this one,</b> which is part of why it wants the approval now, 14 years before the old tax expires."
+    ],
+    threshold: "Two-thirds of votes cast." },
+  { id: "sb-H", letter: "H", juris: "City of Ontario", name: "New half-cent city sales tax",
+    official: "\"Ontario Public Safety and City Services Measure.\" Ballot question opens \"To maintain fire, paramedic, police, 911 response, anti-gang programs\" and asks for a half-cent sales tax providing about $32.5 million a year \"until ended by voters.\"",
+    what: "Adds a <b>0.5%</b> sales tax in Ontario, raising the rate from 8.75% to 9.25%, starting April 1, 2027. No end date.",
+    yes: "Authorizes the half-cent sales tax.",
+    no: "Does not authorize the tax.",
+    cost: "About $32.5 million a year to the city's general fund.",
+    forWho: "City Council, 4 to 0 (Mayor Paul Leon, Bowman, Porada, Macias; Wapner absent). The argument in favor cites firefighters, police, carpenters, and laborers.",
+    against: "An opposition argument pointing to VoteNoOnH.com; it says none of the signers of the argument in favor live in Ontario. The Inland Valley Daily Bulletin editorial board recommended No on October 1. Reform California: No. California Choices lists the county Democratic Party as No.",
+    money: "Critics quoted in the San Bernardino County Sentinel say the council is supported by city employee unions, with no donors named. Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://public.netfile.com/pub2/?aid=SBD\" target=\"_blank\" rel=\"noopener\">San Bernardino County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>It is a general tax.</b> The police, fire, and anti-gang wording in the question is not binding; the money goes to the general fund for any lawful purpose. Opponents' rebuttal makes exactly this point.",
+      "<b>No citizens' oversight committee</b> is in the ordinance. The city promises an annual audit and a project dashboard. Opponents say City Hall monitors itself.",
+      "<b>It stacks on Measure Q,</b> the 1% sales tax Ontario voters approved in 2022, which opponents say brings in about $60 million a year and went partly to the Ontario Sports Empire project (their claim). At 9.25% Ontario would have the highest sales tax in the county.",
+      "<b>Context in the opposition argument:</b> FBI agents searched Councilman Alan Wapner's home and served a subpoena at Ontario International Airport in late July. No charges have been reported and Wapner says he is not a target."
+    ],
+    threshold: "Simple majority." },
+  { id: "sb-J", letter: "J", juris: "City of Chino Hills", name: "New 1% city sales tax",
+    official: "\"Chino Hills Services Measure.\" Ballot question opens \"Shall the measure protecting Chino Hills' financial stability and maintaining City services\" and asks for a 1-cent sales tax providing about $11.5 million a year \"until ended by voters.\"",
+    what: "Adds <b>1%</b> to the sales tax, from 7.75% to 8.75%. No end date.",
+    yes: "Approves the 1% sales tax.",
+    no: "Rejects it.",
+    cost: "About $11.5 million a year. The city's 2026-27 budget runs a $4.3 million deficit covered by $25.4 million in reserves, with the gap projected to top $8 million a year by 2030-31.",
+    forWho: "All five council members signed the argument in favor: Ray Marquez, Peter Rogers, Art Bennett, Brian Johsz, Cynthia Moran. California Choices lists the county Democratic Party as Yes.",
+    against: "Resident Bill Shannon's argument, picked by random drawing from three submitted. A rejected argument from Ann-Marie Gabel and Claudette Dain said the city ended each of the last three years with a surplus and holds reserves equal to about 61% of spending. Reform California: No.",
+    money: "Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://public.netfile.com/pub2/?aid=SBD\" target=\"_blank\" rel=\"noopener\">San Bernardino County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>It is a general tax with no spending restrictions.</b> The ordinance says proceeds are for \"unrestricted general revenue purposes.\" The city's rebuttal claims the measure \"legally restricts spending to parks, trails, open space, and public safety.\" That claim is not supported by the ordinance text or the city attorney's impartial analysis.",
+      "<b>No oversight committee.</b> An annual independent audit goes to the council. The council can suspend the tax at any time but cannot raise it without voters.",
+      "<b>Supporters estimate about 64% of city sales tax is paid by visitors.</b>"
+    ],
+    threshold: "Simple majority." },
+  { id: "sb-E", letter: "E", juris: "City of Highland", name: "New 1% city sales tax",
+    official: "Ballot question: \"To maintain local funding for police, fire, emergency services; and improve critical infrastructure, including maintaining roads, bridges, drainage, 5th Street Corridor Interchange... shall the City of Highland enact a 1 cent sales tax, providing approximately $6.35 million annually, remaining in effect until ended by voters.\"",
+    what: "Adds <b>1%</b> to the sales tax, from 7.75% to 8.75%. No end date.",
+    yes: "Adopts the sales tax ordinance.",
+    no: "Does not adopt it.",
+    cost: "About $6.35 million a year. Supporters say city spending will exceed revenue starting in 2027.",
+    forWho: "Mayor Penny Lilburn, Sheriff Shannon Dicus, Fire Chief Liz Brown, Supervisor Dawn Rowe, and the Highland Area Chamber of Commerce signed the argument in favor. No argument against was filed.",
+    against: "Reform California: No. California Choices lists the county Democratic Party as No.",
+    money: "Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://public.netfile.com/pub2/?aid=SBD\" target=\"_blank\" rel=\"noopener\">San Bernardino County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>General tax.</b> Despite the police and fire wording, the money goes to the general fund for any lawful purpose.",
+      "<b>No oversight committee and no audit requirement in the ordinance itself;</b> the city attorney points to the regular budget process and the city's existing annual audit.",
+      "<b>No sunset.</b>"
+    ],
+    threshold: "Simple majority." },
+  { id: "sb-F", letter: "F", juris: "City of Chino", name: "Business license tax based on gross receipts",
+    official: "\"Business License Reform and Small Business Protection Measure.\" Ballot question opens \"Without taxing residents, and to support general city services such as 911/police response; protect local drinking water sources\" and cites about $4.8 million a year.",
+    what: "Replaces the 1987 business license tax with a tax on gross receipts, starting January 1, 2027. Businesses under $75,000 in receipts pay a flat <b>$25</b>. Above that, per $1,000 of receipts: retail 60 cents, contractors and services $1, professional and rental $1.50.",
+    yes: "Approves the new business license tax.",
+    no: "Rejects it; the current flat-fee system stays.",
+    cost: "About $4.8 million a year more, raising license revenue from about $1.1 million to $5.9 million. The city finance director says the general fund could run a deficit by 2028-29 without it.",
+    forWho: "City Council, 5 to 0. Mayor Eunice Ulloa, a party-rental business owner, a retired councilman, and a resident signed the argument in favor. No argument against was filed. California Choices lists the county Democratic Party as Yes.",
+    against: "Reform California: No. The Chino Chew reports residents warned higher costs could discourage large employers.",
+    money: "Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://public.netfile.com/pub2/?aid=SBD\" target=\"_blank\" rel=\"noopener\">San Bernardino County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>General tax.</b> The drinking water and police wording is not a legal restriction; the money goes to the general fund.",
+      "<b>Who pays:</b> supporters' data says the 100 largest businesses produce about 65% of gross receipts but only 12% of current license revenue. About 56% of businesses would pay just $25. Nonprofits pay nothing.",
+      "<b>Two different revenue numbers:</b> the ballot question says $4.8 million; the ordinance's own recitals say about $5.9 million. The resolution does not reconcile them.",
+      "<b>Annual audit, no oversight committee.</b> The council can lower or suspend the tax but cannot raise rates without voters."
+    ],
+    threshold: "Simple majority." },
+  { id: "sb-M", letter: "M", juris: "City of Upland", name: "Business license tax based on gross receipts",
+    official: "\"Upland Business License Reform Measure.\" Municipal code amendment.",
+    what: "Shifts the business license tax to gross receipts. Under $100,000 in receipts: flat <b>$75</b>. Above that: retail 0.065%, contractors 0.15%, rental 0.2%, services and professional 0.125%, capped at $28,000 a year per business. Reduced rates in 2027, full rates from January 1, 2028.",
+    yes: "Approves the amendment to the business license tax.",
+    no: "Does not approve it.",
+    cost: "About $3.3 million a year, $2.1 million more than today, to the general fund.",
+    forWho: "City Council, unanimous (Mayor Bill Velto, Maust, Breitling, Garcia, Zuniga). The argument in favor cites small business owners, firefighters, and police. California Choices lists the county Democratic Party as Yes.",
+    against: "\"Upland Residents for Good Government,\" no names given. They note Upland voters rejected council sales tax proposals in 2022 and 2024. Reform California: No.",
+    money: "Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://public.netfile.com/pub2/?aid=SBD\" target=\"_blank\" rel=\"noopener\">San Bernardino County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>General tax</b> to the general fund, with an annual audit and no oversight committee.",
+      "<b>The biggest businesses go from $864 a year to the $28,000 cap,</b> per the San Bernardino County Sentinel.",
+      "<b>Third try:</b> after two failed sales tax measures, this one taxes businesses rather than shoppers."
+    ],
+    threshold: "Simple majority." },
+  { id: "sb-Y", letter: "Y", juris: "San Bernardino Community College District", name: "$898 million bond for Valley College and Crafton Hills",
+    official: "\"Local College Affordability, Job Training, Repairs Measure.\" School bonds.",
+    what: "Up to <b>$898 million</b> in bonds for San Bernardino Valley College and Crafton Hills College: repairs, job training facilities, asbestos and mold removal, gas lines, and a new community college center in the mountain area.",
+    yes: "Authorizes the district to issue $898 million in bonds.",
+    no: "The district cannot issue the bonds.",
+    cost: "About $25 per $100,000 of assessed value a year through 2058-59, about $56 million a year. Total repayment with interest: about $1.9 billion.",
+    forWho: "Board of Trustees, unanimous. A nurse, a fire chief, two retired educators, and a skilled-trades graduate signed the argument in favor. No argument against was filed.",
+    against: "Reform California: No.",
+    money: "Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://public.netfile.com/pub2/?aid=SBD\" target=\"_blank\" rel=\"noopener\">San Bernardino County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>You pay about double the sticker price.</b> $898 million borrowed, about $1.9 billion repaid over 32 years.",
+      "<b>Capital only:</b> no salaries or pensions. An oversight committee must include a taxpayer group, a business group, and a seniors' group, and no district employees or vendors.",
+      "<b>The project list is not a promise.</b> Standard bond language says listing a project does not guarantee it gets built.",
+      "<b>55% passes it,</b> not two-thirds, because it follows the Prop 39 school bond rules."
+    ],
+    threshold: "55% of votes cast." },
+  { id: "sb-Z", letter: "Z", juris: "San Bernardino City Unified School District", name: "$345 million school bond",
+    official: "School bonds for classrooms, labs, career technology facilities, roofs, plumbing, HVAC, electrical, safety, and disabled access.",
+    what: "Up to <b>$345 million</b> in bonds, including land for a <b>new school</b> to relieve overcrowding, replacing portables with permanent classrooms, early learning and transitional kindergarten space, career labs, and wildfire hardening.",
+    yes: "Authorizes the district to issue the bonds.",
+    no: "The district cannot issue the bonds.",
+    cost: "About $45 per $100,000 of assessed value a year through 2056-57, about $22 million a year. Total repayment with interest: about $670 million.",
+    forWho: "Board of Education, resolution adopted July 21. The posted argument in favor has no named signers. No argument against was filed.",
+    against: "Reform California: No. No news coverage of this measure was found.",
+    money: "Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://public.netfile.com/pub2/?aid=SBD\" target=\"_blank\" rel=\"noopener\">San Bernardino County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>The county counsel's impartial analysis was not posted online</b> as of October 20; the registrar's link points to the argument in favor instead. Check the printed voter guide.",
+      "<b>Capital only:</b> no salaries, no operating costs, no routine maintenance. Oversight committee of at least seven with no employees, officials, or contractors; annual audits.",
+      "<b>The project list is not a promise.</b> The board says it cannot guarantee every listed project gets done."
+    ],
+    threshold: "55% of votes cast." },
+  { id: "sb-A", letter: "A", juris: "Upland Unified School District", name: "$236.7 million school bond",
+    official: "School bonds for classrooms, career and STEM labs, safety, accessibility, roofs, plumbing, electrical, and HVAC at all district sites.",
+    what: "Up to <b>$236.7 million</b> in bonds for repairs and upgrades across every school in the district.",
+    yes: "Authorizes up to $236.7 million in bonds.",
+    no: "The district cannot issue the bonds.",
+    cost: "Average $47.46 per $100,000 of assessed value a year, peaking at $49, through 2062-63. Total repayment with interest: about $511 million.",
+    forWho: "Board of Trustees, unanimous. Signers include a retired superintendent, the YMCA CEO, the teachers' union president, and a retired CPA.",
+    against: "An unnamed former Chaffey College business instructor, who says enrollment is down 25% over 15 years and taxpayers are still paying for the 2008 Measure K bond. Reform California: No.",
+    money: "Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://public.netfile.com/pub2/?aid=SBD\" target=\"_blank\" rel=\"noopener\">San Bernardino County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>You are still paying for the last bond.</b> The district sold $11 million more of 2008 Measure K bonds plus $25.5 million in refunding bonds in April 2026, so Measure K taxes continue alongside Measure A.",
+      "<b>Some projects assume state matching money</b> the Legislature may or may not provide.",
+      "<b>Capital only,</b> with a citizens' oversight committee and annual audits. The district cites 602 roof leaks and 1,294 plumbing failures in two years."
+    ],
+    threshold: "55% of votes cast." }
+  ]
+};
+
+
+LOCAL["Riverside"] = {
+  intro: "We found 12 local measures on Riverside County ballots (the registrar's page lists notices for only seven, so small districts may be missing). These ten carry the most money. Which of these are on your ballot depends on your city and school district. For campaign money, each measure links to the county's campaign finance portal.",
+  measures: [
+  { id: "rv-A", letter: "A", juris: "Countywide, Riverside County Transportation Commission", name: "Keep the half-cent transportation sales tax, with no end date",
+    official: "\"Riverside County Traffic Relief, Pothole/Road Repair Investment Renewal Without Raising Tax Rates.\"",
+    what: "The existing half-cent countywide sales tax for roads and transit, first approved in 1988 and renewed in 2002, expires in 2039. This continues it from April 1, 2039 with <b>no expiration date</b>. The rate does not change.",
+    yes: "The half-cent tax keeps going past 2039 until voters repeal it, and a repeal cannot take effect until all bonds are paid.",
+    no: "The current tax stays as is and expires in March 2039.",
+    cost: "About $280 million a year; staff forecast about $11.8 billion over 30 years.",
+    forWho: "Auto Club of Southern California, CAL FIRE Local 2881, Riverside County Sheriffs' Association, Greater Riverside Chambers of Commerce, Inland Empire Taxpayers Association, the carpenters' union, all five supervisors, Assemblymember Corey Jackson, and the mayors of Riverside, Corona, Moreno Valley, Jurupa Valley, Hemet, Indio, Palm Desert, and most other cities.",
+    against: "Streetsblog California urges No, saying a permanent tax should dedicate more to transit, biking, and walking and there is time before 2039 to write a better one. Reform California: No. No filed argument against was located.",
+    money: "Yes committee (FPPC ID 1482486) lists its top funders as Rebuild SoCal (the Southern California Partnership for Jobs, a construction industry and union group), the Southern California District Council of Laborers, and Jacobs Engineering. For dollar amounts and any opposition committee, see the <a class=\"b-a\" href=\"https://public.netfile.com/pub2/?aid=CTRIV\" target=\"_blank\" rel=\"noopener\">Riverside County campaign finance portal</a>.",
+    also: [
+      "<b>The 1988 and 2002 versions each had an end date. This one does not,</b> and voters cannot repeal it until every bond is paid off.",
+      "<b>Money is limited to transportation</b> and returns to the area that paid it. Western County: 59% highways, 29% local streets, 12% transit. Coachella Valley: 50/35/15. Palo Verde Valley: 100% local streets. Cities must keep their current road spending to get their share.",
+      "<b>Administration capped at 1%.</b> A seven-member taxpayer oversight committee meets once a year, chaired by the Commission chair as a non-voting member. Annual audits are public.",
+      "<b>Why now:</b> the renewal comes 13 years before the current tax expires. Some residents questioned the timing; the Commission says it lets the agency borrow against the future revenue for projects sooner. The Coachella Valley rail project's stations and cost are not yet set."
+    ],
+    threshold: "Two-thirds of votes cast." },
+  { id: "rv-Q", letter: "Q", juris: "City of Hemet", name: "New 1% city sales tax",
+    official: "One-cent transactions and use tax. The city's official title could not be read from its scanned documents.",
+    what: "Adds <b>1%</b> to the sales tax, from 8.75% to 9.75%, which news reports say would be the highest rate in the county. Takes effect April 2027. No end date.",
+    yes: "Approves the 1% sales tax.",
+    no: "Rejects it.",
+    cost: "About $16 million a year. The city's 2026-27 budget spends $96.1 million against $86.5 million in revenue, with about $28.9 million in reserves.",
+    forWho: "City Council, unanimous. Mayor Linda Krupa, Mayor Pro Tem Joe Males, and the interim city manager spoke in favor.",
+    against: "The Hemet and San Jacinto Chronicle editorial board, which says the city should cut spending first. Residents spoke against at the hearing; one urged a quarter-cent instead. Reform California: No.",
+    money: "Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://public.netfile.com/pub2/?aid=CTRIV\" target=\"_blank\" rel=\"noopener\">Riverside County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>General tax.</b> The city lists 911 response, police, homelessness, streets, and the library as intended uses, but the money goes to the general fund and the council can spend it on anything.",
+      "<b>Hemet already has a 1% local tax,</b> Measure U from 2016, extended by Measure H in 2022. This would be the second.",
+      "<b>The city promises citizens' oversight and audits</b> but has published no details on how the committee would be structured."
+    ],
+    threshold: "Simple majority." },
+  { id: "rv-R", letter: "R", juris: "City of Rancho Mirage", name: "New 1% city sales tax",
+    official: "\"Rancho Mirage Public Safety, Roads, City Services Measure.\"",
+    what: "Adds <b>1%</b> to the sales tax, from 7.75% to 8.75%. No end date. Council placed it 5 to 0.",
+    yes: "Approves the tax.",
+    no: "Rejects it.",
+    cost: "About $7.5 million a year. The city's general fund is $38.4 million; sheriff and fire costs are up more than 56% in four years and the city projects a shortfall by 2028.",
+    forWho: "Council members Ted Weill, Eve Fromberg Edelstein, and Steve Downs spoke in favor.",
+    against: "No organized opposition found. Residents at the hearing pointed to the city's balanced budget and reserves. Reform California: No.",
+    money: "Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://public.netfile.com/pub2/?aid=CTRIV\" target=\"_blank\" rel=\"noopener\">Riverside County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>General tax</b> with no oversight committee, only \"public disclosure of spending\" through the budget.",
+      "<b>The city estimates visitors pay about 75% of its sales tax.</b>"
+    ],
+    threshold: "Simple majority." },
+  { id: "rv-C", letter: "C", juris: "City of Perris", name: "Tax on large warehouses and truck yards",
+    official: "\"Perris Distribution Facilities, Industrial Business and Truck Yards Tax Measure.\" Ballot question says \"with no tax on residents\" and cites about $2.5 million a year.",
+    what: "A business license tax of up to <b>10 cents per square foot</b> a year on warehouses, industrial buildings, and truck yards over 50,000 square feet with heavy truck traffic. Rises with inflation up to 3% a year. No end date.",
+    yes: "Approves the warehouse tax.",
+    no: "Rejects it.",
+    cost: "About $2.5 million a year in the first year, to the general fund.",
+    forWho: "City Council, unanimous. Mayor Michael Vargas and Mayor Pro Tem Malcolm Corona.",
+    against: "The Commercial Real Estate Development Association called it rushed; an Inland Empire real estate executive said targeting one industry is unfair.",
+    money: "Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://public.netfile.com/pub2/?aid=CTRIV\" target=\"_blank\" rel=\"noopener\">Riverside County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>E-commerce warehouses are exempt.</b> Facilities that mainly ship online orders to consumers do not pay, nor do buildings under 50,000 square feet. The exemption was criticized at the hearing.",
+      "<b>Second try:</b> a 2023 version was a special tax, needed two-thirds, and failed with about 52%. This one is a general tax, so a simple majority passes it, and the money is unrestricted.",
+      "<b>A resident questioned whether $2.5 million is enough</b> to matter for road repair."
+    ],
+    threshold: "Simple majority." },
+  { id: "rv-P", letter: "P", juris: "Desert Recreation District (Palm Springs, Cathedral City, Palm Desert, Indio, La Quinta, Coachella, and nearby)", name: "New parcel tax for parks and senior and youth services",
+    official: "\"Local Park Repair/Safety and Senior/Youth Services Measure.\" 5 cents per building square foot a year, about $11.3 million a year, until ended by voters.",
+    what: "A special parcel tax of <b>5 cents per square foot of building</b> on improved parcels starting in 2027-28. A 2,000 square foot home pays about $100 a year. Buildings under 500 square feet and empty lots pay nothing; the calculation caps at 250,000 square feet.",
+    yes: "Approves the parcel tax.",
+    no: "Rejects it.",
+    cost: "About $11.3 million a year. The district's general fund transfers to cover operating deficits grew from $583,000 in 2022 to $4.16 million in 2025, and it is weighing cutting 119 jobs.",
+    forWho: "The district board, unanimous. District staff spoke in favor.",
+    against: "La Quinta Mayor Linda Evans opposes it and has demanded transparency. La Quinta Councilmember Steve Sanchez launched a Vote No on Measure P campaign and asked for a forensic audit. The district board removed its own president, Giovanna Healy, on October 16 after she raised financial questions. Reform California: No.",
+    money: "Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://public.netfile.com/pub2/?aid=CTRIV\" target=\"_blank\" rel=\"noopener\">Riverside County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>Special tax, so the money is restricted</b> to the listed purposes and held in a separate account with an annual audit. No standing oversight committee is in the ordinance.",
+      "<b>Exemptions:</b> homeowners over 65 with very low income can apply for one. Government and nonprofit parcels are exempt.",
+      "<b>No inflation escalator,</b> so the rate stays at 5 cents unless voters change it.",
+      "<b>Context from news:</b> district staffing grew from 343 to 482 between 2021 and 2024 and payroll from about $7 million to over $9 million."
+    ],
+    threshold: "Two-thirds of voters in the district." },
+  { id: "rv-M", letter: "M", juris: "Murrieta Valley Unified School District", name: "$359 million school bond",
+    official: "School bonds, \"without increasing current tax rates.\"",
+    what: "Up to <b>$359 million</b> in bonds for roofs, plumbing, HVAC, electrical, safety systems, classrooms, science labs, and career technology facilities.",
+    yes: "Authorizes the bonds.",
+    no: "The district cannot issue the bonds.",
+    cost: "About $60 per $100,000 of assessed value a year, about $22 million a year. Total repayment with interest and the final year were not published online.",
+    forWho: "Board of Trustees, unanimous. Parents and educators spoke in favor.",
+    against: "Two Republican activists objected to the ballot language at the hearing. The California Republican Assembly and Reform California recommend No.",
+    money: "Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://public.netfile.com/pub2/?aid=CTRIV\" target=\"_blank\" rel=\"noopener\">Riverside County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>\"Without increasing current tax rates\" means the rate stays at $60 instead of dropping</b> as the 2002, 2006, and 2014 bonds get paid off. $60 per $100,000 is the state maximum for this kind of bond.",
+      "<b>Capital only:</b> no salaries or pensions. Oversight committee of at least seven with no district employees or vendors; annual audits.",
+      "<b>No senior exemption</b> is available on this kind of bond. The district cites more than 125 roof leaks last year and over 150 portables older than 20 years."
+    ],
+    threshold: "55% of votes cast." },
+  { id: "rv-I", letter: "I", juris: "Hemet Unified School District", name: "$225 million school bond",
+    official: "School bonds for classrooms, labs, roofs, plumbing, electrical, safety, security, and air conditioning.",
+    what: "Up to <b>$225 million</b> in bonds. The district's last bond was Measure X in 2018 for $150 million.",
+    yes: "Authorizes the bonds.",
+    no: "The district cannot issue the bonds.",
+    cost: "About $50 per $100,000 of assessed value a year, about $16 million a year. Total repayment, duration, and whether this raises the current rate were not published online.",
+    forWho: "The district board placed it on the ballot. No news coverage or district page on this measure was found as of October 20.",
+    against: "Reform California: No. No other opposition found.",
+    money: "Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://public.netfile.com/pub2/?aid=CTRIV\" target=\"_blank\" rel=\"noopener\">Riverside County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>Unlike the other school bonds on county ballots, the ballot notice does not say \"without increasing current tax rates,\"</b> so this may be a new tax rate rather than a continuation. Check the tax rate statement in your county voter guide.",
+      "<b>Very little public information:</b> the district had not posted a Measure I page as of October 20."
+    ],
+    threshold: "55% of votes cast." },
+  { id: "rv-S", letter: "S", juris: "Temecula Valley Unified School District", name: "$215 million school bond",
+    official: "School bonds for classrooms, science and career technology labs, roofs, plumbing, gas and electrical systems.",
+    what: "Up to <b>$215 million</b> in bonds. The district's last bond was Measure Y in 2012 for $165 million.",
+    yes: "Authorizes the bonds.",
+    no: "The district cannot issue the bonds.",
+    cost: "About $20 per $100,000 of assessed value a year, averaging $13 million a year. Trustees debated whether to put the 30-year duration and total interest in the ballot language; total repayment was not published online.",
+    forWho: "Board of Trustees, on the advice of a facilities advisory committee. No other supporters verified.",
+    against: "Reform California: No. No other opposition found.",
+    money: "Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://public.netfile.com/pub2/?aid=CTRIV\" target=\"_blank\" rel=\"noopener\">Riverside County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>Capital only,</b> with citizen oversight and audits per the ballot question.",
+      "<b>Context, not a measure fact:</b> the district board is dealing with a sheriff's investigation into a trustee's alleged recording device, reported October 1."
+    ],
+    threshold: "55% of votes cast." },
+  { id: "rv-AA", letter: "AA", juris: "Perris Union High School District (Perris and Menifee high schools)", name: "$187 million school bond",
+    official: "School bonds, \"without increasing current tax rates,\" for classrooms, career technology facilities, hazardous material removal, safety, and security.",
+    what: "Up to <b>$187 million</b> in bonds. Board voted 5 to 0 in July.",
+    yes: "Authorizes the bonds.",
+    no: "The district cannot issue the bonds.",
+    cost: "About $20 per $100,000 of assessed value a year, about $12 million a year. Total repayment was not published online.",
+    forWho: "District officials, citing aging buildings and 35 classrooms with roof leaks in the past year. No public comment at the board vote.",
+    against: "Reform California: No. No other opposition found.",
+    money: "Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://public.netfile.com/pub2/?aid=CTRIV\" target=\"_blank\" rel=\"noopener\">Riverside County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>\"Without increasing current tax rates\" means the $20 rate continues</b> instead of ending when two existing bonds, including 2018's $148 million Measure W, are paid off.",
+      "<b>Capital only,</b> with an oversight committee and annual audits. No senior exemption on this kind of bond.",
+      "<b>A district survey found 55% support,</b> right at the threshold."
+    ],
+    threshold: "55% of votes cast." },
+  { id: "rv-B", letter: "B", juris: "Beaumont Unified School District (Beaumont, Cherry Valley, part of Calimesa)", name: "$86 million school bond",
+    official: "\"Beaumont Unified School District General Obligation Bonds.\" For roofs, plumbing, HVAC, electrical, safety, classrooms, science labs, and career technology at existing schools.",
+    what: "Up to <b>$86 million</b> in bonds, continuing the tax rate from the 1998 Measure T bond that is expiring.",
+    yes: "Authorizes the district to issue the bonds.",
+    no: "The district cannot issue the bonds.",
+    cost: "$20 per $100,000 of assessed value a year from 2028-29 through 2056-57, about $6 million a year. Total repayment with interest: about $178 million.",
+    forWho: "A senior resident, the teachers' association president, a bond oversight committee member, a library district director, and the classified employees' union president signed the argument in favor. No argument against was filed.",
+    against: "Reform California: No.",
+    money: "Local campaign committees file with the county registrar and city clerks. Look up any committee for this measure on the <a class=\"b-a\" href=\"https://public.netfile.com/pub2/?aid=CTRIV\" target=\"_blank\" rel=\"noopener\">Riverside County campaign finance portal</a> (search the measure name).",
+    also: [
+      "<b>Second try:</b> the district's 2024 Measure E ($148 million at up to $28 per $100,000) failed and a recount confirmed it. This is smaller and at a lower rate. If it fails, the next chance is 2028.",
+      "<b>Capital only,</b> no salaries. Oversight committee and annual audits. The district says it has over $42 million in deferred maintenance and could qualify for over $184 million in state matching funds."
+    ],
+    threshold: "55% of votes cast." }
+  ]
+};
+
+function localMeasures(county) { return (LOCAL[county] && LOCAL[county].measures) || []; }
+function countyChanged() {
+  const sel = document.getElementById('countySel');
+  state.localCounty = sel.options[sel.selectedIndex].text;
+  if (!sel.value) state.localCounty = "";
+  renderLocal();
+}
+function localVote(id, v, btn) {
+  state.localVotes[id] = v;
+  if (btn && btn.parentNode) {
+    Array.from(btn.parentNode.querySelectorAll('.vote-btn')).forEach(b => b.classList.remove('sel-yes', 'sel-no', 'sel-und'));
+    btn.classList.add('sel-' + v);
+  }
+}
+function toggleLocal(id) { state.localOpen[id] = !state.localOpen[id]; renderLocal(); }
+function localCardHtml(m) {
+  const v = state.localVotes[m.id];
+  const open = !!state.localOpen[m.id];
+  return `
+    <div class="bcard" id="${m.id}">
+      <div class="bcard-head">Measure ${m.letter}: ${m.name}</div>
+      <div class="bcard-sub">${m.juris}. ${m.official}</div>
+      <div class="prop-block" style="border-top:none;padding-top:0;"><div class="prop-label">What it does</div><div class="prop-text">${m.what}</div></div>
+      ${open ? propDetailHtml(m, { local: true }) : ''}
+      ${m.threshold ? `<div class="prop-block"><div class="prop-label">Needs to pass</div><div class="prop-text">${m.threshold}</div></div>` : ''}
+      <div class="briefing-link-row" style="margin:6px 0 0;"><button class="briefing-link" onclick="toggleLocal('${m.id}')">${open ? 'Hide the details ↑' : 'Cost, who is for and against, who is paying, what it also does ↓'}</button></div>
+      <div class="prop-block">
+        <div class="prop-label">Where do you land?</div>
+        <div class="vote-row">
+          <button type="button" class="vote-btn ${v === 'yes' ? 'sel-yes' : ''}" onclick="localVote('${m.id}', 'yes', this)">Yes</button>
+          <button type="button" class="vote-btn ${v === 'no' ? 'sel-no' : ''}" onclick="localVote('${m.id}', 'no', this)">No</button>
+          <button type="button" class="vote-btn ${v === 'und' ? 'sel-und' : ''}" onclick="localVote('${m.id}', 'und', this)">Undecided</button>
+        </div>
+      </div>
+    </div>`;
+}
+function openCounty() {
+  const sel = document.getElementById('countySel');
+  const url = sel && sel.value;
+  if (!url) { sel.focus(); return; }
+  window.open(url, '_blank', 'noopener');
+}
+function renderLocal() {
+  const card = (title, body, href, host) => `
+    <a class="resource-link" href="${href}" target="_blank" rel="noopener" style="display:block;margin-bottom:12px;">
+      <span class="resource-label">${title}</span>
+      <span class="prop-text" style="display:block;margin:4px 0 6px;">${body}</span>
+      <span class="resource-host">${host} →</span>
+    </a>`;
+  app.innerHTML = `
+    <div class="fade-in">
+      <div class="result-head" style="padding-bottom:20px;">
+        <div class="result-kicker">Your Local Ballot</div>
+        <h2 class="result-name" style="font-size:clamp(28px,6vw,36px);">What else is on my ballot?</h2>
+        <p class="result-liner">The 14 propositions and the statewide races are the same for everyone in California. The rest of your ballot depends on where you live.</p>
+      </div>
+      <div class="section">
+        <div class="prop-block" style="border-top:none;padding-top:0;">
+          <div class="prop-text">Your ballot is set by your voting precinct, not your zip code. One zip can cross a city line, a school district line, even a county line. Start with your county, which runs your election and publishes everything on your local ballot. Depending on where you live, you may also be voting on your member of Congress, state Senate and Assembly, county supervisor, city council or mayor, school board, special districts, judges, and local measures like a sales tax, a parcel tax, or a school bond.</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Pick your county</div>
+          <div class="prop-text" style="margin-bottom:10px;">Opens your county elections office's page for the November 3 election: the local candidates, the local measures with their full text and arguments, and the sample ballot or voter guide.</div>
+          <select id="countySel" class="county-select" onchange="countyChanged()">
+            <option value="">Choose your county</option>
+            ${COUNTIES.map(c => `<option value="${c[1]}" ${state.localCounty === c[0] ? 'selected' : ''}>${c[0]}</option>`).join('')}
+          </select>
+          <button class="cta dark" style="width:100%;margin-top:10px;" onclick="openCounty()">Open my county's ballot page</button>
+        </div>
+        ${localMeasures(state.localCounty).length ? `
+        <div class="prop-block">
+          <div class="prop-label">${state.localCounty} County measures, in depth</div>
+          <div class="prop-text" style="margin-bottom:12px;">${LOCAL[state.localCounty].intro}</div>
+          ${localMeasures(state.localCounty).map(localCardHtml).join('')}
+          <div class="briefing-cta no-print" style="margin-top:12px;"><button class="briefing-cta-btn" onclick="go('sheet')">Add these to my cheat sheet</button></div>
+        </div>` : ''}
+        <div class="prop-block">
+          <div class="prop-label">Or look it up by address</div>
+          ${card("VOTE411 (League of Women Voters)", "Enter your address and get every race and measure on your ballot, with candidate statements in their own words and the text of each local measure. Non-partisan. This is the site formerly known as Voter's Edge California.", "https://www.vote411.org/ballot", "vote411.org")}
+          ${card("Ballotpedia sample ballot", "Enter your address for a sample ballot with links to each candidate's page and each measure's summary, arguments, and funding.", "https://ballotpedia.org/Sample_Ballot_Lookup", "ballotpedia.org")}
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Want a matcher for a local race?</div>
+          <div class="prop-text">This site's AI prompt builds one for any race. Back on the home page, open "In a different state? Build your own matcher," copy the prompt, and swap in your city, county, or district race.</div>
+        </div>
+      </div>
+      <div class="restart-wrap no-print">
+        <button class="restart-btn" onclick="go('sheet')">Back to my cheat sheet</button>
+        <button class="restart-btn" style="margin-left:8px;" onclick="go('home')">Home</button>
+      </div>
+      <p class="footer">Links go to outside non-partisan sites. This site does not collect your address.</p>
+    </div>
+  `;
+}
+
+function sheetText() {
+  const label = { yes: "Yes", no: "No", und: "Undecided" };
+  const lines = PROPS.map(p => `Prop ${p.num} (${p.name}): ${state.propVotes[p.num] ? label[state.propVotes[p.num]] : "no pick"}`);
+  let gov = '';
+  if (QUESTIONS.some(q => state.answers[q.id])) {
+    const r = computeScores();
+    gov = `\nGovernor match: Becerra ${r.pct.becerra}%, Hilton ${r.pct.hilton}%\n`;
+  }
+  const local = localMeasures(state.localCounty).filter(m => state.localVotes[m.id]).map(m => `Measure ${m.letter} (${m.juris}, ${m.name}): ${label[state.localVotes[m.id]]}`);
+  const localTxt = local.length ? `\n\n${state.localCounty} County:\n${local.join('\n')}` : '';
+  return `My California ballot cheat sheet (November 3, 2026)\n${gov}\n${lines.join('\n')}${localTxt}\n\nFrom https://candiland-ux.github.io/CaliGovInfo/`;
+}
+async function shareSheet() {
+  const text = sheetText();
+  if (navigator.share) {
+    try { await navigator.share({ title: "My California ballot cheat sheet", text }); return; } catch (e) { if (e && e.name === 'AbortError') return; }
+  }
+  window.location.href = "mailto:?subject=" + encodeURIComponent("My California ballot cheat sheet") + "&body=" + encodeURIComponent(text);
+}
+function copySheet(btn) {
+  const text = sheetText();
+  const done = () => { const o = btn.textContent; btn.textContent = "Copied ✓"; setTimeout(() => btn.textContent = o, 1500); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(() => window.prompt("Copy your cheat sheet:", text));
+  else window.prompt("Copy your cheat sheet:", text);
 }
 
 function togglePrompt() {

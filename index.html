@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#ffffff">
 <meta name="supported-color-schemes" content="light">
-<title>California 2026 General Election: Governor Matcher and Proposition Guide</title>
+<title>California 2026 General Election: Governor Matcher, Proposition Guide, and County Ballot Guide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -2006,8 +2006,8 @@ function renderHome() {
   app.innerHTML = `
     <div class="fade-in">
       <span class="tag">General Election · November 3, 2026</span>
-      <h1>California 2026: your governor match and a plain-English guide to all 14 propositions</h1>
-      <p class="lede">Two candidates for governor. Fourteen statewide measures. Sort out where you stand before your ballot arrives.</p>
+      <h1>California 2026: your governor match, all 14 propositions, every statewide office, and your county's ballot</h1>
+      <p class="lede">Two candidates for governor. Fourteen statewide measures. Eight more statewide offices. Then your county: local measures, your House race, your mayor. Sort out where you stand before your ballot arrives.</p>
 
       <div class="data-banner"><strong>Data as of ${DATA_DATE}.</strong> Polls, fundraising totals, and endorsements change. Anything published after this date is not reflected here. For live information, check the <a href="https://voterguide.sos.ca.gov/" target="_blank" rel="noopener">official state voter guide</a>, <a href="https://calmatters.org/california-voter-guide-2026/" target="_blank" rel="noopener">CalMatters</a>, or <a href="https://www.ppic.org/" target="_blank" rel="noopener">PPIC polling</a>.</div>
 
@@ -2023,8 +2023,13 @@ function renderHome() {
           <button class="cta dark" onclick="beginRaces()">Walk me through them</button>
         </div>
         <div class="home-card">
+          <h2>My county: local measures, my House race, my mayor</h2>
+          <p>Pick your county for the biggest local measures with who is paying and the fine print, your member of Congress, and mayoral races. Los Angeles, Orange, San Diego, Riverside, and San Bernardino in depth; every other county links to its official ballot page.</p>
+          <button class="cta dark" onclick="go('local')">Go to my county</button>
+        </div>
+        <div class="home-card">
           <h2>The 14 propositions</h2>
-          <p>What each one does, who is for and against, who is paying for the campaigns, and what the fine print also does. Mark your picks and leave with a cheat sheet. Los Angeles, Orange, San Diego, Riverside, and San Bernardino County voters: the biggest local measures, your House race, and the LA mayor's race get the same treatment, plus every mayoral contest listed.</p>
+          <p>What each one does, who is for and against, who is paying for the campaigns, and what the fine print also does. Mark your picks and leave with a cheat sheet.</p>
           <button class="cta dark" onclick="beginProps()">Build my ballot</button>
         </div>
       </div>

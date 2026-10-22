@@ -4390,26 +4390,29 @@ function renderLocal() {
 }
 
 function sheetText() {
-  const label = { yes: "Yes", no: "No", und: "Undecided" };
-  const lines = PROPS.map(p => `Prop ${p.num} (${p.name}): ${state.propVotes[p.num] ? label[state.propVotes[p.num]] : "no pick"}`);
-  let gov = '';
-  if (QUESTIONS.some(q => state.answers[q.id])) {
-    const r = computeScores();
-    gov = `\nGovernor match: Becerra ${r.pct.becerra}%, Hilton ${r.pct.hilton}%\n`;
-  }
+  const mark = { yes: "✅ YES", no: "❌ NO", und: "➖ Undecided" };
   const rvv = state.raceVotes;
-  const pickName = r => rvv[r.id] === 'und' ? 'Undecided' : r.cands[rvv[r.id]].name;
-  const races = RACES.filter(r => rvv[r.id] !== undefined).map(r => `${r.office}: ${pickName(r)}`);
-  const house = HOUSE.filter(r => rvv[r.id] !== undefined).map(r => `${r.district}: ${pickName(r)}`);
-  const raceTxt = races.length ? `\n\nStatewide offices:\n${races.join('\n')}` : '';
-  const houseTxt = house.length ? `\n\nU.S. House:\n${house.join('\n')}` : '';
-  const mayors = MAYORS.filter(r => rvv[r.id] !== undefined).map(r => `${r.city} mayor: ${pickName(r)}`);
-  const mayorTxt = mayors.length ? `\n\nMayor:\n${mayors.join('\n')}` : '';
-  const localTxt = Object.keys(LOCAL).map(county => {
-    const picks = localMeasures(county).filter(m => state.localVotes[m.id]).map(m => `Measure ${m.letter} (${m.juris}, ${m.name}): ${label[state.localVotes[m.id]]}`);
-    return picks.length ? `\n\n${county} County:\n${picks.join('\n')}` : '';
-  }).join('');
-  return `My California ballot cheat sheet (November 3, 2026)\n${gov}\n${lines.join('\n')}${raceTxt}${houseTxt}${mayorTxt}${localTxt}\n\nOpen this link on any phone to see and change these picks:\n${picksLink()}`;
+  const pickName = r => rvv[r.id] === 'und' ? '➖ Undecided' : '✅ ' + r.cands[rvv[r.id]].name;
+  const bar = '━━━━━━━━━━━━━━━━━━━━';
+  const section = (title, rows) => rows.length ? `\n${bar}\n${title}\n${bar}\n${rows.join('\n')}` : '';
+  const out = [];
+  out.push('🗳️ MY BALLOT CHEAT SHEET');
+  out.push('California General Election, Tuesday, November 3, 2026');
+  if (QUESTIONS.some(q => state.answers[q.id]) && state.step >= GOV_STEPS.length) {
+    const r = computeScores();
+    out.push(section('GOVERNOR MATCH', [`Becerra ${r.pct.becerra}%  |  Hilton ${r.pct.hilton}%`]));
+  }
+  out.push(section('STATEWIDE OFFICES', RACES.filter(r => rvv[r.id] !== undefined).map(r => `${r.short || r.office}: ${pickName(r)}`)));
+  const props = PROPS.filter(p => state.propVotes[p.num]).map(p => `Prop ${p.num}  ${mark[state.propVotes[p.num]]}\n   ${p.name}`);
+  out.push(section('PROPOSITIONS', props));
+  out.push(section('U.S. HOUSE', HOUSE.filter(r => rvv[r.id] !== undefined).map(r => `${r.district}: ${pickName(r)}`)));
+  out.push(section('MAYOR', MAYORS.filter(r => rvv[r.id] !== undefined).map(r => `${r.city}: ${pickName(r)}`)));
+  Object.keys(LOCAL).forEach(county => {
+    const picks = localMeasures(county).filter(m => state.localVotes[m.id]).map(m => `Measure ${m.letter}  ${mark[state.localVotes[m.id]]}\n   ${m.juris}\n   ${m.name}`);
+    out.push(section(`${county.toUpperCase()} COUNTY MEASURES`, picks));
+  });
+  out.push(`\n${bar}\nVote by Nov 3. Mail ballots must be postmarked by Election Day.\n\nOpen this link on any phone to see or change these picks:\n${picksLink()}`);
+  return out.filter(Boolean).join('\n');
 }
 async function shareSheet() {
   const text = sheetText();

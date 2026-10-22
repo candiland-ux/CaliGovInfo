@@ -4853,49 +4853,53 @@ function applyPicks(d) {
   state.localCounty = d.c || ""; state.houseDistrict = d.h || "";
   return true;
 }
-// Compact link code. Sections joined by "~": p=props (one char each, in PROPS order), r=offices (one char each, in RACES order),
-// g=governor answers, h=House/mayor picks, l=local measure picks, c=county, d=district, s=governor step.
+// Compact link code using only letters, digits, dots, and dashes so every messaging app treats the whole thing as one link.
+// Sections joined by ".": p=props (one char each, PROPS order), r=offices (one char each, RACES order), g=governor answers,
+// h=House and mayor picks, l=local measure picks, c=county index, d=district, each entry joined by "-".
 const VCH = { yes: 'y', no: 'n', und: 'u' };
 const VCH_R = { y: 'yes', n: 'no', u: 'und' };
+const sid = id => id.replace(/-/g, '');
 function encodePicks() {
   const parts = [];
-  const props = PROPS.map(p => VCH[state.propVotes[p.num]] || '-').join('');
-  if (props.replace(/-/g, '')) parts.push('p' + props);
-  const races = RACES.map(r => state.raceVotes[r.id] === undefined ? '-' : (state.raceVotes[r.id] === 'und' ? 'u' : String(state.raceVotes[r.id]))).join('');
-  if (races.replace(/-/g, '')) parts.push('r' + races);
-  const ans = QUESTIONS.map(q => { const k = state.answers[q.id]; return !k ? '-' : (k === 'skip' ? 's' : k); }).join('');
-  const top = (state.answers.topIssue || []).map(k => QUESTIONS.findIndex(q => q.id === k)).filter(i => i >= 0).map(i => String.fromCharCode(97 + i)).join('');
-  const rf = state.answers.redflag ? String(REDFLAG_Q.options.findIndex(o => o.key === state.answers.redflag)) : '';
-  if (ans.replace(/-/g, '') || top || rf) parts.push('g' + top + '.' + ans + '.' + rf + '.' + state.step);
-  const hm = HOUSE.concat(MAYORS).filter(r => state.raceVotes[r.id] !== undefined).map(r => r.id + ':' + (state.raceVotes[r.id] === 'und' ? 'u' : state.raceVotes[r.id])).join(',');
+  const props = PROPS.map(p => VCH[state.propVotes[p.num]] || 'x').join('');
+  if (props.replace(/x/g, '')) parts.push('p' + props);
+  const races = RACES.map(r => state.raceVotes[r.id] === undefined ? 'x' : (state.raceVotes[r.id] === 'und' ? 'u' : String(state.raceVotes[r.id]))).join('');
+  if (races.replace(/x/g, '')) parts.push('r' + races);
+  const ans = QUESTIONS.map(q => { const k = state.answers[q.id]; return !k ? 'x' : (k === 'skip' ? 's' : k); }).join('');
+  const top = (state.answers.topIssue || []).map(k => QUESTIONS.findIndex(q => q.id === k)).filter(i => i >= 0).map(i => String.fromCharCode(97 + i)).join('') || 'x';
+  const rf = state.answers.redflag ? String(REDFLAG_Q.options.findIndex(o => o.key === state.answers.redflag)) : 'x';
+  if (ans.replace(/x/g, '') || top !== 'x' || rf !== 'x') parts.push('g' + top + '-' + ans + '-' + rf + '-' + state.step);
+  const hm = HOUSE.concat(MAYORS).filter(r => state.raceVotes[r.id] !== undefined).map(r => sid(r.id) + (state.raceVotes[r.id] === 'und' ? 'U' : String.fromCharCode(65 + state.raceVotes[r.id]))).join('-');
   if (hm) parts.push('h' + hm);
-  const loc = Object.keys(state.localVotes).filter(k => state.localVotes[k]).map(k => k + ':' + VCH[state.localVotes[k]]).join(',');
+  const loc = Object.keys(state.localVotes).filter(k => state.localVotes[k]).map(k => sid(k) + VCH[state.localVotes[k]].toUpperCase()).join('-');
   if (loc) parts.push('l' + loc);
-  if (state.localCounty) parts.push('c' + encodeURIComponent(state.localCounty));
+  const ci = COUNTIES.findIndex(c => c[0] === state.localCounty);
+  if (ci >= 0) parts.push('c' + ci);
   if (state.houseDistrict) parts.push('d' + state.houseDistrict);
-  return parts.join('~');
+  return parts.join('.');
 }
 function decodePicks(str) {
   try {
-    if (/^eyJ/.test(str)) { // old long format
+    if (/^eyJ/.test(str)) { // oldest long format
       const b = str.replace(/-/g, '+').replace(/_/g, '/');
       return JSON.parse(decodeURIComponent(escape(atob(b + '==='.slice((b.length + 3) % 4)))));
     }
     const d = { v: 1, a: {}, s: 0, p: {}, r: {}, l: {}, c: "", h: "" };
-    str.split('~').forEach(part => {
+    const findId = (list, short) => { const hit = list.find(x => sid(x) === short); return hit || null; };
+    str.split('.').forEach(part => {
       const t = part[0], v = part.slice(1);
       if (t === 'p') v.split('').forEach((ch, i) => { if (VCH_R[ch] && PROPS[i]) d.p[PROPS[i].num] = VCH_R[ch]; });
-      else if (t === 'r') v.split('').forEach((ch, i) => { if (!RACES[i] || ch === '-') return; d.r[RACES[i].id] = ch === 'u' ? 'und' : parseInt(ch, 10); });
+      else if (t === 'r') v.split('').forEach((ch, i) => { if (!RACES[i] || ch === 'x' || ch === '-') return; d.r[RACES[i].id] = ch === 'u' ? 'und' : parseInt(ch, 10); });
       else if (t === 'g') {
-        const [top, ans, rf, step] = v.split('.');
-        if (top) d.a.topIssue = top.split('').map(ch => QUESTIONS[ch.charCodeAt(0) - 97]).filter(Boolean).map(q => q.id);
-        (ans || '').split('').forEach((ch, i) => { if (ch !== '-' && QUESTIONS[i]) d.a[QUESTIONS[i].id] = ch === 's' ? 'skip' : ch; });
-        if (rf !== '' && REDFLAG_Q.options[parseInt(rf, 10)]) d.a.redflag = REDFLAG_Q.options[parseInt(rf, 10)].key;
+        const [top, ans, rf, step] = v.split('-');
+        if (top && top !== 'x') d.a.topIssue = top.split('').map(ch => QUESTIONS[ch.charCodeAt(0) - 97]).filter(Boolean).map(q => q.id);
+        (ans || '').split('').forEach((ch, i) => { if (ch !== 'x' && ch !== '-' && QUESTIONS[i]) d.a[QUESTIONS[i].id] = ch === 's' ? 'skip' : ch; });
+        if (rf && rf !== 'x' && REDFLAG_Q.options[parseInt(rf, 10)]) d.a.redflag = REDFLAG_Q.options[parseInt(rf, 10)].key;
         d.s = Math.min(parseInt(step, 10) || 0, GOV_STEPS.length);
       }
-      else if (t === 'h') v.split(',').forEach(pair => { const [id, val] = pair.split(':'); if (id) d.r[id] = val === 'u' ? 'und' : parseInt(val, 10); });
-      else if (t === 'l') v.split(',').forEach(pair => { const [id, val] = pair.split(':'); if (id && VCH_R[val]) d.l[id] = VCH_R[val]; });
-      else if (t === 'c') d.c = decodeURIComponent(v);
+      else if (t === 'h') v.split('-').forEach(tok => { if (!tok) return; const val = tok.slice(-1), id = findId(HOUSE.concat(MAYORS).map(r => r.id), tok.slice(0, -1)); if (id) d.r[id] = val === 'U' ? 'und' : val.charCodeAt(0) - 65; });
+      else if (t === 'l') v.split('-').forEach(tok => { if (!tok) return; const val = tok.slice(-1).toLowerCase(), ids = []; Object.keys(LOCAL).forEach(c => localMeasures(c).forEach(m => ids.push(m.id))); const id = findId(ids, tok.slice(0, -1)); if (id && VCH_R[val]) d.l[id] = VCH_R[val]; });
+      else if (t === 'c') { const c = COUNTIES[parseInt(v, 10)]; if (c) d.c = c[0]; }
       else if (t === 'd') d.h = v;
     });
     return d;

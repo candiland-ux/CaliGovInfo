@@ -1494,6 +1494,12 @@
   .yn.n { background: #fdf4f2 !important; border-left: 3px solid #c8321a; }
   .yn b { color: #111 !important; -webkit-text-fill-color: #111; }
   html, body, .stage { overflow-anchor: none; }
+  .next-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+  .next-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border: 1.5px solid #e5e3de; border-radius: 8px; background: #fff !important; }
+  .next-row .nl { font-size: 15px; text-align: left; color: #1a1814 !important; -webkit-text-fill-color: #1a1814; }
+  .next-row .nl small { display: block; text-align: left; font-size: 12px; color: #6a6a67 !important; -webkit-text-fill-color: #6a6a67; }
+  .next-row .restart-btn { margin: 0; white-space: nowrap; }
+  .done-chip { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #2b8a3e !important; -webkit-text-fill-color: #2b8a3e; }
   .race-card { border: 1.5px solid #e5e3de; border-left-width: 5px; border-radius: 8px; padding: 14px 16px; margin: 12px 0; background: #fff !important; }
   .race-card.D { border-left-color: #2c5aa0; } .race-card.R { border-left-color: #c8321a; } .race-card.N { border-left-color: #5a544a; }
   .race-name { font-size: 18px; font-weight: 700; color: #111 !important; -webkit-text-fill-color: #111; }
@@ -2379,6 +2385,7 @@ function renderGovResult() {
       <div class="briefing-cta" style="margin-top:8px;">
         <button class="briefing-cta-btn" onclick="beginProps()">Or skip to the 14 propositions</button>
       </div>
+      <div class="briefing-link-row"><button class="briefing-link" onclick="go('sheet')">See my cheat sheet →</button></div>
       <div class="briefing-link-row">
         <button class="briefing-link" onclick="openBriefing()">Read the full voter briefing →</button>
       </div>
@@ -2472,6 +2479,36 @@ function propBack() {
 }
 function reviewProp(idx) { state.propIdx = idx; state.propReview = idx; go("props"); }
 
+function sheetSections() {
+  const govDone = QUESTIONS.some(q => state.answers[q.id]) && state.step >= GOV_STEPS.length;
+  const racesDone = RACES.filter(r => state.raceVotes[r.id] !== undefined).length;
+  const propsDone = PROPS.filter(p => state.propVotes[p.num]).length;
+  const localDone = Object.keys(state.localVotes).length + HOUSE.filter(h => state.raceVotes[h.id] !== undefined).length + MAYORS.filter(m => state.raceVotes[m.id] !== undefined).length;
+  return [
+    { key: "gov", label: "Governor match", sub: "12 questions", done: govDone ? 1 : 0, total: 1, start: "beginGov()", resume: "beginGov()", review: "state.step = GOV_STEPS.length; go('gov')" },
+    { key: "races", label: "The other statewide offices", sub: `${racesDone} of ${RACES.length} picked`, done: racesDone, total: RACES.length, start: "beginRaces()", resume: "state.raceIdx = RACES.findIndex(r => state.raceVotes[r.id] === undefined); state.raceReview = null; go('races')", review: "beginRaces()" },
+    { key: "props", label: "The 14 propositions", sub: `${propsDone} of ${PROPS.length} picked`, done: propsDone, total: PROPS.length, start: "beginProps()", resume: "state.propIdx = PROPS.findIndex(p => !state.propVotes[p.num]); state.propReview = null; go('props')", review: "beginProps()" },
+    { key: "local", label: "My county", sub: localDone ? `${localDone} local pick${localDone === 1 ? '' : 's'}` : "Local measures, your House race, your mayor", done: localDone, total: 1, start: "go('local')", resume: "go('local')", review: "go('local')" }
+  ];
+}
+function nextBlockHtml() {
+  const secs = sheetSections();
+  const todo = secs.filter(x => x.done === 0);
+  const partial = secs.filter(x => x.done > 0 && x.done < x.total);
+  const first = partial[0] || todo[0];
+  if (!first) {
+    return `<div class="briefing-cta no-print"><div class="done-chip" style="margin-bottom:6px;">All sections done</div><p class="briefing-cta-hint">Send or print your cheat sheet below, or tap any pick to change it.</p></div>`;
+  }
+  const rowsHtml = secs.filter(x => x !== first && x.done < x.total).map(x => `
+      <div class="next-row"><span class="nl">${x.label}<small>${x.sub}</small></span><button class="restart-btn" onclick="${x.done ? x.resume : x.start}">${x.done ? 'Continue' : 'Start'}</button></div>`).join('');
+  return `
+      <div class="briefing-cta no-print">
+        <div class="prop-label" style="margin-bottom:6px;">What's next</div>
+        <button class="briefing-cta-btn" onclick="${first.done ? first.resume : first.start}">${first.done ? 'Continue: ' : 'Next: '}${first.label.toLowerCase()}</button>
+        <p class="briefing-cta-hint">${first.sub}. Or review your picks below.</p>
+        ${rowsHtml ? `<div class="next-list">${rowsHtml}</div>` : ''}
+      </div>`;
+}
 function renderSheet() {
   const pv = state.propVotes;
   const label = { yes: "Yes", no: "No", und: "Undecided" };
@@ -2513,34 +2550,40 @@ function renderSheet() {
   const houseRows = HOUSE.filter(r => rv[r.id] !== undefined).map(r => raceRow(r, 0, `reviewHouse('${r.id}')`)).join('');
   const houseBlock = houseRows ? `<div class="section"><div class="prop-label" style="margin:14px 0 6px;">U.S. House</div>${houseRows}</div>` : '';
   const picked = PROPS.filter(p => pv[p.num]).length;
+  const secs = sheetSections();
+  const totalPicks = secs.reduce((n, x) => n + (x.key === 'gov' || x.key === 'local' ? 0 : x.done), 0) + (secs[0].done ? 1 : 0) + (secs[3].done ? secs[3].done : 0);
+  let govBlock = '';
+  if (secs[0].done) {
+    const r = computeScores();
+    govBlock = `<div class="section"><div class="prop-label" style="margin:14px 0 6px;">Governor match</div>
+      <div class="sheet-row"><span class="sheet-num">Governor</span><span class="sheet-name">Becerra ${r.pct.becerra}%, Hilton ${r.pct.hilton}%<button class="no-print" onclick="state.step = GOV_STEPS.length; go('gov')">Review</button></span><span class="sheet-pick yes">${r.pct.becerra === r.pct.hilton ? 'Tie' : lastName(CANDIDATES[r.pct.becerra > r.pct.hilton ? 'becerra' : 'hilton'].name)}</span></div></div>`;
+  }
+  const propsBlock = picked ? `<div class="section"><div class="prop-label" style="margin:14px 0 6px;">Propositions</div>${rows}</div>` : '';
   app.innerHTML = `
     <div class="fade-in">
       <div class="result-head" style="padding-bottom:20px;">
         <div class="result-kicker">Your Ballot Cheat Sheet</div>
         <h2 class="result-name" style="font-size:clamp(28px,6vw,36px);">Your picks</h2>
-        <p class="result-liner">${picked} of ${PROPS.length} marked. Screenshot or print this and keep it next to your ballot.</p>
+        <p class="result-liner">${totalPicks ? 'Everything you have marked so far, in ballot order.' : 'Nothing marked yet. Pick a section to start.'}</p>
       </div>
+      ${nextBlockHtml()}
       ${warn}
-      <div class="section">${rows}</div>
+      ${govBlock}
       ${raceBlock}
+      ${propsBlock}
       ${houseBlock}
       ${mayorBlock}
       ${localBlock}
-      <div class="briefing-cta no-print">
+      ${totalPicks ? `<div class="briefing-cta no-print">
         <button class="briefing-cta-btn" onclick="shareSheet()">Send my cheat sheet to myself</button>
         <div class="share-row">
           <button class="restart-btn" onclick="copySheet(this)">Copy as text</button>
           <button class="restart-btn" onclick="window.print()">Print</button>
         </div>
         <p class="briefing-cta-hint">Opens your phone's share menu so you can text or email it to yourself. Your picks stay on this device until you choose to send them.</p>
-      </div>
-      <div class="briefing-cta no-print" style="margin-top:8px;">
-        <button class="briefing-cta-btn" onclick="go('local')">Next: what else is on my ballot?</button>
-        <p class="briefing-cta-hint">Your county, city, school district, and local measures.</p>
-      </div>
+      </div>` : ''}
       <div class="restart-wrap no-print">
-        <button class="restart-btn" onclick="beginGov()">Governor matcher</button>
-        <button class="restart-btn" style="margin-left:8px;" onclick="go('home')">Home</button>
+        <button class="restart-btn" onclick="go('home')">Home</button>
       </div>
       <p class="footer">Summaries draw on the official state voter guide and the Legislative Analyst's Office. This is a study aid, not a recommendation.</p>
       ${disclaimerHtml()}

@@ -2231,6 +2231,7 @@ function renderGovQuestion() {
 }
 
 function toggleTop(key) {
+  savePicksSoon();
   if (!state.answers.topIssue) state.answers.topIssue = [];
   const arr = state.answers.topIssue;
   const idx = arr.indexOf(key);
@@ -2238,8 +2239,11 @@ function toggleTop(key) {
   else { if (arr.length >= TOP_ISSUE_Q.maxPicks) arr.pop(); arr.push(key); }
   render();
 }
-function govNext() { state.step++; render(); toTop(); }
+function govNext() { state.step++; savePicks(); render(); toTop(); }
+let saveTimer = null;
+function savePicksSoon() { clearTimeout(saveTimer); saveTimer = setTimeout(savePicks, 50); }
 function govAnswer(qid, key) {
+  savePicksSoon();
   state.answers[qid] = key;
   render();
   setTimeout(() => { govNext(); }, 180);
@@ -2459,7 +2463,7 @@ let voteLock = false;
 function propVote(num, v, btn) {
   if (voteLock) return;
   voteLock = true;
-  state.propVotes[num] = v;
+  state.propVotes[num] = v; savePicks();
   // Mark the tapped button in place instead of rebuilding the page under the finger.
   if (btn && btn.parentNode) {
     Array.from(btn.parentNode.querySelectorAll('.vote-btn')).forEach(b => b.classList.remove('sel-yes', 'sel-no', 'sel-und'));
@@ -2587,10 +2591,11 @@ function renderSheet() {
           <button class="restart-btn" onclick="copySheet(this)">Copy as text</button>
           <button class="restart-btn" onclick="window.print()">Print</button>
         </div>
-        <p class="briefing-cta-hint">Opens your phone's share menu so you can text or email it to yourself. Your picks stay on this device until you choose to send them.</p>
+        <p class="briefing-cta-hint">Opens your phone's share menu so you can text or email it to yourself. The text includes a link that reopens this cheat sheet with your picks filled in, on any device. Your picks are also remembered in this browser. Nothing is stored on a server.</p>
       </div>` : ''}
       <div class="restart-wrap no-print">
         <button class="restart-btn" onclick="go('home')">Home</button>
+        <button class="restart-btn" style="margin-left:8px;" onclick="clearPicks()">Clear my picks</button>
       </div>
       <p class="footer">Summaries draw on the official state voter guide and the Legislative Analyst's Office. This is a study aid, not a recommendation.</p>
       ${disclaimerHtml()}
@@ -3383,7 +3388,7 @@ function renderRace() {
 }
 function raceVote(id, v, btn) {
   if (voteLock) return; voteLock = true;
-  state.raceVotes[id] = v;
+  state.raceVotes[id] = v; savePicks();
   if (btn && btn.parentNode) { Array.from(btn.parentNode.querySelectorAll('.vote-btn')).forEach(b => b.classList.remove('sel-und')); btn.classList.add('sel-und'); }
   setTimeout(() => {
     voteLock = false;
@@ -3397,7 +3402,7 @@ function raceBack() {
 }
 function reviewRace(idx) { state.raceIdx = idx; state.raceReview = idx; go("races"); }
 function houseVote(id, v, btn) {
-  state.raceVotes[id] = v;
+  state.raceVotes[id] = v; savePicks();
   if (btn && btn.parentNode) { Array.from(btn.parentNode.querySelectorAll('.vote-btn')).forEach(b => b.classList.remove('sel-und')); btn.classList.add('sel-und'); }
 }
 function reviewHouse(id) {
@@ -3406,7 +3411,7 @@ function reviewHouse(id) {
   state.houseDistrict = id;
   go('local');
 }
-function houseChanged() { const sel = document.getElementById('houseSel'); state.houseDistrict = sel.value; renderLocal(); }
+function houseChanged() { const sel = document.getElementById('houseSel'); state.houseDistrict = sel.value; savePicks(); renderLocal(); }
 function houseSectionHtml() {
   const list = HOUSE.filter(h => !h.counties || h.counties.includes(state.localCounty)).sort((a, b) => parseInt(a.district.replace(/\D/g, '')) - parseInt(b.district.replace(/\D/g, '')));
   if (!state.localCounty || !list.length) return '';
@@ -4289,10 +4294,11 @@ function countyChanged() {
   state.localCounty = sel.options[sel.selectedIndex].text;
   if (!sel.value) state.localCounty = "";
   state.houseDistrict = "";
+  savePicks();
   renderLocal();
 }
 function localVote(id, v, btn) {
-  state.localVotes[id] = v;
+  state.localVotes[id] = v; savePicks();
   if (btn && btn.parentNode) {
     Array.from(btn.parentNode.querySelectorAll('.vote-btn')).forEach(b => b.classList.remove('sel-yes', 'sel-no', 'sel-und'));
     btn.classList.add('sel-' + v);
@@ -4403,7 +4409,7 @@ function sheetText() {
     const picks = localMeasures(county).filter(m => state.localVotes[m.id]).map(m => `Measure ${m.letter} (${m.juris}, ${m.name}): ${label[state.localVotes[m.id]]}`);
     return picks.length ? `\n\n${county} County:\n${picks.join('\n')}` : '';
   }).join('');
-  return `My California ballot cheat sheet (November 3, 2026)\n${gov}\n${lines.join('\n')}${raceTxt}${houseTxt}${mayorTxt}${localTxt}\n\nFrom https://candiland-ux.github.io/CaliGovInfo/`;
+  return `My California ballot cheat sheet (November 3, 2026)\n${gov}\n${lines.join('\n')}${raceTxt}${houseTxt}${mayorTxt}${localTxt}\n\nOpen this link on any phone to see and change these picks:\n${picksLink()}`;
 }
 async function shareSheet() {
   const text = sheetText();
@@ -4832,6 +4838,53 @@ function buildEconContext() {
   return html;
 }
 
+// ==================== SAVE AND RESTORE PICKS ====================
+// Picks are kept in this browser (localStorage) and can be packed into a link (#picks=...) so the cheat sheet opens on another device.
+// Nothing is sent to any server.
+function picksPayload() {
+  return { v: 1, a: state.answers, s: state.step, p: state.propVotes, r: state.raceVotes, l: state.localVotes, c: state.localCounty, h: state.houseDistrict };
+}
+function applyPicks(d) {
+  if (!d || d.v !== 1) return false;
+  state.answers = d.a || {}; state.step = d.s || 0; state.propVotes = d.p || {}; state.raceVotes = d.r || {}; state.localVotes = d.l || {};
+  state.localCounty = d.c || ""; state.houseDistrict = d.h || "";
+  return true;
+}
+function encodePicks() {
+  const json = JSON.stringify(picksPayload());
+  return btoa(unescape(encodeURIComponent(json))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+function decodePicks(str) {
+  try {
+    const b = str.replace(/-/g, '+').replace(/_/g, '/');
+    return JSON.parse(decodeURIComponent(escape(atob(b + '==='.slice((b.length + 3) % 4)))));
+  } catch (e) { return null; }
+}
+function savePicks() {
+  try { localStorage.setItem('caligov_picks', JSON.stringify(picksPayload())); } catch (e) {}
+}
+function picksLink() {
+  const base = location.origin && location.origin.startsWith('http') ? location.origin + location.pathname : 'https://candiland-ux.github.io/CaliGovInfo/';
+  return base + '#picks=' + encodePicks();
+}
+function clearPicks() {
+  if (!window.confirm('Clear every pick on this device and start over?')) return;
+  try { localStorage.removeItem('caligov_picks'); } catch (e) {}
+  state.answers = {}; state.step = 0; state.propVotes = {}; state.raceVotes = {}; state.localVotes = {}; state.localCounty = ""; state.houseDistrict = "";
+  try { history.replaceState(null, '', location.pathname); } catch (e) {}
+  go('home');
+}
+(function restorePicks() {
+  const m = location.hash.match(/^#picks=([A-Za-z0-9_-]+)/);
+  if (m) {
+    const d = decodePicks(m[1]);
+    if (applyPicks(d)) { savePicks(); try { history.replaceState(null, '', location.pathname); } catch (e) {} state.view = 'sheet'; return; }
+  }
+  try {
+    const raw = localStorage.getItem('caligov_picks');
+    if (raw) applyPicks(JSON.parse(raw));
+  } catch (e) {}
+})();
 render();
 </script>
 </body>

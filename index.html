@@ -2493,20 +2493,27 @@ function sheetSections() {
 }
 function nextBlockHtml() {
   const secs = sheetSections();
-  const todo = secs.filter(x => x.done === 0);
-  const partial = secs.filter(x => x.done > 0 && x.done < x.total);
+  const state3 = secs.filter(x => x.key !== 'local');
+  const local = secs.find(x => x.key === 'local');
+  const todo = state3.filter(x => x.done === 0);
+  const partial = state3.filter(x => x.done > 0 && x.done < x.total);
   const first = partial[0] || todo[0];
+  const localRow = `
+        <div style="margin-top:14px;border:1.5px dashed #c9c5bd;border-radius:8px;padding:10px 12px;background:#fff;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;"><span class="nl" style="font-size:15px;font-weight:600;">My county${local.done ? ` <small style="display:inline;font-weight:400;">(${local.sub} so far)</small>` : ''}</span><button class="restart-btn" style="margin:0;white-space:nowrap;" onclick="go('local')">Open</button></div>
+          <p class="briefing-cta-hint" style="text-align:left;margin:8px 0 0;">Different from the three above. It opens your county's page. Only the items that have cards there, the biggest local measures, the House race, and the mayor in Los Angeles, Orange, San Diego, Riverside, and San Bernardino, can be marked and added to this cheat sheet. Everything else on your local ballot (city council, school board, state Legislature, smaller measures) opens on outside official sites, and this site has no data on those races, so picks made there cannot be recorded here.</p>
+        </div>`;
   if (!first) {
-    return `<div class="briefing-cta no-print"><div class="done-chip" style="margin-bottom:6px;">All sections done</div><p class="briefing-cta-hint">Send or print your cheat sheet below, or tap any pick to change it.</p></div>`;
+    return `<div class="briefing-cta no-print"><div class="done-chip" style="margin-bottom:6px;">All statewide sections done</div><p class="briefing-cta-hint">Send or print your cheat sheet below, or tap any pick to change it.</p><div class="next-list">${localRow}</div></div>`;
   }
-  const rowsHtml = secs.filter(x => x !== first && x.done < x.total).map(x => `
+  const rowsHtml = state3.filter(x => x !== first && x.done < x.total).map(x => `
       <div class="next-row"><span class="nl">${x.label}<small>${x.sub}</small></span><button class="restart-btn" onclick="${x.done ? x.resume : x.start}">${x.done ? 'Continue' : 'Start'}</button></div>`).join('');
   return `
       <div class="briefing-cta no-print">
         <div class="prop-label" style="margin-bottom:6px;">What's next</div>
         <button class="briefing-cta-btn" onclick="${first.done ? first.resume : first.start}">${first.done ? 'Continue: ' : 'Next: '}${first.label.toLowerCase()}</button>
         <p class="briefing-cta-hint">${first.sub}. Or review your picks below.</p>
-        ${rowsHtml ? `<div class="next-list">${rowsHtml}</div>` : ''}
+        <div class="next-list">${rowsHtml}${localRow}</div>
       </div>`;
 }
 function renderSheet() {
@@ -4332,6 +4339,7 @@ function renderLocal() {
         <div class="result-kicker">Your Local Ballot</div>
         <h2 class="result-name" style="font-size:clamp(28px,6vw,36px);">What else is on my ballot?</h2>
         <p class="result-liner">The 14 propositions and the statewide races are the same for everyone in California. The rest of your ballot depends on where you live.</p>
+        <p class="briefing-cta-hint" style="margin-top:8px;">What you can mark here: the local measures, House race, and mayoral race that have cards on this page. Those go on your cheat sheet. The outside links open official sites in a new tab, and picks you make there cannot be recorded here.</p>
       </div>
       <div class="section">
         <div class="prop-block" style="border-top:none;padding-top:0;">

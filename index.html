@@ -2189,7 +2189,19 @@ function econCalloutHtml() {
 }
 
 // ==================== GOVERNOR MATCHER ====================
-function beginGov() { state.step = 0; go("gov"); }
+// Start fresh from the home page. Old answers are cleared so nothing shows as pre-picked.
+function beginGov() {
+  const started = (state.answers.topIssue || []).length > 0 || QUESTIONS.some(q => state.answers[q.id]) || !!state.answers.redflag;
+  if (started) { resumeGov(); return; }
+  state.answers = {}; state.step = 0; state.showMethod = false; state.showDetail = false; savePicks(); go("gov");
+}
+function freshGov() { state.answers = {}; state.step = 0; state.showMethod = false; state.showDetail = false; savePicks(); go("gov"); }
+// Pick up where the voter left off (from the cheat sheet).
+function resumeGov() {
+  const answered = i => i === 0 ? ((state.answers.topIssue || []).length > 0) : (i === GOV_STEPS.length - 1 ? !!state.answers.redflag : !!state.answers[GOV_STEPS[i].id]);
+  let step = 0; while (step < GOV_STEPS.length && answered(step)) step++;
+  state.step = Math.min(step, GOV_STEPS.length); go("gov");
+}
 
 function renderGovQuestion() {
   const q = GOV_STEPS[state.step];
@@ -2216,7 +2228,7 @@ function renderGovQuestion() {
     const selected = state.answers[q.id];
     optsHtml = q.options.map(opt => {
       const sub = opt.sub ? `<small>${opt.sub}</small>` : '';
-      return `<button class="opt ${selected === opt.key ? 'selected' : ''}" onclick="govAnswer('${q.id}', '${opt.key}')"><strong>${opt.label}</strong>${sub}</button>`;
+      return `<button class="opt ${selected === opt.key ? 'selected' : ''}" onclick="govAnswer('${q.id}', '${opt.key}', this)"><strong>${opt.label}</strong>${sub}</button>`;
     }).join('');
     navHtml = `<div class="nav">${backBtn}<span class="nav-hint">Tap an answer to continue</span></div>`;
   }
@@ -2237,28 +2249,33 @@ function renderGovQuestion() {
 }
 
 function toggleTop(key) {
-  savePicksSoon();
   if (!state.answers.topIssue) state.answers.topIssue = [];
   const arr = state.answers.topIssue;
   const idx = arr.indexOf(key);
   if (idx !== -1) arr.splice(idx, 1);
   else { if (arr.length >= TOP_ISSUE_Q.maxPicks) arr.pop(); arr.push(key); }
+  savePicks();
+  // Update the screen in place so it does not blink.
+  const wrap = app.querySelector('.fade-in');
+  if (wrap) wrap.classList.remove('fade-in');
   render();
+  const w2 = app.querySelector('.fade-in');
+  if (w2) w2.classList.remove('fade-in');
 }
 function govNext() { state.step++; savePicks(); render(); toTop(); }
 let saveTimer = null;
 function savePicksSoon() { clearTimeout(saveTimer); saveTimer = setTimeout(savePicks, 50); }
-function govAnswer(qid, key) {
-  savePicksSoon();
-  state.answers[qid] = key;
-  render();
-  setTimeout(() => { govNext(); }, 180);
+function govAnswer(qid, key, btn) {
+  if (voteLock) return; voteLock = true;
+  state.answers[qid] = key; savePicks();
+  if (btn && btn.parentNode) { Array.from(btn.parentNode.querySelectorAll('.opt')).forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); }
+  setTimeout(() => { voteLock = false; govNext(); }, 180);
 }
 function govBack() {
   if (state.step > 0) { state.step--; render(); toTop(); }
   else go("home");
 }
-function restartGov() { state.answers = {}; state.step = 0; state.showMethod = false; go("gov"); }
+function restartGov() { freshGov(); }
 
 function issueMult(qid) {
   const idx = (state.answers.topIssue || []).indexOf(qid);
@@ -2500,7 +2517,7 @@ function sheetSections() {
   const propsDone = PROPS.filter(p => state.propVotes[p.num]).length;
   const localDone = Object.keys(state.localVotes).length + HOUSE.filter(h => state.raceVotes[h.id] !== undefined).length + MAYORS.filter(m => state.raceVotes[m.id] !== undefined).length;
   return [
-    { key: "gov", label: "Governor match", sub: "12 questions", done: govDone ? 1 : 0, total: 1, start: "beginGov()", resume: "beginGov()", review: "state.step = GOV_STEPS.length; go('gov')" },
+    { key: "gov", label: "Governor match", sub: "12 questions", done: govDone ? 1 : 0, total: 1, start: "beginGov()", resume: "resumeGov()", review: "state.step = GOV_STEPS.length; go('gov')" },
     { key: "races", label: "The other statewide offices", sub: `${racesDone} of ${RACES.length} picked`, done: racesDone, total: RACES.length, start: "beginRaces()", resume: "state.raceIdx = RACES.findIndex(r => state.raceVotes[r.id] === undefined); state.raceReview = null; go('races')", review: "beginRaces()" },
     { key: "props", label: "The 14 propositions", sub: `${propsDone} of ${PROPS.length} picked`, done: propsDone, total: PROPS.length, start: "beginProps()", resume: "state.propIdx = PROPS.findIndex(p => !state.propVotes[p.num]); state.propReview = null; go('props')", review: "beginProps()" },
     { key: "local", label: "My county", sub: localDone ? `${localDone} local pick${localDone === 1 ? '' : 's'}` : "Local measures, your House race, your mayor", done: localDone, total: 1, start: "go('local')", resume: "go('local')", review: "go('local')" }

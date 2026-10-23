@@ -1967,7 +1967,7 @@ const PROPS = [
     poll: "49% yes, 46% no", gov: "Neither candidate has a public position on Prop 45 that we could find. Hilton separately says he wants to stop CEQA lawsuits from blocking construction." }
 ];
 
-const state = { view: "home", step: 0, answers: {}, showMethod: false, propIdx: 0, propVotes: {}, propReview: null, localCounty: "", localVotes: {}, localOpen: {}, raceIdx: 0, raceVotes: {}, raceReview: null, houseDistrict: "" };
+const state = { view: "home", step: 0, answers: {}, showMethod: false, propIdx: 0, propVotes: {}, propReview: null, localCounty: "", localVotes: {}, localOpen: {}, raceIdx: 0, raceVotes: {}, raceReview: null, houseDistrict: "", countyAnswer: "" };
 const app = document.getElementById('app');
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
@@ -1997,6 +1997,7 @@ function render() {
   else if (state.view === "sheet") renderSheet();
   else if (state.view === "local") renderLocal();
   else if (state.view === "races") renderRace();
+  else if (state.view === "fork") renderFork();
   if (y > 0) { window.scrollTo(0, y); requestAnimationFrame(() => { if (!toTopPending) window.scrollTo(0, y); }); }
 }
 let toTopPending = false;
@@ -2501,7 +2502,7 @@ function propVote(num, v, btn) {
     voteLock = false;
     if (state.propReview !== null) { state.propReview = null; go("sheet"); return; }
     if (state.propIdx < PROPS.length - 1) { state.propIdx++; go("props"); }
-    else go("sheet");
+    else afterStatewide();
   }, 180);
 }
 function propBack() {
@@ -2511,6 +2512,35 @@ function propBack() {
 }
 function reviewProp(idx) { state.propIdx = idx; state.propReview = idx; go("props"); }
 
+const DEEP_COUNTIES = ["Los Angeles", "Orange", "San Diego", "Riverside", "San Bernardino"];
+function statewideDone() {
+  const govDone = QUESTIONS.some(q => state.answers[q.id]) && state.step >= GOV_STEPS.length;
+  return govDone && RACES.every(r => state.raceVotes[r.id] !== undefined) && PROPS.every(p => state.propVotes[p.num]);
+}
+// After the last statewide section: ask the county question once, unless already answered or county picks exist.
+function afterStatewide() {
+  if (statewideDone() && !state.countyAnswer && !Object.keys(state.localVotes).length && !state.localCounty) go("fork");
+  else go("sheet");
+}
+function answerFork(yes) {
+  state.countyAnswer = yes ? "yes" : "no"; savePicks();
+  if (yes) go("local"); else go("sheet");
+}
+function renderFork() {
+  app.innerHTML = `
+    <div class="fade-in">
+      <div class="result-head" style="padding-bottom:20px;">
+        <div class="result-kicker">One more thing</div>
+        <h2 class="result-name" style="font-size:clamp(26px,6vw,34px);">Do you live in Los Angeles, Orange, San Diego, Riverside, or San Bernardino County?</h2>
+        <p class="result-liner">If yes, a subset of your local ballot can be added to your cheat sheet. If no, your cheat sheet is ready, with a link to your official county page.</p>
+      </div>
+      <div class="pick-row" style="margin-top:8px;">
+        <button type="button" class="vote-btn" onclick="answerFork(true)">Yes</button>
+        <button type="button" class="vote-btn" onclick="answerFork(false)">No</button>
+      </div>
+      <div class="restart-wrap no-print"><button class="restart-btn" onclick="go('home')">Home</button></div>
+    </div>`;
+}
 function sheetSections() {
   const govDone = QUESTIONS.some(q => state.answers[q.id]) && state.step >= GOV_STEPS.length;
   const racesDone = RACES.filter(r => state.raceVotes[r.id] !== undefined).length;
@@ -2601,7 +2631,16 @@ function renderSheet() {
           <button class="restart-btn" onclick="window.print()">Print</button>
         </div>
         <p class="briefing-cta-hint">Opens your phone's share menu so you can text or email it to yourself. The text includes a link that reopens this cheat sheet with your picks filled in, on any device. Your picks are also remembered in this browser. Nothing is stored on a server.</p>
-        ${allDone ? `<div class="next-list" style="margin-top:14px;"><div class="next-row"><span class="nl">My county${secs[3].done ? `<small>${secs[3].sub} so far</small>` : '<small>Los Angeles, Orange, San Diego, Riverside, San Bernardino: add local picks here. Every county: official county page.</small>'}</span><button class="restart-btn" onclick="go('local')">${secs[3].done ? 'Add more' : 'Open'}</button></div></div>` : ''}
+        ${allDone ? `<div class="next-list" style="margin-top:14px;">
+          ${state.countyAnswer === 'no' && !secs[3].done ? '' : `<div class="next-row"><span class="nl">Los Angeles, Orange, San Diego, Riverside, San Bernardino<small>A subset of your local ballot can be added to your cheat sheet.${secs[3].done ? ' ' + secs[3].sub + ' so far.' : ''}</small></span><button class="restart-btn" onclick="state.countyAnswer='yes'; savePicks(); go('local')">${secs[3].done ? 'Add more' : 'Add picks'}</button></div>`}
+          <div class="next-row" style="flex-direction:column;align-items:stretch;"><span class="nl">${state.countyAnswer === 'no' && !secs[3].done ? 'Your county' : 'Every other county'}<small>Choose your county to open its official county page.</small></span>
+            <select class="county-select" style="margin-top:8px;" onchange="if(this.value){window.open(this.value,'_blank','noopener');this.selectedIndex=0;}">
+              <option value="">Choose your county</option>
+              ${COUNTIES.filter(c => !(state.countyAnswer === 'no' && !secs[3].done) || !DEEP_COUNTIES.includes(c[0])).map(c => `<option value="${c[1]}">${c[0]}</option>`).join('')}
+            </select>
+            ${state.countyAnswer === 'no' && !secs[3].done ? `<p class="briefing-cta-hint" style="margin:8px 0 0;"><button class="briefing-link" onclick="state.countyAnswer='yes'; savePicks(); go('local')">I live in one of those five counties after all</button></p>` : ''}
+          </div>
+        </div>` : ''}
       </div>` : '';
   const countyNote = `<p class="briefing-cta-hint no-print" style="margin-top:18px;">Your county: <button class="briefing-link" onclick="go('local')">Open my county</button><br>Los Angeles, Orange, San Diego, Riverside, San Bernardino: a subset of your local ballot can be added here. Full local ballot: your official county page. Picks made on outside sites are not recorded here.</p>`;
   app.innerHTML = `
@@ -3421,7 +3460,7 @@ function raceVote(id, v, btn) {
   setTimeout(() => {
     voteLock = false;
     if (state.raceReview !== null) { state.raceReview = null; go("sheet"); return; }
-    if (state.raceIdx < RACES.length - 1) { state.raceIdx++; go("races"); } else go("sheet");
+    if (state.raceIdx < RACES.length - 1) { state.raceIdx++; go("races"); } else afterStatewide();
   }, 180);
 }
 function raceBack() {
@@ -4354,6 +4393,10 @@ function localCardHtml(m) {
       </div>
     </div>`;
 }
+function openCountyFromSheet() {
+  const c = COUNTIES.find(x => x[0] === state.localCounty);
+  if (c) window.open(c[1], '_blank', 'noopener'); else go('local');
+}
 function openCounty() {
   const sel = document.getElementById('countySel');
   const url = sel && sel.value;
@@ -4385,8 +4428,9 @@ function renderLocal() {
           <div class="prop-text" style="margin-bottom:10px;">If you are in Los Angeles, Orange, San Diego, Riverside, or San Bernardino, a subset of your local ballot appears when you select a county: selected local measures, House race, mayor's race, and more. These selections can be added to your cheat sheet. Below that is the link to your official county page for the rest of your ballot, which cannot be added to your cheat sheet. For every other county, click the official county page link.</div>
           <select id="countySel" class="county-select" onchange="countyChanged()">
             <option value="">Choose your county</option>
-            ${COUNTIES.map(c => `<option value="${c[1]}" ${state.localCounty === c[0] ? 'selected' : ''}>${c[0]}</option>`).join('')}
+            ${(state.countyAnswer === 'yes' && !state.showAllCounties ? COUNTIES.filter(c => DEEP_COUNTIES.includes(c[0])) : COUNTIES).map(c => `<option value="${c[1]}" ${state.localCounty === c[0] ? 'selected' : ''}>${c[0]}</option>`).join('')}
           </select>
+          ${state.countyAnswer === 'yes' && !state.showAllCounties ? `<p class="briefing-cta-hint" style="margin:8px 0 0;text-align:left;">Not one of these? <button class="briefing-link" onclick="state.showAllCounties = true; state.countyAnswer = 'no'; savePicks(); render()">Show all counties</button></p>` : ''}
           ${deep ? '' : `<div class="prop-text" style="margin:10px 0;">Local candidates, measures with full text and arguments, and your sample ballot.</div>
           <button class="cta dark" style="width:100%;margin-top:4px;" onclick="openCounty()">Open my official county page</button>`}
         </div>
@@ -4884,12 +4928,12 @@ function buildEconContext() {
 // Picks are kept in this browser (localStorage) and can be packed into a link (#picks=...) so the cheat sheet opens on another device.
 // Nothing is sent to any server.
 function picksPayload() {
-  return { v: 1, a: state.answers, s: state.step, p: state.propVotes, r: state.raceVotes, l: state.localVotes, c: state.localCounty, h: state.houseDistrict };
+  return { v: 1, a: state.answers, s: state.step, p: state.propVotes, r: state.raceVotes, l: state.localVotes, c: state.localCounty, h: state.houseDistrict, k: state.countyAnswer };
 }
 function applyPicks(d) {
   if (!d || d.v !== 1) return false;
   state.answers = d.a || {}; state.step = d.s || 0; state.propVotes = d.p || {}; state.raceVotes = d.r || {}; state.localVotes = d.l || {};
-  state.localCounty = d.c || ""; state.houseDistrict = d.h || "";
+  state.localCounty = d.c || ""; state.houseDistrict = d.h || ""; state.countyAnswer = d.k || "";
   return true;
 }
 // Compact link code using only letters, digits, dots, and dashes so every messaging app treats the whole thing as one link.
@@ -4954,7 +4998,7 @@ function picksLink() {
 function clearPicks() {
   if (!window.confirm('Clear every pick on this device and start over?')) return;
   try { localStorage.removeItem('caligov_picks'); } catch (e) {}
-  state.answers = {}; state.step = 0; state.propVotes = {}; state.raceVotes = {}; state.localVotes = {}; state.localCounty = ""; state.houseDistrict = "";
+  state.answers = {}; state.step = 0; state.propVotes = {}; state.raceVotes = {}; state.localVotes = {}; state.localCounty = ""; state.houseDistrict = ""; state.countyAnswer = "";
   try { history.replaceState(null, '', location.pathname); } catch (e) {}
   go('home');
 }

@@ -2034,22 +2034,22 @@ function renderHome() {
       <div class="home-cta-grid">
         <div class="home-card">
           <h2>Governor: Becerra or Hilton?</h2>
-          <p>12 quick questions about what you want the state to do. See which candidate lines up with your answers, issue by issue.</p>
+          <p>12 quick questions about the issues that matter most to you. See which candidate lines up with your answers, issue by issue.</p>
           <button class="cta" onclick="beginGov()">Find my match</button>
         </div>
         <div class="home-card">
           <h2>The other statewide offices</h2>
-          <p>Lieutenant governor, attorney general, secretary of state, treasurer, controller, insurance commissioner, schools chief, and the tax board. Who they are, who is paying, and the one thing to know. Pick as you go.</p>
+          <p>Lieutenant governor, attorney general, secretary of state, and more. Who they are, who supports their campaign, and additional details.</p>
           <button class="cta dark" onclick="beginRaces()">Walk me through them</button>
         </div>
         <div class="home-card">
           <h2>My county: local measures, my House race, my mayor</h2>
-          <p>Pick your county for the biggest local measures with who is paying and the fine print, your member of Congress, and mayoral races. Los Angeles, Orange, San Diego, Riverside, and San Bernardino in depth (a subset of your local ballot, not all of it); every county links to its official ballot page.</p>
+          <p>Pick your county. In Los Angeles, Orange, San Diego, Riverside, and San Bernardino, you get a subset of your local ballot: selected local measures, your House race, and the mayor's race, with the same detail as the propositions, and you can add them to your cheat sheet. For your full local ballot, click the link to your official county page.</p>
           <button class="cta dark" onclick="go('local')">Go to my county</button>
         </div>
         <div class="home-card">
           <h2>The 14 propositions</h2>
-          <p>What each one does, who is for and against, who is paying for the campaigns, and what the fine print also does. Mark your picks and leave with a cheat sheet.</p>
+          <p>What each proposition does, who is for and against it, who is paying for the campaigns, and the fine print missing from the commercials. Mark your picks as you go.</p>
           <button class="cta dark" onclick="beginProps()">Build my ballot</button>
         </div>
       </div>
@@ -2070,7 +2070,7 @@ function renderHome() {
           <span class="resource-host">caearlyvoting.sos.ca.gov →</span>
         </a>
         <a class="resource-link" href="javascript:void(0)" onclick="go('local')">
-          <span class="resource-label">What else is on my ballot? Local measures and House races for LA, Orange, San Diego, Riverside, and San Bernardino</span>
+          <span class="resource-label">My county: a subset of local measures, House races, and mayors for LA, Orange, San Diego, Riverside, and San Bernardino, plus every county's official ballot page</span>
           <span class="resource-host">by address →</span>
         </a>
         <a class="resource-link" href="https://voterstatus.sos.ca.gov/" target="_blank" rel="noopener">
@@ -2097,7 +2097,7 @@ THE SITE HAS FOUR PARTS, reached from four cards on the home page:
 
 3. THE STATEWIDE BALLOT MEASURES, one per screen. For each: what it does, what a yes and a no vote mean in the official voter guide's wording, the cost from the state's budget analyst, who is for it and who is against it, WHO IS PAYING (top donors each side with amounts from the state campaign finance database and the ethics or disclosure agency's top-contributor lists, and what each donor is in plain terms, for example "the teachers' union that wrote the measure" or "a committee funded by one tech billionaire"), WHAT IT ALSO DOES (3 to 5 bullets on the fine print: who specifically benefits, carve-outs and exemptions, who controls the money, sunset date or none, whether it is a general or special tax, the vote threshold, and anything the budget analyst or major outlets flag), the candidates' positions on it, and the latest poll. Flag measures written to cancel each other out, and warn the voter on the cheat sheet if their picks conflict. Add a "follow the money across measures" box when one funder is behind several.
 
-4. MY COUNTY. A dropdown of every county in the state that opens that county's official election page for this election (find and verify the URL for each county). For the largest counties, go deeper, by county: (a) the 8 to 12 biggest LOCAL MEASURES, with the same fields as the statewide measures, from the county registrar's impartial analyses, tax rate statements, and filed arguments, with a link to the county or city campaign finance portal for money; (b) every U.S. HOUSE district touching the county, in a dropdown listing each district by its cities, with candidate cards in the same format as the statewide offices, the rating from Cook, Sabato, or Inside Elections, the primary result, money from the FEC, and each incumbent's vote on the biggest recent bill; (c) MAYORAL races, with full cards for the largest city and a candidate list for the rest. Below that, links to a nonpartisan address lookup (VOTE411 in the U.S.) and a sample ballot lookup, and an explanation that ballots are set by precinct, not zip code.
+4. MY COUNTY. A dropdown of every county in the state that opens that county's official election page for this election (find and verify the URL for each county). For the largest counties, go deeper, by county: (a) a subset of 8 to 12 LOCAL MEASURES chosen for the money involved and the number of voters affected, with the same fields as the statewide measures, labeled clearly as a subset of the local ballot, from the county registrar's impartial analyses, tax rate statements, and filed arguments, with a link to the county or city campaign finance portal for money; (b) every U.S. HOUSE district touching the county, in a dropdown listing each district by its cities, with candidate cards in the same format as the statewide offices, the rating from Cook, Sabato, or Inside Elections, the primary result, money from the FEC, and each incumbent's vote on the biggest recent bill; (c) MAYORAL races, with full cards for the largest city and a candidate list for the rest. Below that, links to a nonpartisan address lookup (VOTE411 in the U.S.) and a sample ballot lookup, and an explanation that ballots are set by precinct, not zip code.
 
 CHEAT SHEET: every pick the voter makes (measures, offices, House, mayor, local measures) lands on one cheat sheet with "review or change" links, a print button, a copy-as-text button, and a "send to myself" button that opens the phone's share menu with the picks as plain text. Nothing is saved or sent anywhere unless the voter chooses.
 
@@ -2602,7 +2602,7 @@ function renderSheet() {
         </div>
         <p class="briefing-cta-hint">Opens your phone's share menu so you can text or email it to yourself. The text includes a link that reopens this cheat sheet with your picks filled in, on any device. Your picks are also remembered in this browser. Nothing is stored on a server.</p>
       </div>` : '';
-  const countyNote = `<p class="briefing-cta-hint no-print" style="margin-top:18px;">Want to look at your county's local ballot? <button class="briefing-link" onclick="go('local')">Open my county</button><br>Only the items with cards there (the biggest local measures, House, and mayor in Los Angeles, Orange, San Diego, Riverside, and San Bernardino) can be added to this cheat sheet. The rest of your local ballot opens on outside official sites and cannot be recorded here.</p>`;
+  const countyNote = `<p class="briefing-cta-hint no-print" style="margin-top:18px;">Your county: <button class="briefing-link" onclick="go('local')">Open my county</button><br>In Los Angeles, Orange, San Diego, Riverside, and San Bernardino, a subset of your local ballot (selected measures, your House race, the mayor's race) can be added to this cheat sheet. For your full local ballot, click the link to your official county page there; picks made on outside sites cannot be recorded here.</p>`;
   app.innerHTML = `
     <div class="fade-in">
       <div class="result-head" style="padding-bottom:20px;">
@@ -3531,7 +3531,7 @@ const LOCAL = {};
 
 
 LOCAL["San Bernardino"] = {
-  intro: "There are 20 local measures on San Bernardino County ballots. These nine carry the most money. Which of these are on your ballot depends on your city and school district. For campaign money, each measure links to the county's campaign finance portal.",
+  intro: "There are 20 local measures on San Bernardino County ballots. These are nine of them, chosen for the money involved. Which of these are on your ballot depends on your city and school district. For campaign money, each measure links to the county's campaign finance portal.",
   measures: [
   { id: "sb-I", letter: "I", juris: "Countywide, San Bernardino County Transportation Authority", name: "Keep the half-cent transportation sales tax, with no end date",
     official: "Ballot question starts \"Without raising tax rates, shall an ordinance to fund repairing potholes; keeping local roads in good condition\" and cites about $250 million a year \"until ended by voters.\"",
@@ -3677,7 +3677,7 @@ LOCAL["San Bernardino"] = {
 
 
 LOCAL["Riverside"] = {
-  intro: "We found 12 local measures on Riverside County ballots (the registrar's page lists notices for only seven, so small districts may be missing). These ten carry the most money. Which of these are on your ballot depends on your city and school district. For campaign money, each measure links to the county's campaign finance portal.",
+  intro: "We found 12 local measures on Riverside County ballots (the registrar's page lists notices for only seven, so small districts may be missing). These are ten of them, chosen for the money involved. Which of these are on your ballot depends on your city and school district. For campaign money, each measure links to the county's campaign finance portal.",
   measures: [
   { id: "rv-A", letter: "A", juris: "Countywide, Riverside County Transportation Commission", name: "Keep the half-cent transportation sales tax, with no end date",
     official: "\"Riverside County Traffic Relief, Pothole/Road Repair Investment Renewal Without Raising Tax Rates.\"",
@@ -3832,7 +3832,7 @@ LOCAL["Riverside"] = {
 
 
 LOCAL["San Diego"] = {
-  intro: "There are 20 local measures on San Diego County ballots, and no City of San Diego measure this time. These ten carry the most money. Which of these are on your ballot depends on your city and school district. For campaign money, each measure links to the county's campaign finance portal.",
+  intro: "There are 20 local measures on San Diego County ballots, and no City of San Diego measure this time. These are ten of them, chosen for the money involved. Which of these are on your ballot depends on your city and school district. For campaign money, each measure links to the county's campaign finance portal.",
   measures: [
   { id: "sd-A", letter: "A", juris: "Countywide, County of San Diego", name: "County charter reform, with a third term for supervisors",
     official: "\"A Transparent, Accountable, Modern County Government.\" Charter amendment placed by the Board of Supervisors, 3 to 2.",
@@ -3984,7 +3984,7 @@ LOCAL["San Diego"] = {
 
 
 LOCAL["Los Angeles"] = {
-  intro: "There are 68 county and city measures on Los Angeles County ballots this year, and no LAUSD or community college bond. These twelve carry the most money or reach the most voters: the two countywide charter amendments, the City of Los Angeles measures, and the largest city and school measures elsewhere. Which of these are on your ballot depends on your city and school district. For campaign money, each measure links to the right campaign finance portal.",
+  intro: "There are 68 county and city measures on Los Angeles County ballots this year, and no LAUSD or community college bond. These are twelve of them, chosen for the money involved or the number of voters affected: the two countywide charter amendments, the City of Los Angeles measures, and the largest city and school measures elsewhere. Which of these are on your ballot depends on your city and school district. For campaign money, each measure links to the right campaign finance portal.",
   measures: [
   { id: "la-A", letter: "A", juris: "Countywide, County of Los Angeles", name: "Binding arbitration for public safety unions",
     official: "\"Charter Amendment: Good Faith Negotiation and Impartial Binding Arbitration.\" Placed by the Board of Supervisors 4 to 0, Supervisor Mitchell abstaining.",
@@ -4166,7 +4166,7 @@ LOCAL["Los Angeles"] = {
 
 
 LOCAL["Orange"] = {
-  intro: "There are 15 local measures on Orange County ballots, and no countywide measure. These ten carry the most money or reach the most voters. Which of these are on your ballot depends on your city and school district. For campaign money, each measure links to where committees file.",
+  intro: "There are 15 local measures on Orange County ballots, and no countywide measure. These are ten of them, chosen for the money involved or the number of voters affected. Which of these are on your ballot depends on your city and school district. For campaign money, each measure links to where committees file.",
   measures: [
   { id: "oc-N", letter: "N", juris: "City of Santa Ana", name: "Make the 1.5% city sales tax permanent",
     official: "\"Santa Ana Streets, Public Safety, Essential City Services Measure.\" Council placed it 5 to 2.",
@@ -4391,7 +4391,7 @@ function renderLocal() {
         ${deep ? `
         <div class="prop-block">
           <div class="prop-label">${state.localCounty} County: what you can add to your cheat sheet</div>
-          <div class="prop-warn" style="margin-bottom:12px;"><b>This is a subset of your ballot, not the whole thing.</b> Below are the biggest countywide and city measures, your House race, and the mayoral races we covered in depth. Your precinct's ballot also has city council, school board, state Senate and Assembly, judges, special districts, and smaller measures that are not here. Some of the measures below may not be on your ballot at all; each one names the city or district it applies to. For your complete ballot, use the official county page and the address lookup further down.</div>
+          <div class="prop-warn" style="margin-bottom:12px;"><b>This is a subset of your ballot, not the whole thing.</b> Below are selected countywide and city measures, your House race, and the mayoral races, in the same detail as the propositions. Your precinct's ballot also has city council, school board, state Senate and Assembly, judges, special districts, and other measures that are not here. Some of the measures below may not be on your ballot at all; each one names the city or district it applies to. For your full local ballot, click the link to your official county page further down.</div>
           <div class="prop-text" style="margin-bottom:12px;">${LOCAL[state.localCounty].intro}</div>
           ${localMeasures(state.localCounty).map(localCardHtml).join('')}
         </div>
@@ -4403,7 +4403,7 @@ function renderLocal() {
         </div>
         <div class="prop-block">
           <div class="prop-label">The rest of your local ballot</div>
-          <div class="prop-text" style="margin-bottom:10px;">City council, school board, state Legislature, judges, and smaller measures are on your county's official page and in the address lookups below. Those open outside sites, and picks you make there cannot be recorded on this cheat sheet.</div>
+          <div class="prop-text" style="margin-bottom:10px;">City council, school board, state Legislature, judges, and the other measures are on your county's official page and in the address lookups below. Those open outside sites, and picks you make there cannot be recorded on this cheat sheet.</div>
           <button class="cta dark" style="width:100%;" onclick="openCounty()">Open my county's official ballot page</button>
         </div>` : `${houseSectionHtml()}${mayorSectionHtml()}`}
         <div class="prop-block">

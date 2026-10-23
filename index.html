@@ -2043,14 +2043,14 @@ function renderHome() {
           <button class="cta dark" onclick="beginRaces()">Walk me through them</button>
         </div>
         <div class="home-card">
-          <h2>My county: local measures, my House race, my mayor</h2>
-          <p>Pick your county. In Los Angeles, Orange, San Diego, Riverside, and San Bernardino, you get a subset of your local ballot: selected local measures, your House race, and the mayor's race, with the same detail as the propositions, and you can add them to your cheat sheet. For your full local ballot, click the link to your official county page.</p>
-          <button class="cta dark" onclick="go('local')">Go to my county</button>
-        </div>
-        <div class="home-card">
           <h2>The 14 propositions</h2>
           <p>What each proposition does, who is for and against it, who is paying for the campaigns, and the fine print missing from the commercials. Mark your picks as you go.</p>
           <button class="cta dark" onclick="beginProps()">Build my ballot</button>
+        </div>
+        <div class="home-card">
+          <h2>My county: local measures, my House race, my mayor</h2>
+          <p>Los Angeles, Orange, San Diego, Riverside, San Bernardino: a subset of your local ballot, with picks for your cheat sheet. Every county: a link to your official county page.</p>
+          <button class="cta dark" onclick="go('local')">Go to my county</button>
         </div>
       </div>
 
@@ -2602,7 +2602,7 @@ function renderSheet() {
         </div>
         <p class="briefing-cta-hint">Opens your phone's share menu so you can text or email it to yourself. The text includes a link that reopens this cheat sheet with your picks filled in, on any device. Your picks are also remembered in this browser. Nothing is stored on a server.</p>
       </div>` : '';
-  const countyNote = `<p class="briefing-cta-hint no-print" style="margin-top:18px;">Your county: <button class="briefing-link" onclick="go('local')">Open my county</button><br>In Los Angeles, Orange, San Diego, Riverside, and San Bernardino, a subset of your local ballot (selected measures, your House race, the mayor's race) can be added to this cheat sheet. For your full local ballot, click the link to your official county page there; picks made on outside sites cannot be recorded here.</p>`;
+  const countyNote = `<p class="briefing-cta-hint no-print" style="margin-top:18px;">Your county: <button class="briefing-link" onclick="go('local')">Open my county</button><br>Los Angeles, Orange, San Diego, Riverside, San Bernardino: a subset of your local ballot can be added here. Full local ballot: your official county page. Picks made on outside sites are not recorded here.</p>`;
   app.innerHTML = `
     <div class="fade-in">
       <div class="result-head" style="padding-bottom:20px;">
@@ -4373,25 +4373,26 @@ function renderLocal() {
         <div class="result-kicker">Your Local Ballot</div>
         <h2 class="result-name" style="font-size:clamp(28px,6vw,36px);">What else is on my ballot?</h2>
         <p class="result-liner">The 14 propositions and the statewide races are the same for everyone in California. The rest of your ballot depends on where you live.</p>
-        <p class="briefing-cta-hint" style="margin-top:8px;">What you can mark here: the local measures, House race, and mayoral race that have cards on this page. Those go on your cheat sheet. The outside links open official sites in a new tab, and picks you make there cannot be recorded here.</p>
+        
       </div>
       <div class="section">
         <div class="prop-block" style="border-top:none;padding-top:0;">
           <div class="prop-text">Your ballot is set by your voting precinct, not your zip code. One zip can cross a city line, a school district line, even a county line. Start with your county, which runs your election and publishes everything on your local ballot. Depending on where you live, you may also be voting on your member of Congress, state Senate and Assembly, county supervisor, city council or mayor, school board, special districts, judges, and local measures like a sales tax, a parcel tax, or a school bond.</div>
         </div>
         <div class="prop-block">
-          <div class="prop-label">Pick your county</div>
+          <div class="prop-label">Choose your county</div>
+          <div class="prop-text" style="margin-bottom:10px;">If you are in Los Angeles, Orange, San Diego, Riverside, or San Bernardino, a subset of your local ballot appears when you select a county: selected local measures, House race, mayor's race, and more. These selections can be added to your cheat sheet. Below that is the link to your official county page for the rest of your ballot, which cannot be added to your cheat sheet. For every other county, click the official county page link.</div>
           <select id="countySel" class="county-select" onchange="countyChanged()">
             <option value="">Choose your county</option>
             ${COUNTIES.map(c => `<option value="${c[1]}" ${state.localCounty === c[0] ? 'selected' : ''}>${c[0]}</option>`).join('')}
           </select>
-          ${deep ? '' : `<div class="prop-text" style="margin:10px 0;">Opens your county elections office's page for the November 3 election: the local candidates, the local measures with their full text and arguments, and the sample ballot or voter guide.</div>
-          <button class="cta dark" style="width:100%;margin-top:4px;" onclick="openCounty()">Open my county's ballot page</button>`}
+          ${deep ? '' : `<div class="prop-text" style="margin:10px 0;">Local candidates, measures with full text and arguments, and your sample ballot.</div>
+          <button class="cta dark" style="width:100%;margin-top:4px;" onclick="openCounty()">Open my official county page</button>`}
         </div>
         ${deep ? `
         <div class="prop-block">
           <div class="prop-label">${state.localCounty} County: what you can add to your cheat sheet</div>
-          <div class="prop-warn" style="margin-bottom:12px;"><b>This is a subset of your ballot, not the whole thing.</b> Below are selected countywide and city measures, your House race, and the mayoral races, in the same detail as the propositions. Your precinct's ballot also has city council, school board, state Senate and Assembly, judges, special districts, and other measures that are not here. Some of the measures below may not be on your ballot at all; each one names the city or district it applies to. For your full local ballot, click the link to your official county page further down.</div>
+          <div class="prop-warn" style="margin-bottom:12px;"><b>A subset of your ballot.</b> City council, school board, state Legislature, judges, and other measures are not here. Each measure below names the city or district it applies to; it may not be on your ballot. Full local ballot: your official county page, further down.</div>
           <div class="prop-text" style="margin-bottom:12px;">${LOCAL[state.localCounty].intro}</div>
           ${localMeasures(state.localCounty).map(localCardHtml).join('')}
         </div>
@@ -4403,8 +4404,8 @@ function renderLocal() {
         </div>
         <div class="prop-block">
           <div class="prop-label">The rest of your local ballot</div>
-          <div class="prop-text" style="margin-bottom:10px;">City council, school board, state Legislature, judges, and the other measures are on your county's official page and in the address lookups below. Those open outside sites, and picks you make there cannot be recorded on this cheat sheet.</div>
-          <button class="cta dark" style="width:100%;" onclick="openCounty()">Open my county's official ballot page</button>
+          <div class="prop-text" style="margin-bottom:10px;">City council, school board, state Legislature, judges, and other measures. Outside sites; picks made there are not recorded here.</div>
+          <button class="cta dark" style="width:100%;" onclick="openCounty()">Open my official county page</button>
         </div>` : `${houseSectionHtml()}${mayorSectionHtml()}`}
         <div class="prop-block">
           <div class="prop-label">${deep ? 'Look up your exact ballot by address' : 'Or look it up by address'}</div>

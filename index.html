@@ -1978,6 +1978,7 @@ function lastName(fullName) {
 function partyWord(p) { return p === 'R' ? 'Republican' : 'Democrat'; }
 function toTop() {
   // Instant scroll, applied after the new screen is drawn. Smooth scrolling gets cancelled by the redraw on some phones.
+  toTopPending = true; setTimeout(() => { toTopPending = false; }, 300);
   const up = () => { window.scrollTo(0, 0); if (document.scrollingElement) document.scrollingElement.scrollTop = 0; document.documentElement.scrollTop = 0; document.body.scrollTop = 0; app.scrollTop = 0; };
   up(); requestAnimationFrame(up); setTimeout(up, 60); setTimeout(up, 250);
 }
@@ -1987,13 +1988,18 @@ function go(view) { state.view = view; render(); toTop(); }
 const GOV_STEPS = [TOP_ISSUE_Q].concat(QUESTIONS).concat([REDFLAG_Q]);
 
 function render() {
-  if (state.view === "home") return renderHome();
-  if (state.view === "gov") return state.step >= GOV_STEPS.length ? renderGovResult() : renderGovQuestion();
-  if (state.view === "props") return renderProp();
-  if (state.view === "sheet") return renderSheet();
-  if (state.view === "local") return renderLocal();
-  if (state.view === "races") return renderRace();
+  // Redrawing the screen in place can reset the scroll position on iPhone Safari. Remember it and put it back.
+  // Screen changes that should start at the top call toTop() right after render(), which overrides this.
+  const y = window.scrollY || document.documentElement.scrollTop || 0;
+  if (state.view === "home") renderHome();
+  else if (state.view === "gov") state.step >= GOV_STEPS.length ? renderGovResult() : renderGovQuestion();
+  else if (state.view === "props") renderProp();
+  else if (state.view === "sheet") renderSheet();
+  else if (state.view === "local") renderLocal();
+  else if (state.view === "races") renderRace();
+  if (y > 0) { window.scrollTo(0, y); requestAnimationFrame(() => { if (!toTopPending) window.scrollTo(0, y); }); }
 }
+let toTopPending = false;
 
 function disclaimerHtml() {
   return `
@@ -2038,7 +2044,7 @@ function renderHome() {
         </div>
         <div class="home-card">
           <h2>My county: local measures, my House race, my mayor</h2>
-          <p>Pick your county for the biggest local measures with who is paying and the fine print, your member of Congress, and mayoral races. Los Angeles, Orange, San Diego, Riverside, and San Bernardino in depth; every other county links to its official ballot page.</p>
+          <p>Pick your county for the biggest local measures with who is paying and the fine print, your member of Congress, and mayoral races. Los Angeles, Orange, San Diego, Riverside, and San Bernardino in depth (a subset of your local ballot, not all of it); every county links to its official ballot page.</p>
           <button class="cta dark" onclick="go('local')">Go to my county</button>
         </div>
         <div class="home-card">
@@ -2342,7 +2348,7 @@ function renderGovResult() {
   const headHtml = tie ? `
         <div class="result-kicker">Your Result</div>
         <h2 class="result-name">An even split</h2>
-        <p class="result-liner">Your answers lined up equally with both candidates. The issue-by-issue breakdown below shows where each one matched you.</p>`
+        <p class="result-liner">Your answers lined up equally with both candidates. The issue-by-issue breakdown shows where each one matched you.</p>`
     : `
         <div class="result-kicker">${close ? 'Your Closer Match' : 'Your Match'}</div>
         <h2 class="result-name">${top.name}</h2>
@@ -2365,6 +2371,17 @@ function renderGovResult() {
 
       ${flagHtml}
 
+      <div class="briefing-cta">
+        <button class="briefing-cta-btn" onclick="beginRaces()">Next: the other statewide offices</button>
+        <p class="briefing-cta-hint">Attorney general, secretary of state, treasurer, and the rest, one screen each.</p>
+      </div>
+      <div class="briefing-cta" style="margin-top:8px;">
+        <button class="briefing-cta-btn" onclick="beginProps()">Or skip to the 14 propositions</button>
+      </div>
+      <div class="briefing-link-row"><button class="briefing-link" onclick="go('sheet')">See my cheat sheet →</button></div>
+
+      <div class="briefing-link-row" style="margin-top:18px;"><button class="briefing-link" onclick="toggleDetail()">${state.showDetail ? 'Hide the issue-by-issue breakdown ↑' : 'Show how I matched on each issue, and what to know about each candidate ↓'}</button></div>
+      <div style="display:${state.showDetail ? 'block' : 'none'};">
       <div class="section">
         <div class="section-title">Issue by issue</div>
         ${issuesHtml}
@@ -2381,15 +2398,8 @@ function renderGovResult() {
         <p>If you named a dealbreaker, the candidate it applies to had his score cut in half.</p>
         <p>This is not a poll, a prediction, or an endorsement. It compares what you said you want with what each candidate has put on the public record.</p>
       </div>
+      </div>
 
-      <div class="briefing-cta">
-        <button class="briefing-cta-btn" onclick="beginRaces()">Next: the other statewide offices</button>
-        <p class="briefing-cta-hint">Attorney general, secretary of state, treasurer, and the rest, one screen each.</p>
-      </div>
-      <div class="briefing-cta" style="margin-top:8px;">
-        <button class="briefing-cta-btn" onclick="beginProps()">Or skip to the 14 propositions</button>
-      </div>
-      <div class="briefing-link-row"><button class="briefing-link" onclick="go('sheet')">See my cheat sheet →</button></div>
       <div class="briefing-link-row">
         <button class="briefing-link" onclick="openBriefing()">Read the full voter briefing →</button>
       </div>
@@ -2403,6 +2413,7 @@ function renderGovResult() {
   `;
 }
 function toggleMethod() { state.showMethod = !state.showMethod; render(); }
+function toggleDetail() { state.showDetail = !state.showDetail; render(); }
 
 // ==================== PROPOSITIONS ====================
 function beginProps() { state.propIdx = 0; state.propReview = null; go("props"); }
@@ -2502,14 +2513,8 @@ function nextBlockHtml() {
   const todo = state3.filter(x => x.done === 0);
   const partial = state3.filter(x => x.done > 0 && x.done < x.total);
   const first = partial[0] || todo[0];
-  const localRow = `
-        <div style="margin-top:14px;border:1.5px dashed #c9c5bd;border-radius:8px;padding:10px 12px;background:#fff;">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;"><span class="nl" style="font-size:15px;font-weight:600;">My county${local.done ? ` <small style="display:inline;font-weight:400;">(${local.sub} so far)</small>` : ''}</span><button class="restart-btn" style="margin:0;white-space:nowrap;" onclick="go('local')">Open</button></div>
-          <p class="briefing-cta-hint" style="text-align:left;margin:8px 0 0;">Different from the three above. It opens your county's page. Only the items that have cards there, the biggest local measures, the House race, and the mayor in Los Angeles, Orange, San Diego, Riverside, and San Bernardino, can be marked and added to this cheat sheet. Everything else on your local ballot (city council, school board, state Legislature, smaller measures) opens on outside official sites, and this site has no data on those races, so picks made there cannot be recorded here.</p>
-        </div>`;
-  if (!first) {
-    return `<div class="briefing-cta no-print"><div class="done-chip" style="margin-bottom:6px;">All statewide sections done</div><p class="briefing-cta-hint">Send or print your cheat sheet below, or tap any pick to change it.</p><div class="next-list">${localRow}</div></div>`;
-  }
+
+  if (!first) return '';
   const rowsHtml = state3.filter(x => x !== first && x.done < x.total).map(x => `
       <div class="next-row"><span class="nl">${x.label}<small>${x.sub}</small></span><button class="restart-btn" onclick="${x.done ? x.resume : x.start}">${x.done ? 'Continue' : 'Start'}</button></div>`).join('');
   return `
@@ -2517,7 +2522,7 @@ function nextBlockHtml() {
         <div class="prop-label" style="margin-bottom:6px;">What's next</div>
         <button class="briefing-cta-btn" onclick="${first.done ? first.resume : first.start}">${first.done ? 'Continue: ' : 'Next: '}${first.label.toLowerCase()}</button>
         <p class="briefing-cta-hint">${first.sub}. Or review your picks below.</p>
-        <div class="next-list">${rowsHtml}${localRow}</div>
+        ${rowsHtml ? `<div class="next-list">${rowsHtml}</div>` : ''}
       </div>`;
 }
 function renderSheet() {
@@ -2545,7 +2550,7 @@ function renderSheet() {
         <span class="sheet-name">${m.name} <small style="color:#6a6a67;">(${m.juris})</small><button class="no-print" onclick="state.localCounty='${county}'; state.localOpen['${m.id}']=true; go('local')">Review or change</button></span>
         <span class="sheet-pick ${lv[m.id]}">${label[lv[m.id]]}</span>
       </div>`).join('');
-    return rowsC ? `<div class="section"><div class="prop-label" style="margin:14px 0 6px;">${county} County</div>${rowsC}</div>` : '';
+    return rowsC ? `<div class="section"><div class="prop-label" style="margin:14px 0 6px;">${county} County (selected local items, not your full local ballot)</div>${rowsC}</div>` : '';
   }).join('');
   const rv = state.raceVotes;
   const raceRow = (r, idx, reviewFn) => `
@@ -2570,6 +2575,17 @@ function renderSheet() {
       <div class="sheet-row"><span class="sheet-num">Governor</span><span class="sheet-name">Becerra ${r.pct.becerra}%, Hilton ${r.pct.hilton}%<button class="no-print" onclick="state.step = GOV_STEPS.length; go('gov')">Review</button></span><span class="sheet-pick yes">${r.pct.becerra === r.pct.hilton ? 'Tie' : lastName(CANDIDATES[r.pct.becerra > r.pct.hilton ? 'becerra' : 'hilton'].name)}</span></div></div>`;
   }
   const propsBlock = picked ? `<div class="section"><div class="prop-label" style="margin:14px 0 6px;">Propositions</div>${rows}</div>` : '';
+  const allDone = secs.filter(x => x.key !== 'local').every(x => x.done >= x.total);
+  const shareBlock = totalPicks ? `<div class="briefing-cta no-print">
+        ${allDone ? '<div class="done-chip" style="margin-bottom:6px;">All statewide sections done</div>' : ''}
+        <button class="briefing-cta-btn" onclick="shareSheet()">Send my cheat sheet to myself</button>
+        <div class="share-row">
+          <button class="restart-btn" onclick="copySheet(this)">Copy as text</button>
+          <button class="restart-btn" onclick="window.print()">Print</button>
+        </div>
+        <p class="briefing-cta-hint">Opens your phone's share menu so you can text or email it to yourself. The text includes a link that reopens this cheat sheet with your picks filled in, on any device. Your picks are also remembered in this browser. Nothing is stored on a server.</p>
+      </div>` : '';
+  const countyNote = `<p class="briefing-cta-hint no-print" style="margin-top:18px;">Want to look at your county's local ballot? <button class="briefing-link" onclick="go('local')">Open my county</button><br>Only the items with cards there (the biggest local measures, House, and mayor in Los Angeles, Orange, San Diego, Riverside, and San Bernardino) can be added to this cheat sheet. The rest of your local ballot opens on outside official sites and cannot be recorded here.</p>`;
   app.innerHTML = `
     <div class="fade-in">
       <div class="result-head" style="padding-bottom:20px;">
@@ -2577,7 +2593,7 @@ function renderSheet() {
         <h2 class="result-name" style="font-size:clamp(28px,6vw,36px);">Your picks</h2>
         <p class="result-liner">${totalPicks ? 'Everything you have marked so far, in ballot order.' : 'Nothing marked yet. Pick a section to start.'}</p>
       </div>
-      ${nextBlockHtml()}
+      ${allDone ? shareBlock : nextBlockHtml()}
       ${warn}
       ${govBlock}
       ${raceBlock}
@@ -2585,14 +2601,8 @@ function renderSheet() {
       ${houseBlock}
       ${mayorBlock}
       ${localBlock}
-      ${totalPicks ? `<div class="briefing-cta no-print">
-        <button class="briefing-cta-btn" onclick="shareSheet()">Send my cheat sheet to myself</button>
-        <div class="share-row">
-          <button class="restart-btn" onclick="copySheet(this)">Copy as text</button>
-          <button class="restart-btn" onclick="window.print()">Print</button>
-        </div>
-        <p class="briefing-cta-hint">Opens your phone's share menu so you can text or email it to yourself. The text includes a link that reopens this cheat sheet with your picks filled in, on any device. Your picks are also remembered in this browser. Nothing is stored on a server.</p>
-      </div>` : ''}
+      ${allDone ? '' : shareBlock}
+      ${countyNote}
       <div class="restart-wrap no-print">
         <button class="restart-btn" onclick="go('home')">Home</button>
         <button class="restart-btn" style="margin-left:8px;" onclick="clearPicks()">Clear my picks</button>
@@ -3411,7 +3421,7 @@ function reviewHouse(id) {
   state.houseDistrict = id;
   go('local');
 }
-function houseChanged() { const sel = document.getElementById('houseSel'); state.houseDistrict = sel.value; savePicks(); renderLocal(); }
+function houseChanged() { const sel = document.getElementById('houseSel'); state.houseDistrict = sel.value; savePicks(); render(); }
 function houseSectionHtml() {
   const list = HOUSE.filter(h => !h.counties || h.counties.includes(state.localCounty)).sort((a, b) => parseInt(a.district.replace(/\D/g, '')) - parseInt(b.district.replace(/\D/g, '')));
   if (!state.localCounty || !list.length) return '';
@@ -4295,7 +4305,7 @@ function countyChanged() {
   if (!sel.value) state.localCounty = "";
   state.houseDistrict = "";
   savePicks();
-  renderLocal();
+  render();
 }
 function localVote(id, v, btn) {
   state.localVotes[id] = v; savePicks();
@@ -4304,7 +4314,7 @@ function localVote(id, v, btn) {
     btn.classList.add('sel-' + v);
   }
 }
-function toggleLocal(id) { state.localOpen[id] = !state.localOpen[id]; renderLocal(); }
+function toggleLocal(id) { state.localOpen[id] = !state.localOpen[id]; render(); }
 function localCardHtml(m) {
   const v = state.localVotes[m.id];
   const open = !!state.localOpen[m.id];
@@ -4333,6 +4343,7 @@ function openCounty() {
   window.open(url, '_blank', 'noopener');
 }
 function renderLocal() {
+  const deep = !!(state.localCounty && LOCAL[state.localCounty]);
   const card = (title, body, href, host) => `
     <a class="resource-link" href="${href}" target="_blank" rel="noopener" style="display:block;margin-bottom:12px;">
       <span class="resource-label">${title}</span>
@@ -4353,24 +4364,33 @@ function renderLocal() {
         </div>
         <div class="prop-block">
           <div class="prop-label">Pick your county</div>
-          <div class="prop-text" style="margin-bottom:10px;">Opens your county elections office's page for the November 3 election: the local candidates, the local measures with their full text and arguments, and the sample ballot or voter guide.</div>
           <select id="countySel" class="county-select" onchange="countyChanged()">
             <option value="">Choose your county</option>
             ${COUNTIES.map(c => `<option value="${c[1]}" ${state.localCounty === c[0] ? 'selected' : ''}>${c[0]}</option>`).join('')}
           </select>
-          <button class="cta dark" style="width:100%;margin-top:10px;" onclick="openCounty()">Open my county's ballot page</button>
+          ${deep ? '' : `<div class="prop-text" style="margin:10px 0;">Opens your county elections office's page for the November 3 election: the local candidates, the local measures with their full text and arguments, and the sample ballot or voter guide.</div>
+          <button class="cta dark" style="width:100%;margin-top:4px;" onclick="openCounty()">Open my county's ballot page</button>`}
         </div>
-        ${localMeasures(state.localCounty).length ? `
+        ${deep ? `
         <div class="prop-block">
-          <div class="prop-label">${state.localCounty} County measures, in depth</div>
+          <div class="prop-label">${state.localCounty} County: what you can add to your cheat sheet</div>
+          <div class="prop-warn" style="margin-bottom:12px;"><b>This is a subset of your ballot, not the whole thing.</b> Below are the biggest countywide and city measures, your House race, and the mayoral races we covered in depth. Your precinct's ballot also has city council, school board, state Senate and Assembly, judges, special districts, and smaller measures that are not here. Some of the measures below may not be on your ballot at all; each one names the city or district it applies to. For your complete ballot, use the official county page and the address lookup further down.</div>
           <div class="prop-text" style="margin-bottom:12px;">${LOCAL[state.localCounty].intro}</div>
           ${localMeasures(state.localCounty).map(localCardHtml).join('')}
-          <div class="briefing-cta no-print" style="margin-top:12px;"><button class="briefing-cta-btn" onclick="go('sheet')">Add these to my cheat sheet</button></div>
-        </div>` : ''}
+        </div>
         ${houseSectionHtml()}
         ${mayorSectionHtml()}
+        <div class="briefing-cta no-print" style="margin-top:12px;">
+          <button class="briefing-cta-btn" onclick="go('sheet')">Done here: go to my cheat sheet</button>
+          <p class="briefing-cta-hint">Send it, copy it, or print it from there.</p>
+        </div>
         <div class="prop-block">
-          <div class="prop-label">Or look it up by address</div>
+          <div class="prop-label">The rest of your local ballot</div>
+          <div class="prop-text" style="margin-bottom:10px;">City council, school board, state Legislature, judges, and smaller measures are on your county's official page and in the address lookups below. Those open outside sites, and picks you make there cannot be recorded on this cheat sheet.</div>
+          <button class="cta dark" style="width:100%;" onclick="openCounty()">Open my county's official ballot page</button>
+        </div>` : `${houseSectionHtml()}${mayorSectionHtml()}`}
+        <div class="prop-block">
+          <div class="prop-label">${deep ? 'Look up your exact ballot by address' : 'Or look it up by address'}</div>
           ${card("VOTE411 (League of Women Voters)", "Enter your address and get every race and measure on your ballot, with candidate statements in their own words and the text of each local measure. Non-partisan. This is the site formerly known as Voter's Edge California.", "https://www.vote411.org/ballot", "vote411.org")}
           ${card("Ballotpedia sample ballot", "Enter your address for a sample ballot with links to each candidate's page and each measure's summary, arguments, and funding.", "https://ballotpedia.org/Sample_Ballot_Lookup", "ballotpedia.org")}
         </div>
@@ -4409,7 +4429,7 @@ function sheetText() {
   out.push(section('MAYOR', MAYORS.filter(r => rvv[r.id] !== undefined).map(r => `${r.city}: ${pickName(r)}`)));
   Object.keys(LOCAL).forEach(county => {
     const picks = localMeasures(county).filter(m => state.localVotes[m.id]).map(m => `Measure ${m.letter}  ${mark[state.localVotes[m.id]]}\n   ${m.juris}\n   ${m.name}`);
-    out.push(section(`${county.toUpperCase()} COUNTY MEASURES`, picks));
+    out.push(section(`${county.toUpperCase()} COUNTY MEASURES (a subset; your full local ballot has more)`, picks));
   });
   out.push(`\n${bar}\nVote by Nov 3. Mail ballots must be postmarked by Election Day.\n\nOpen this link on any phone to see or change these picks:\n${picksLink()}`);
   return out.filter(Boolean).join('\n');
